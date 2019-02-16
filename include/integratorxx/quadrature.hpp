@@ -132,11 +132,13 @@ namespace IntegratorXX {
   QuadratureImpl( GaussLegendre );
   QuadratureImpl( GaussChebyshev1 );
   QuadratureImpl( GaussChebyshev2 );
+  QuadratureImpl( EulerMaclaurin );
 
 };
 
 #include "gausslegendre.hpp"
 #include "gausscheby1.hpp"
 #include "gausscheby2.hpp"
+#include "eulermaclaurin.hpp"
 
 #endif
