@@ -125,7 +125,24 @@ namespace IntegratorXX {
   };
 
 
-  template <typename CombinedType, typename QuadratureType1, typename QuadratureType2>
+
+
+
+
+  namespace detail{
+  struct standard_combine_op {
+    template <typename T, typename U, typename V>
+    static T combine( const U& u, const V& v ) {
+      return {u,v};
+    }
+  };
+  }
+
+
+
+
+  template <typename CombinedType, typename QuadratureType1, typename QuadratureType2,
+            typename CombineOp = detail::standard_combine_op >
   class QuadratureBatch2D_t {
 
 
@@ -222,7 +239,8 @@ namespace IntegratorXX {
         auto pts_loop_init = std::tuple(pts2_st, pts.begin());
         for(auto [i2, indx] = pts_loop_init; i2 != pts2_en; ++i2        )
         for(auto i1 = pts1_st;               i1 != pts1_en; ++i1, ++indx)
-          *indx = { *i1, *i2 };
+          //*indx = { *i1, *i2 };
+          *indx = CombineOp::template combine<CombinedType>( *i1, *i2 );
 
         auto wgt_loop_init = std::tuple(wgt2_st, wgt.begin());
         for(auto [i2, indx] = wgt_loop_init; i2 != wgt2_en; ++i2        )
@@ -260,8 +278,9 @@ namespace IntegratorXX {
 
   };
 
-  template <typename CombinedType, typename QuadratureType1, typename QuadratureType2>
-  QuadratureBatch2D_t<CombinedType, QuadratureType1, QuadratureType2>
+  template <typename CombinedType, typename QuadratureType1, typename QuadratureType2,
+            typename CombineOp = detail::standard_combine_op >
+  QuadratureBatch2D_t<CombinedType, QuadratureType1, QuadratureType2, CombineOp>
   QuadratureBatch2D(
     const QuadratureType1& q1,
     const QuadratureType2& q2,
@@ -269,11 +288,9 @@ namespace IntegratorXX {
     const size_t bsz2 = 1
   ) {
 
-    return QuadratureBatch2D_t<CombinedType, QuadratureType1, QuadratureType2>(q1,q2,bsz1,bsz2);
+    return QuadratureBatch2D_t<CombinedType, QuadratureType1, QuadratureType2, CombineOp>(q1,q2,bsz1,bsz2);
 
   }
-
-  
 
 };
 
