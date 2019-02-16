@@ -33,11 +33,11 @@ namespace IntegratorXX {
     generate_impl(const size_t nPts, const PointType lo, const PointType up) {
 
     point_container   pts(nPts);
-    weight_container  weights(nPts);
+    weight_container  wghts(nPts);
 
     for(size_t i = 0; i < nPts; i++) {
 
-      // Generate raw points and weights on (-1,1)
+      // Generate raw points and wghts on (-1,1)
       PointType pt = std::cos(M_PI * (i+1) / (nPts +1));
       PointType wgt = M_PI / (nPts + 1) * 
         std::pow(
@@ -46,17 +46,17 @@ namespace IntegratorXX {
         );
 
       // As we're integrating f(x) not f(x)\sqrt{1 - x^2}
-      // we must factor the \sqrt{1-x^2} into the weights
+      // we must factor the \sqrt{1-x^2} into the wghts
       wgt /= std::sqrt(1 - pt * pt);
 
       // Transform points and populate arrays
-      //std::tie(pts[i],weights[i]) = unitBoundTransform(lowBound,upBound,pt,wgt);
+      //std::tie(pts[i],wghts[i]) = unitBoundTransform(lowBound,upBound,pt,wgt);
       pts[i] = pt;
-      weights[i] = wgt;
+      wghts[i] = wgt;
 
     }; // Loop over points
 
-    return std::tuple( std::move(pts), std::move(weights) );
+    return std::tuple( std::move(pts), std::move(wghts) );
 
   }
 

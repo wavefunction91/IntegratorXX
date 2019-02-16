@@ -33,18 +33,18 @@ namespace IntegratorXX {
     generate_impl(const size_t nPts) {
 
     point_container   pts(nPts);
-    weight_container  weights(nPts);
+    weight_container  wghts(nPts);
 
     for(size_t i = 0; i < nPts; i++) {
 
       pts[i] = (i + 1.0) * (i + 1.0) / ((nPts - i) * (nPts - i));
 
-      weights[i] = 2.0 * (i + 1.0) * (nPts + 1.0) / 
+      wghts[i] = 2.0 * (i + 1.0) * (nPts + 1.0) / 
         ((nPts - i) * (nPts - i) * (nPts - i));
 
     }; // Loop over points
 
-    return std::tuple( std::move(pts), std::move(weights) );
+    return std::tuple( std::move(pts), std::move(wghts) );
 
   }
 

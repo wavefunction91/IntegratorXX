@@ -34,7 +34,7 @@ namespace IntegratorXX {
 
     assert( nPts % 2 == 0 );
     point_container   pts(nPts);
-    weight_container  weights(nPts);
+    weight_container  wghts(nPts);
 
     auto mid = (nPts + 1) / 2;
 
@@ -69,17 +69,17 @@ namespace IntegratorXX {
       PointType wgt = 2. / (1. - z*z) / pp / pp;
 
       // Transform points and populate arrays
-      //std::tie(pts[i-1],weights[i-1]) = unitBoundTransform(lowBound,upBound,pt,wgt);
+      //std::tie(pts[i-1],wghts[i-1]) = unitBoundTransform(lowBound,upBound,pt,wgt);
       pts[i-1]     = pt;
-      weights[i-1] = wgt;
+      wghts[i-1] = wgt;
 
       // Reflect the points
       pts[nPts-i]     = (lo + up) - pt;
-      weights[nPts-i] = wgt;
+      wghts[nPts-i] = wgt;
 
     }; // Loop over points
 
-    return std::tuple( std::move(pts), std::move(weights) );
+    return std::tuple( std::move(pts), std::move(wghts) );
 
   }
 

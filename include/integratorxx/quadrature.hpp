@@ -67,7 +67,7 @@ namespace IntegratorXX {
   protected:
 
     point_container  pts; ///< Integration pts
-    weight_container weights; ///< Quadrature weights
+    weight_container wghts; ///< Quadrature weights
 
     
     // Private constructors
@@ -75,12 +75,12 @@ namespace IntegratorXX {
     Quadrature(
       const point_container&  _pts,
       const weight_container& _wgt
-    ): pts( _pts ), weights( _wgt ){ }
+    ): pts( _pts ), wghts( _wgt ){ }
 
     Quadrature(
       point_container&&  _pts,
       weight_container&& _wgt
-    ): pts( std::move(_pts) ), weights( std::move(_wgt) ){ }
+    ): pts( std::move(_pts) ), wghts( std::move(_wgt) ){ }
 
 
     Quadrature(
@@ -111,6 +111,8 @@ namespace IntegratorXX {
      */ 
     inline auto nPts() const { return pts.size(); };
     
+    inline const auto& points()  const { return pts; };
+    inline const auto& weights() const { return wghts; };
 
   };
 
