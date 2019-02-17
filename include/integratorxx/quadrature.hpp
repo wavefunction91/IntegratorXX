@@ -111,8 +111,8 @@ namespace IntegratorXX {
      */ 
     inline auto nPts() const { return pts.size(); };
     
-    inline const auto& points()  const { return pts; };
-    inline const auto& weights() const { return wghts; };
+    inline const point_container&  points()  const { return pts; };
+    inline const weight_container& weights() const { return wghts; };
 
   };
 
@@ -130,11 +130,24 @@ namespace IntegratorXX {
   };
 
 
-
   QuadratureImpl( GaussLegendre );
   QuadratureImpl( GaussChebyshev1 );
   QuadratureImpl( GaussChebyshev2 );
   QuadratureImpl( EulerMaclaurin );
+
+
+  // Specialization for Lebedev
+  template <                  
+    typename PointType,       
+    typename wght_t = double, 
+    template<typename> class ContiguousContainer = std::vector
+  >                                                           
+  class Lebedev : public Quadrature<cartesian_pt_t<PointType>,wght_t,ContiguousContainer,Lebedev<PointType>>
+  {                                                                                   
+    using Base = Quadrature<cartesian_pt_t<PointType>,wght_t,ContiguousContainer,Lebedev<PointType>>;    
+    using Base::Quadrature;                                                           
+  };
+
 
 };
 
@@ -142,5 +155,6 @@ namespace IntegratorXX {
 #include "gausscheby1.hpp"
 #include "gausscheby2.hpp"
 #include "eulermaclaurin.hpp"
+#include "lebedev.hpp"
 
 #endif
