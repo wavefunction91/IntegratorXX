@@ -129,13 +129,33 @@ namespace IntegratorXX {
 
 
 
-  namespace detail{
-  struct standard_combine_op {
-    template <typename T, typename U, typename V>
-    static T combine( const U& u, const V& v ) {
-      return {u,v};
-    }
-  };
+  namespace detail {
+
+    struct standard_combine_op {
+      template <typename T, typename U, typename V>
+      static T combine( const U& u, const V& v ) {
+        return {u,v};
+      }
+    };
+
+
+    struct spherical_from_radial_cart_combine_op {
+      template <typename T, typename U, typename V>
+      static 
+        std::enable_if_t<
+          std::is_same_v< cartesian_pt_t<U>, T> and
+          std::is_same_v< cartesian_pt_t<U>, V>,
+          T
+        > combine( const U& r, const V& v ) {
+        return { r*v[0], r*v[1], r*v[2] };
+      }
+
+      //template <typename T>
+      //static cartesian_pt_t<T> combine( const cartesian_pt_t<T>& v, const T& r ) {
+      //  return combine(r,v);
+      //}
+    };
+
   }
 
 
@@ -290,6 +310,21 @@ namespace IntegratorXX {
 
     return QuadratureBatch2D_t<CombinedType, QuadratureType1, QuadratureType2, CombineOp>(q1,q2,bsz1,bsz2);
 
+  }
+
+
+  template <typename RadialQuadrature, typename point_type = typename RadialQuadrature::point_type >
+  QuadratureBatch2D_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type>, 
+                       detail::spherical_from_radial_cart_combine_op > 
+  SphericalBatch(
+    const RadialQuadrature&     r,
+    const Lebedev<point_type>&  l,
+    const size_t bsz1 = 1,
+    const size_t bsz2 = 1
+  ) {
+    return
+    QuadratureBatch2D_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type>, 
+                         detail::spherical_from_radial_cart_combine_op >(r,l,bsz1,bsz2); 
   }
 
 };
