@@ -7,12 +7,22 @@
 
 namespace IntegratorXX {
 
+
+  /**
+   *  \brief Generic implementation of batching in 1D Quadratures
+   *
+   *  Provides an iterator which generates quadrature batches on the
+   *  fly.
+   */ 
   template <typename QuadratureType>
   class QuadratureBatch {
 
     const QuadratureType& quad; ///< Base quadrature
     const size_t          batch_sz; ///< Batch size
 
+    /**
+     *  \brief 1D Quadrature Batch Iterator
+     */ 
     class iterator {
 
       using point_type  = typename QuadratureType::point_type;
@@ -51,7 +61,6 @@ namespace IntegratorXX {
         return *this;
       }
 
-      // TODO, check that quads are the same through hash
       bool operator==(iterator other){ return cur_indx == other.cur_indx and quad == other.quad; }
       bool operator!=(iterator other){ return not (*this == other); }
 
@@ -156,6 +165,12 @@ namespace IntegratorXX {
 
 
 
+  /**
+   *  \brief Generic implementation of batching in 2D Quadratures
+   *
+   *  Provides an iterator which generates 2D quadrature batches on the
+   *  fly.
+   */ 
   template <typename CombinedType, typename QuadratureType1, typename QuadratureType2,
             typename CombineOp = detail::standard_combine_op >
   class QuadratureBatch2D_t {
