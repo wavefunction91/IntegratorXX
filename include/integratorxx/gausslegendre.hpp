@@ -3,6 +3,9 @@
 
 namespace IntegratorXX {
 
+  /**
+   *  \brief Gauss-Legendre quadrature factory
+   */ 
   template <
     typename PointType, 
     typename wght_t,
@@ -13,10 +16,23 @@ namespace IntegratorXX {
     using point_container  = typename GaussLegendre<PointType,wght_t,ContiguousContainer>::point_container;
     using weight_container = typename GaussLegendre<PointType,wght_t,ContiguousContainer>::weight_container;
 
+    /**
+     *  \brief Generate the Gauss-Legendre quadrature rule of a specific order (impl)
+     *
+     *  \param[in] nPts Number of quadrature points
+     *  \param[in] lo   Lower bound of the integration
+     *  \param[in] up   Upper bound of the integration
+     *
+     *  \returns [points,weights] tuple of quadrature points and weights
+     *
+     */ 
     static auto generate_impl( const size_t nPts, const PointType lo, const PointType up );
 
   public:
 
+    /**
+     *  \brief Generate the Gauss-Legendre quadrature rule of a specific order (interface)
+     */ 
     template <typename... Args>
     inline static auto generate(Args&&... args){
       return generate_impl( std::forward<Args>(args)... );
@@ -24,6 +40,8 @@ namespace IntegratorXX {
 
   };
 
+
+  // Implementation of Gauss-Legendre quadrature factory
   template <
     typename PointType, 
     typename wght_t,
@@ -38,11 +56,13 @@ namespace IntegratorXX {
 
     auto mid = (nPts + 1) / 2;
 
+    const PointType eps(3.e-11); // Convergence tolerance
+
     // Legendre indexing starts at 1
     for( size_t i = 1; i <= mid; ++i ) {
 
       PointType z = std::cos( M_PI * (PointType(i) - 0.25) / (PointType(nPts) + 0.5));
-      PointType pp(0), z1(0), eps(3.e-11);
+      PointType pp(0), z1(0);
 
       // Iteratively determine the i-th root 
       while(std::abs(z-z1) > eps) {
@@ -70,11 +90,11 @@ namespace IntegratorXX {
 
       // Transform points and populate arrays
       //std::tie(pts[i-1],wghts[i-1]) = unitBoundTransform(lowBound,upBound,pt,wgt);
-      pts[i-1]     = pt;
+      pts[i-1]   = pt;
       wghts[i-1] = wgt;
 
       // Reflect the points
-      pts[nPts-i]     = (lo + up) - pt;
+      pts[nPts-i]   = (lo + up) - pt;
       wghts[nPts-i] = wgt;
 
     }; // Loop over points

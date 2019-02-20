@@ -3,6 +3,9 @@
 
 namespace IntegratorXX {
 
+  /**
+   *  \brief Gauss-Chebyshev (1st kind) quadrature factory
+   */ 
   template <
     typename PointType, 
     typename wght_t,
@@ -13,10 +16,23 @@ namespace IntegratorXX {
     using point_container  = typename GaussChebyshev1<PointType,wght_t,ContiguousContainer>::point_container;
     using weight_container = typename GaussChebyshev1<PointType,wght_t,ContiguousContainer>::weight_container;
 
+    /**
+     *  \brief Generate the Gauss-Chebyshev (1st kind) quadrature rule of a specific order (impl)
+     *
+     *  \param[in] nPts Number of quadrature points
+     *  \param[in] lo   Lower bound of the integration
+     *  \param[in] up   Upper bound of the integration
+     *
+     *  \returns [points,weights] tuple of quadrature points and weights
+     *
+     */ 
     static auto generate_impl( const size_t nPts, const PointType lo, const PointType up );
 
   public:
 
+    /**
+     *  \brief Generate the Gauss-Chebyshev (1st kind) quadrature rule of a specific order (interface)
+     */ 
     template <typename... Args>
     inline static auto generate(Args&&... args){
       return generate_impl( std::forward<Args>(args)... );
@@ -24,6 +40,7 @@ namespace IntegratorXX {
 
   };
 
+  // Implementation of Gauss-Chebyshev (1st kind) quadrature factory
   template <
     typename PointType, 
     typename wght_t,

@@ -149,11 +149,6 @@ namespace IntegratorXX {
         > combine( const U& r, const V& v ) {
         return { r*v[0], r*v[1], r*v[2] };
       }
-
-      //template <typename T>
-      //static cartesian_pt_t<T> combine( const cartesian_pt_t<T>& v, const T& r ) {
-      //  return combine(r,v);
-      //}
     };
 
   }
@@ -240,7 +235,6 @@ namespace IntegratorXX {
       iterator  operator++(int){ iterator retval = *this; ++(*this); return retval; }
 
 
-      // TODO, check that quads are the same through hash
       bool operator==(iterator other){ return it_1 == other.it_1 and it_2 == other.it_2; }
       bool operator!=(iterator other){ return not (*this == other); }
 
@@ -259,7 +253,6 @@ namespace IntegratorXX {
         auto pts_loop_init = std::tuple(pts2_st, pts.begin());
         for(auto [i2, indx] = pts_loop_init; i2 != pts2_en; ++i2        )
         for(auto i1 = pts1_st;               i1 != pts1_en; ++i1, ++indx)
-          //*indx = { *i1, *i2 };
           *indx = CombineOp::template combine<CombinedType>( *i1, *i2 );
 
         auto wgt_loop_init = std::tuple(wgt2_st, wgt.begin());

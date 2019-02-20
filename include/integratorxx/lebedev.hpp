@@ -5,6 +5,9 @@
 
 namespace IntegratorXX {
 
+  /**
+   *  \brief Lebedev-Laikov quadrature factory
+   */ 
   template <
     typename PointType, 
     typename wght_t,
@@ -15,10 +18,20 @@ namespace IntegratorXX {
     using point_container  = typename Lebedev<PointType,wght_t,ContiguousContainer>::point_container;
     using weight_container = typename Lebedev<PointType,wght_t,ContiguousContainer>::weight_container;
 
+    /**
+     *  \brief Generate the Lebedev-Laikov quadrature rule of a specific order (impl)
+     *
+     *  \param[in] nPts Number of quadrature points
+     *  \returns [points,weights] tuple of quadrature points and weights
+     *
+     */ 
     static auto generate_impl( const size_t nPts );
 
   public:
 
+    /**
+     *  \brief Generate the Lebedev-Laikov quadrature rule of a specific order (interface)
+     */ 
     template <typename... Args>
     inline static auto generate(Args&&... args){
       return generate_impl( std::forward<Args>(args)... );
@@ -26,6 +39,7 @@ namespace IntegratorXX {
 
   };
 
+  // Implementation of Lebedev-Laikov quadrature factory
   template <
     typename PointType, 
     typename wght_t,

@@ -1,6 +1,10 @@
 namespace IntegratorXX {
 namespace LebedevGrids {
 
+/**
+ *  \brief Lebedev-Laikov Quadrature specification for Order = 1730
+ * 
+ */
 template <typename T>
 struct lebedev_1730 {
 
@@ -1735,7 +1739,7 @@ struct lebedev_1730 {
      -7.570228781241607e-01,      5.354789536565540e-02,     -6.511904367376113e-01,
       7.570228781241607e-01,     -5.354789536565540e-02,     -6.511904367376113e-01,
      -7.570228781241607e-01,     -5.354789536565540e-02,     -6.511904367376113e-01
-};
+  };
 
 
   static constexpr std::array<T,1730> weights = {
@@ -3469,7 +3473,7 @@ struct lebedev_1730 {
         6.375414170333233e-04,
         6.375414170333233e-04,
         6.375414170333233e-04
-};
+  };
 };
 };
 }
