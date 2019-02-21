@@ -49,10 +49,9 @@ namespace IntegratorXX {
   template <
     typename PointType, 
     typename wght_t,
-    template<typename> class ContiguousContainer,
-    typename Derived
+    template<typename> class ContiguousContainer
   >
-  class Quadrature 
+  class QuadratureBase
   {
 
   public:
@@ -79,52 +78,36 @@ namespace IntegratorXX {
     weight_container wghts; ///< Quadrature weights
 
     
-    // Private constructors
+    // Internal constructors
 
     // Construct from const points / weights
-    Quadrature(
+    QuadratureBase(
       const point_container&  _pts,
       const weight_container& _wgt
     ): pts( _pts ), wghts( _wgt ){ }
 
     // Construct from rvalue points / weights
-    Quadrature(
+    QuadratureBase(
       point_container&&  _pts,
       weight_container&& _wgt
     ): pts( std::move(_pts) ), wghts( std::move(_wgt) ){ }
 
 
     // Construct from const tuple of points / weights
-    Quadrature(
+    QuadratureBase(
       const std::tuple<point_container, weight_container>& tup
-    ) : Quadrature( std::get<0>(tup), std::get<1>(tup) ){ };
+    ) : QuadratureBase( std::get<0>(tup), std::get<1>(tup) ){ };
 
     // Construct from rvalue tuple of points / weights
-    Quadrature(
+    QuadratureBase(
       std::tuple<point_container, weight_container>&& tup
-    ) : Quadrature( 
+    ) : QuadratureBase( 
           std::move(std::get<0>(tup)), 
           std::move(std::get<1>(tup)) 
         ){ }
 
 
     public:
-
-    Quadrature() = delete; // no default ctor
-
-    /**
-     *  \brief Construct a Quadrature object
-     *
-     *  Delagate Quadrature constuction to specific
-     *  GenerateQuadrature<Derived> implementation.
-     */ 
-    template <typename... Args>
-    Quadrature( const size_t nPts, Args&&... args ) :
-      Quadrature( 
-        std::move(GenerateQuadrature<Derived>::generate(nPts,std::forward<Args>(args)...)) 
-      ) { }
-
-
 
     /**
      *  \brief Return number of integration points
@@ -140,6 +123,40 @@ namespace IntegratorXX {
      *  \brief Return const reference to the quadrature weights.
      */ 
     inline const weight_container& weights() const { return wghts; };
+
+  }; // class QuadratureBase
+
+
+
+
+
+
+
+  // Instantiation of Quadrature base class
+  template <
+    typename PointType, 
+    typename wght_t,
+    template<typename> class ContiguousContainer,
+    typename Derived
+  >
+  class Quadrature : public QuadratureBase< PointType, wght_t, ContiguousContainer >
+  {
+
+    public:
+
+    Quadrature() = delete; // no default ctor
+
+    /**
+     *  \brief Construct a Quadrature object
+     *
+     *  Delagate Quadrature constuction to specific
+     *  GenerateQuadrature<Derived> implementation.
+     */ 
+    template <typename... Args>
+    Quadrature( const size_t nPts, Args&&... args ) :
+      QuadratureBase< PointType, wght_t, ContiguousContainer >( 
+        std::move(GenerateQuadrature<Derived>::generate(nPts,std::forward<Args>(args)...)) 
+      ) { }
 
   }; // class Quadrature
 
