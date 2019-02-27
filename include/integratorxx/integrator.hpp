@@ -53,7 +53,7 @@ namespace IntegratorXX {
         func( init, points, weights, std::forward<Args>(args)... );
       }
 
-      return init;
+      return std::forward<RetType>(init);
 
     }
     
