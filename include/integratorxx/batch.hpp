@@ -334,7 +334,6 @@ namespace IntegratorXX {
 
       using point_container = typename batch_base::iterator::point_container;
       using weight_container = typename batch_base::iterator::weight_container;
-      //using batch_base::iterator::iterator;
 
       template <typename... Args>
       iterator( const decltype(center) cen, Args&&... args ) :
