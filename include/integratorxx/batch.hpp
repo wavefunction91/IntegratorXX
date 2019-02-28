@@ -175,6 +175,7 @@ namespace IntegratorXX {
             typename CombineOp = detail::standard_combine_op >
   class QuadratureBatch2D_t {
 
+  protected:
 
     using batch_iterator_1 =
       decltype( std::declval<QuadratureBatch<QuadratureType1>>().begin() );
@@ -192,6 +193,8 @@ namespace IntegratorXX {
 
 
     class iterator {
+
+    protected: 
 
       using batch_iterator_1 = 
         typename QuadratureBatch2D_t::batch_iterator_1;
@@ -306,6 +309,92 @@ namespace IntegratorXX {
 
   };
 
+
+  /**
+   *  \brief Generic implementation of batching in 2D Quadratures
+   *
+   *  Provides an iterator which generates 2D quadrature batches on the
+   *  fly.
+   */ 
+  template <typename CombinedType, typename RadialQuadrature, typename AngularQuadrature,
+            typename CombineOp = detail::spherical_from_radial_cart_combine_op >
+  class SphericalBatch_t : 
+    public QuadratureBatch2D_t<CombinedType, RadialQuadrature, AngularQuadrature, CombineOp> {
+
+    using batch_base = QuadratureBatch2D_t<CombinedType, RadialQuadrature, AngularQuadrature, CombineOp>;
+
+    const cartesian_pt_t<typename RadialQuadrature::point_type> center;
+
+    class iterator : public batch_base::iterator {
+
+
+      const cartesian_pt_t<typename RadialQuadrature::point_type> center;
+
+    public:
+
+      using point_container = typename batch_base::iterator::point_container;
+      using weight_container = typename batch_base::iterator::weight_container;
+      //using batch_base::iterator::iterator;
+
+      template <typename... Args>
+      iterator( const decltype(center) cen, Args&&... args ) :
+        center(cen), batch_base::iterator(std::forward<Args>(args)...){ }
+
+      auto operator*(){ 
+
+        auto [pts1_st, pts1_en, wgt1_st, wgt1_en] = this->it_1.range();
+        auto [pts2_st, pts2_en, wgt2_st, wgt2_en] = this->it_2.range();
+
+        auto ncpy_1 = std::distance( pts1_st, pts1_en );
+        auto ncpy_2 = std::distance( pts2_st, pts2_en );
+
+        point_container  pts( ncpy_1 * ncpy_2 );
+        weight_container wgt( ncpy_1 * ncpy_2 );
+
+
+        auto pts_loop_init = std::tuple(pts2_st, pts.begin());
+        for(auto [i2, indx] = pts_loop_init; i2 != pts2_en; ++i2        )
+        for(auto i1 = pts1_st;               i1 != pts1_en; ++i1, ++indx)
+          *indx = CombineOp::template combine<CombinedType>( *i1, *i2 );
+
+        auto wgt_loop_init = std::tuple(wgt2_st, wgt.begin());
+        for(auto [i2, indx] = wgt_loop_init; i2 != wgt2_en; ++i2        )
+        for(auto i1 = wgt1_st;               i1 != wgt1_en; ++i1, ++indx)
+          *indx = (*i1) * (*i2);
+
+        // Modify weights and points
+        auto r_it = pts1_st;
+        auto mod_loop_init = std::tuple( pts.begin(), wgt.begin() );
+        for( auto [pi, wi] = mod_loop_init; pi != pts.end(); ++pi, ++wi ) {
+
+          *wi *= 4*M_PI * (*r_it) * (*r_it); ++r_it;
+          if( r_it == pts1_en ) r_it = pts1_st;
+
+          (*pi)[0] += center[0];
+          (*pi)[1] += center[1];
+          (*pi)[2] += center[2];
+
+        }
+
+        return std::tuple( std::move(pts),std::move(wgt) ); 
+
+      }
+    };
+    
+
+  public:
+
+
+    template <typename... Args>
+    SphericalBatch_t( const decltype(center) cen, Args&&... args ) :
+      center(cen), batch_base(std::forward<Args>(args)...){ }
+
+    iterator begin(){ return iterator(center,this->q_batch_1, this->q_batch_2,0,0); }
+    iterator end(){ return iterator(center,this->q_batch_1, this->q_batch_2, 0, this->q_batch_2.n_batches() ); }
+
+
+  };
+
   template <typename CombinedType, typename QuadratureType1, typename QuadratureType2,
             typename CombineOp = detail::standard_combine_op >
   QuadratureBatch2D_t<CombinedType, QuadratureType1, QuadratureType2, CombineOp>
@@ -322,17 +411,16 @@ namespace IntegratorXX {
 
 
   template <typename RadialQuadrature, typename point_type = typename RadialQuadrature::point_type >
-  QuadratureBatch2D_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type>, 
-                       detail::spherical_from_radial_cart_combine_op > 
+  SphericalBatch_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type> >
   SphericalBatch(
     const RadialQuadrature&     r,
     const Lebedev<point_type>&  l,
+    const cartesian_pt_t<point_type> cen = {0.,0.,0.},
     const size_t bsz1 = 1,
     const size_t bsz2 = 1
   ) {
     return
-    QuadratureBatch2D_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type>, 
-                         detail::spherical_from_radial_cart_combine_op >(r,l,bsz1,bsz2); 
+    SphericalBatch_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type> >(cen,r,l,bsz1,bsz2); 
   }
 
 };
