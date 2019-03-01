@@ -324,11 +324,13 @@ namespace IntegratorXX {
     using batch_base = QuadratureBatch2D_t<CombinedType, RadialQuadrature, AngularQuadrature, CombineOp>;
 
     const cartesian_pt_t<typename RadialQuadrature::point_type> center;
+    const typename RadialQuadrature::point_type                 scale;
 
     class iterator : public batch_base::iterator {
 
 
       const cartesian_pt_t<typename RadialQuadrature::point_type> center;
+      const typename RadialQuadrature::point_type                 scale;
 
     public:
 
@@ -336,8 +338,8 @@ namespace IntegratorXX {
       using weight_container = typename batch_base::iterator::weight_container;
 
       template <typename... Args>
-      iterator( const decltype(center) cen, Args&&... args ) :
-        center(cen), batch_base::iterator(std::forward<Args>(args)...){ }
+      iterator( const decltype(center) cen, const decltype(scale) scl, Args&&... args ) :
+        center(cen), scale(scl), batch_base::iterator(std::forward<Args>(args)...){ }
 
       auto operator*(){ 
 
@@ -366,12 +368,12 @@ namespace IntegratorXX {
         auto mod_loop_init = std::tuple( pts.begin(), wgt.begin() );
         for( auto [pi, wi] = mod_loop_init; pi != pts.end(); ++pi, ++wi ) {
 
-          *wi *= 4*M_PI * (*r_it) * (*r_it); ++r_it;
+          *wi *= 4*M_PI * (*r_it) * (*r_it) * scale * scale * scale; ++r_it;
           if( r_it == pts1_en ) r_it = pts1_st;
 
-          (*pi)[0] += center[0];
-          (*pi)[1] += center[1];
-          (*pi)[2] += center[2];
+          (*pi)[0] = scale*(*pi)[0] + center[0];
+          (*pi)[1] = scale*(*pi)[1] + center[1];
+          (*pi)[2] = scale*(*pi)[2] + center[2];
 
         }
 
@@ -385,11 +387,11 @@ namespace IntegratorXX {
 
 
     template <typename... Args>
-    SphericalBatch_t( const decltype(center) cen, Args&&... args ) :
-      center(cen), batch_base(std::forward<Args>(args)...){ }
+    SphericalBatch_t( const decltype(center) cen, const decltype(scale) scl, Args&&... args ) :
+      center(cen), scale(scl), batch_base(std::forward<Args>(args)...){ }
 
-    iterator begin(){ return iterator(center,this->q_batch_1, this->q_batch_2,0,0); }
-    iterator end(){ return iterator(center,this->q_batch_1, this->q_batch_2, 0, this->q_batch_2.n_batches() ); }
+    iterator begin(){ return iterator(center,scale,this->q_batch_1, this->q_batch_2,0,0); }
+    iterator end(){ return iterator(center,scale,this->q_batch_1, this->q_batch_2, 0, this->q_batch_2.n_batches() ); }
 
 
   };
@@ -415,11 +417,12 @@ namespace IntegratorXX {
     const RadialQuadrature&     r,
     const Lebedev<point_type>&  l,
     const cartesian_pt_t<point_type> cen = {0.,0.,0.},
+    const point_type scale = 1.,
     const size_t bsz1 = 1,
     const size_t bsz2 = 1
   ) {
     return
-    SphericalBatch_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type> >(cen,r,l,bsz1,bsz2); 
+    SphericalBatch_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type> >(cen,scale,r,l,bsz1,bsz2); 
   }
 
 };

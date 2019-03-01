@@ -71,3 +71,9 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/IntegratorXXConfigVersion.cmake
     DESTINATION ${INSTALL_CONFIGDIR}
 )
+
+
+
+
+
+add_subdirectory( test )
