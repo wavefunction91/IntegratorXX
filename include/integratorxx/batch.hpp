@@ -341,6 +341,14 @@ namespace IntegratorXX {
       iterator( const decltype(center) cen, const decltype(scale) scl, Args&&... args ) :
         center(cen), scale(scl), batch_base::iterator(std::forward<Args>(args)...){ }
 
+      auto radius_bounds() {
+
+        auto [pts1_st, pts1_en, wgt1_st, wgt1_en] = this->it_1.range();
+
+        return std::tuple( *pts1_st, *pts1_en );
+
+      }
+
       auto operator*(){ 
 
         auto [pts1_st, pts1_en, wgt1_st, wgt1_en] = this->it_1.range();
