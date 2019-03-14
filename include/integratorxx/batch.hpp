@@ -404,6 +404,75 @@ namespace IntegratorXX {
 
   };
 
+
+
+  
+  template <typename CombinedType, typename RadialQuadrature, typename AngularQuadrature,
+            typename CombineOp = detail::spherical_from_radial_cart_combine_op >
+  class SphericalMicroBatch_t {
+
+
+    using radial_point_type = typename RadialQuadrature::point_type;
+    using point_type = cartesian_pt_t< radial_point_type >;
+
+    SphericalBatch_t<CombinedType, RadialQuadrature, AngularQuadrature, CombineOp> 
+      sphere_generator;
+
+
+    decltype( *sphere_generator.begin() ) sphere;
+
+
+    const point_type         center;
+    const radial_point_type  box_dim;
+    const int64_t            n_macro_subdivide;
+    const int64_t            n_micro_subdivide;
+
+    class iterator {
+
+      const point_type         center;
+      const radial_point_type  box_dim;
+      const int64_t            n_macro_subdivide;
+      const int64_t            n_micro_subdivide;
+
+      const radial_point_type  macro_dim;
+      const radial_point_type  micro_dim;
+
+    public:
+
+      
+    };
+
+  public:
+
+    SphericalMicroBatch_t( 
+      const RadialQuadrature&   r,
+      const AngularQuadrature&  l,
+      const point_type cen, 
+      const radial_point_type scl, 
+      const radial_point_type b_dim,
+      const int64_t n_macro,
+      const int64_t n_micro
+    ) :
+      center(cen), 
+      box_dim(b_dim),
+      n_macro_subdivide( n_macro ),
+      n_micro_subdivide( n_micro ),
+      sphere_generator(cen, scl, r,l, r.nPts(), l.nPts()){ 
+
+      // Generate the sphere
+      sphere = std::move( *sphere_generator.begin() );
+
+    }
+
+  };
+
+
+
+
+
+
+
+
   template <typename CombinedType, typename QuadratureType1, typename QuadratureType2,
             typename CombineOp = detail::standard_combine_op >
   QuadratureBatch2D_t<CombinedType, QuadratureType1, QuadratureType2, CombineOp>
@@ -433,6 +502,18 @@ namespace IntegratorXX {
     SphericalBatch_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type> >(cen,scale,r,l,bsz1,bsz2); 
   }
 
+  template <typename RadialQuadrature, typename point_type = typename RadialQuadrature::point_type >
+  SphericalMicroBatch_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type> >
+  SphericalMicroBatch(
+    const RadialQuadrature&     r,
+    const Lebedev<point_type>&  l,
+    const cartesian_pt_t<point_type> cen = {0.,0.,0.},
+    const point_type scale = 1.
+  ) {
+    return
+    SphericalMicroBatch_t< cartesian_pt_t<point_type>, RadialQuadrature, Lebedev<point_type> >(
+      r,l,cen,scale,66.,6,2); 
+  }
 };
 
 #endif

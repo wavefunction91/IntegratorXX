@@ -9,6 +9,8 @@ project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 add_library( integratorxx INTERFACE )
 add_library( IntegratorXX::integratorxx ALIAS integratorxx )
 
+add_subdirectory( test )
+
 # Target features
 target_compile_features( integratorxx INTERFACE cxx_std_17 )
 target_include_directories( integratorxx
