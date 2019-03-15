@@ -1,0 +1,6 @@
+add_executable( my_test test.cxx )
+add_executable( range_sandbox range_sandbox.cxx )
+add_executable( range_working ranges_working.cxx )
+target_link_libraries( my_test       PUBLIC integratorxx )
+target_link_libraries( range_sandbox PUBLIC integratorxx )
+target_link_libraries( range_working PUBLIC integratorxx )
