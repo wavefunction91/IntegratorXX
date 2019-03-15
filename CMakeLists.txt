@@ -4,10 +4,39 @@ cmake_minimum_required( VERSION 3.11 ) # Require CMake 3.11+
 project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 
 
-
-
 add_library( integratorxx INTERFACE )
 add_library( IntegratorXX::integratorxx ALIAS integratorxx )
+
+
+# Ranges-V3
+find_package( range-v3 QUIET )
+
+if( range-v3_FOUND )
+
+  target_link_libraries( integratorxx INTERFACE range-v3 )
+
+else()
+
+  
+  set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+  include( DownloadProject )
+
+  download_project(
+    PROJ                range-v3
+    GIT_REPOSITORY      https://github.com/ericniebler/range-v3
+    GIT_TAG             master
+    UPDATE_DISCONNECTED 1
+  )
+
+  set(RANGE_V3_TESTS    OFF) 
+  set(RANGE_V3_EXAMPLES OFF)
+  set(RANGES_CXX_STD    17)
+
+  add_subdirectory(${range-v3_SOURCE_DIR} ${range-v3_BINARY_DIR})
+  target_link_libraries( integratorxx INTERFACE range-v3 )
+endif()
+
+
 
 add_subdirectory( test )
 

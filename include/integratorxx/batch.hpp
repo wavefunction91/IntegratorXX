@@ -2,6 +2,7 @@
 #define __INCLUDED_INTEGRATORXX_BATCH_HPP__
 
 #include <iterator>
+#include <range/v3/all.hpp>
 
 #include "quadrature.hpp"
 
