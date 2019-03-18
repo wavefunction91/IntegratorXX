@@ -2,6 +2,7 @@
 #define __INCLUDED_INTEGRATORXX_BATCH_HPP__
 
 #include <iterator>
+#include <numeric>
 
 #include "quadrature.hpp"
 
@@ -427,20 +428,95 @@ namespace IntegratorXX {
     const int64_t            n_macro_subdivide;
     const int64_t            n_micro_subdivide;
 
-    class iterator {
 
-      const point_type         center;
-      const radial_point_type  box_dim;
-      const int64_t            n_macro_subdivide;
-      const int64_t            n_micro_subdivide;
+    std::vector<
+      std::tuple<
+        point_type, // low bound
+        point_type,  // up bound
+        std::vector< point_type >, // points
+        std::vector< double >      // weights
+      >
+    > micro_batches;
 
-      const radial_point_type  macro_dim;
-      const radial_point_type  micro_dim;
+    void generate_micro_batches() {
 
-    public:
+      const point_type box_lo_bound = {
+        center[0] - 0.5*box_dim,
+        center[1] - 0.5*box_dim,
+        center[2] - 0.5*box_dim
+      };
 
-      
-    };
+      const auto macro_step = box_dim / n_macro_subdivide;
+      const auto micro_step = box_dim / n_micro_subdivide;
+
+      const auto& sphere_points  = std::get<0>(sphere);
+      const auto& sphere_weights = std::get<1>(sphere);
+
+      std::vector<std::vector<size_t>> indx_keep;
+
+      // Generate the big macro batches
+      for( auto i = 0; i < n_macro_subdivide; ++i )
+      for( auto j = 0; j < n_macro_subdivide; ++j ) 
+      for( auto k = 0; k < n_macro_subdivide; ++k ) {
+
+        const auto x_lo = box_lo_bound[0] + i * macro_step;
+        const auto y_lo = box_lo_bound[1] + j * macro_step;
+        const auto z_lo = box_lo_bound[2] + k * macro_step;
+
+        const auto x_hi = x_lo + macro_step;
+        const auto y_hi = y_lo + macro_step;
+        const auto z_hi = z_lo + macro_step;
+
+        const point_type lo_bnd = {x_lo, y_lo, z_lo};
+        const point_type up_bnd = {x_hi, y_hi, z_hi};
+
+        std::vector< double >    wgt_keep;
+        std::vector< point_type> pts_keep;
+        std::vector< size_t > iKeep;
+        for( auto iPt = 0; iPt < sphere_points.size(); ++iPt )
+        if( (sphere_points[iPt][0] >= x_lo and sphere_points[iPt][0] < x_hi) and
+            (sphere_points[iPt][1] >= y_lo and sphere_points[iPt][1] < y_hi) and
+            (sphere_points[iPt][2] >= z_lo and sphere_points[iPt][2] < z_hi) ) {
+
+          pts_keep.emplace_back( sphere_points[iPt]  );
+          wgt_keep.emplace_back( sphere_weights[iPt] );
+          iKeep.emplace_back(iPt);
+
+        }
+
+
+
+        if( indx_keep.size() ) {
+
+          for( auto i : iKeep ) 
+          for( auto j = 0; j < indx_keep.size(); ++j ) {
+            auto it = std::find( indx_keep[j].begin(), indx_keep[j].end(), i );
+            if( it != indx_keep[j].end() )
+              std::cout << i << " FOUND IN BATCH " << j << std::endl;
+          }
+
+        }        
+
+
+
+        if( pts_keep.size() ) {
+          micro_batches.push_back(
+            {
+              lo_bnd, up_bnd,
+              pts_keep, wgt_keep
+            }
+          );
+          indx_keep.emplace_back( iKeep );
+        }
+
+      }
+
+      std::cout << "NB = " << micro_batches.size() << std::endl;
+      std::cout << "NP = " <<
+        std::accumulate( micro_batches.begin(), micro_batches.end(), 0,
+                         [](auto x, auto y){ return x + std::get<2>(y).size(); } ) << std::endl;
+
+    }
 
   public:
 
@@ -462,7 +538,14 @@ namespace IntegratorXX {
       // Generate the sphere
       sphere = std::move( *sphere_generator.begin() );
 
+      // Generate the micro batches
+      generate_micro_batches();
     }
+
+
+
+    auto begin() const { return micro_batches.begin(); }
+    auto end() const { return micro_batches.end(); }
 
   };
 
