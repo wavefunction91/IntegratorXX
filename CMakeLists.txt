@@ -4,10 +4,27 @@ cmake_minimum_required( VERSION 3.11 ) # Require CMake 3.11+
 project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 
 
-
-
 add_library( integratorxx INTERFACE )
 add_library( IntegratorXX::integratorxx ALIAS integratorxx )
+
+find_package( Catch2 QUIET )
+if( Catch2-FOUND )
+  target_link_libraries( integratorxx INTERFACE Catch2::Catch2)
+else()
+
+  set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+  include( DownloadProject )
+
+  download_project(
+    PROJ                Catch2
+    GIT_REPOSITORY      https://github.com/catchorg/Catch2.git
+    GIT_TAG             master
+    UPDATE_DISCONNECTED 1
+  )
+
+  add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
+
+endif()
 
 add_subdirectory( test )
 
