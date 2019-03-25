@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <numeric>
+#include <iomanip>
 
 #include "quadrature.hpp"
 
@@ -406,6 +407,14 @@ namespace IntegratorXX {
   };
 
 
+  template <typename T>
+  std::ostream& operator<<( std::ostream& out, const cartesian_pt_t<T>& pt ) {
+
+    out << "{" << pt[0] << ", " << pt[1] << ", " << pt[2] << "}";
+
+    return out;
+
+  }
 
   
   template <typename CombinedType, typename RadialQuadrature, typename AngularQuadrature,
@@ -440,81 +449,187 @@ namespace IntegratorXX {
 
     void generate_micro_batches() {
 
+
+
+
+      assert( (n_macro_subdivide - n_micro_subdivide) % 2 == 0 );
+      const auto macro_step = box_dim / n_macro_subdivide;
+      const auto micro_offset = ((n_macro_subdivide - n_micro_subdivide) / 2) * macro_step;
+
+      const auto micro_step = micro_offset / n_micro_subdivide / 2;
+
+      const auto& sphere_points  = std::get<0>(sphere);
+      const auto& sphere_weights = std::get<1>(sphere);
+
+
       const point_type box_lo_bound = {
         center[0] - 0.5*box_dim,
         center[1] - 0.5*box_dim,
         center[2] - 0.5*box_dim
       };
 
-      const auto macro_step = box_dim / n_macro_subdivide;
-      const auto micro_step = box_dim / n_micro_subdivide;
+      const point_type box_up_bound = {
+        center[0] + 0.5*box_dim,
+        center[1] + 0.5*box_dim,
+        center[2] + 0.5*box_dim
+      };
 
-      const auto& sphere_points  = std::get<0>(sphere);
-      const auto& sphere_weights = std::get<1>(sphere);
+      const point_type micro_box_lo_bound = {
+        box_lo_bound[0] + micro_offset,
+        box_lo_bound[1] + micro_offset,
+        box_lo_bound[2] + micro_offset
+      };
 
-      std::vector<std::vector<size_t>> indx_keep;
+      const point_type micro_box_up_bound = {
+        box_up_bound[0] - micro_offset,
+        box_up_bound[1] - micro_offset,
+        box_up_bound[2] - micro_offset
+      };
+
+/*
+      std::cout << std::setprecision(5) << std::scientific;
+      std::cout << "BOX DIM    = " << box_dim << std::endl;
+      std::cout << "BOX BOUNDS:  " << box_lo_bound << " -> " << box_up_bound << std::endl;
+      std::cout << "MACRO STEP " << macro_step << std::endl;
+      std::cout << "MICRO STEP " << micro_step << std::endl;
+      std::cout << "MICRO OFFSET " << micro_offset << std::endl;
+      std::cout << "MICRO BOX BOUNDS:  " << micro_box_lo_bound << " -> " << micro_box_up_bound << std::endl;
+*/
+
+
+      constexpr auto point_in_box = 
+        []( const auto& pt, const auto& box_lo, const auto& box_hi ) {
+
+          return (pt[0] >= box_lo[0] and pt[0] < box_hi[0] ) and
+                 (pt[1] >= box_lo[1] and pt[1] < box_hi[1] ) and
+                 (pt[2] >= box_lo[2] and pt[2] < box_hi[2] );
+
+        };
+
+
+      auto point_in_micro_box = 
+        [&]( const auto& pt ) {
+          return point_in_box( pt, micro_box_lo_bound, micro_box_up_bound );
+        };
+
+      std::vector<size_t> indx_keep;
+
 
       // Generate the big macro batches
-      for( auto i = 0; i < n_macro_subdivide; ++i )
-      for( auto j = 0; j < n_macro_subdivide; ++j ) 
-      for( auto k = 0; k < n_macro_subdivide; ++k ) {
+      for( auto i = 0; i < n_macro_subdivide; ++i ) {
 
         const auto x_lo = box_lo_bound[0] + i * macro_step;
-        const auto y_lo = box_lo_bound[1] + j * macro_step;
-        const auto z_lo = box_lo_bound[2] + k * macro_step;
-
         const auto x_hi = x_lo + macro_step;
+
+      for( auto j = 0; j < n_macro_subdivide; ++j ) {
+
+        const auto y_lo = box_lo_bound[1] + j * macro_step;
         const auto y_hi = y_lo + macro_step;
+
+      for( auto k = 0; k < n_macro_subdivide; ++k ) {
+
+        const auto z_lo = box_lo_bound[2] + k * macro_step;
         const auto z_hi = z_lo + macro_step;
 
         const point_type lo_bnd = {x_lo, y_lo, z_lo};
         const point_type up_bnd = {x_hi, y_hi, z_hi};
 
+
+        //std::cout << lo_bnd << " -> " << up_bnd << std::endl;
+
         std::vector< double >    wgt_keep;
         std::vector< point_type> pts_keep;
-        std::vector< size_t > iKeep;
         for( auto iPt = 0; iPt < sphere_points.size(); ++iPt )
-        if( (sphere_points[iPt][0] >= x_lo and sphere_points[iPt][0] < x_hi) and
-            (sphere_points[iPt][1] >= y_lo and sphere_points[iPt][1] < y_hi) and
-            (sphere_points[iPt][2] >= z_lo and sphere_points[iPt][2] < z_hi) ) {
+        if( point_in_box( sphere_points[iPt], lo_bnd, up_bnd ) and
+            not point_in_micro_box( sphere_points[iPt] ) ){
 
+          indx_keep.emplace_back(iPt);
           pts_keep.emplace_back( sphere_points[iPt]  );
           wgt_keep.emplace_back( sphere_weights[iPt] );
-          iKeep.emplace_back(iPt);
 
         }
 
-
-
-        if( indx_keep.size() ) {
-
-          for( auto i : iKeep ) 
-          for( auto j = 0; j < indx_keep.size(); ++j ) {
-            auto it = std::find( indx_keep[j].begin(), indx_keep[j].end(), i );
-            if( it != indx_keep[j].end() )
-              std::cout << i << " FOUND IN BATCH " << j << std::endl;
-          }
-
-        }        
-
-
-
-        if( pts_keep.size() ) {
+        if( pts_keep.size() ) 
           micro_batches.push_back(
             {
               lo_bnd, up_bnd,
-              pts_keep, wgt_keep
+              std::move(pts_keep), std::move(wgt_keep)
             }
           );
-          indx_keep.emplace_back( iKeep );
-        }
 
       }
+      }
+      }
 
-      std::cout << "NB = " << micro_batches.size() << std::endl;
-      std::cout << "NP = " <<
+
+      size_t n_micro_dim = n_micro_subdivide * 2;
+      // Generate the small micro batches
+      for( auto i = 0; i < n_micro_dim; ++i ) {
+
+        const auto x_lo = micro_box_lo_bound[0] + i * micro_step;
+        const auto x_hi = x_lo + micro_step;
+
+      for( auto j = 0; j < n_micro_dim; ++j ) {
+
+        const auto y_lo = micro_box_lo_bound[1] + j * micro_step;
+        const auto y_hi = y_lo + micro_step;
+
+      for( auto k = 0; k < n_micro_dim; ++k ) {
+
+        const auto z_lo = micro_box_lo_bound[2] + k * micro_step;
+        const auto z_hi = z_lo + micro_step;
+
+        const point_type lo_bnd = {x_lo, y_lo, z_lo};
+        const point_type up_bnd = {x_hi, y_hi, z_hi};
+
+        //std::cout << lo_bnd << " -> " << up_bnd << std::endl;
+
+        std::vector< double >    wgt_keep;
+        std::vector< point_type> pts_keep;
+        for( auto iPt = 0; iPt < sphere_points.size(); ++iPt )
+        if( point_in_box( sphere_points[iPt], lo_bnd, up_bnd ) ){
+
+          indx_keep.emplace_back(iPt);
+          pts_keep.emplace_back( sphere_points[iPt]  );
+          wgt_keep.emplace_back( sphere_weights[iPt] );
+
+        }
+
+        if( pts_keep.size() ) 
+          micro_batches.push_back(
+            {
+              lo_bnd, up_bnd,
+              std::move(pts_keep), std::move(wgt_keep)
+            }
+          );
+
+      }
+      }
+      }
+    
+
+/*
+      // Excluded point in big box
+      for( auto iPt = 0; iPt < sphere_points.size(); ++iPt )
+      if( (std::find(indx_keep.begin(), indx_keep.end(), iPt) == indx_keep.end()) and
+          (point_in_box( sphere_points[iPt], box_lo_bound, box_up_bound ) or
+           (sphere_points[iPt][0] == box_up_bound[0]) or
+           (sphere_points[iPt][1] == box_up_bound[1]) or
+           (sphere_points[iPt][2] == box_up_bound[2])
+          ) )
+        std::cout << iPt << ", " << sphere_points[iPt] << std::endl;
+*/
+
+/*
+      std::cout << "IS  = " << indx_keep.size() << std::endl;
+      std::unique(indx_keep.begin(), indx_keep.end() );
+      std::cout << "ISU = " << indx_keep.size() << std::endl;
+
+      std::cout << "NB  = " << micro_batches.size() << std::endl;
+      std::cout << "NP  = " <<
         std::accumulate( micro_batches.begin(), micro_batches.end(), 0,
                          [](auto x, auto y){ return x + std::get<2>(y).size(); } ) << std::endl;
+*/
 
     }
 
