@@ -461,6 +461,13 @@ namespace IntegratorXX {
       const auto& sphere_points  = std::get<0>(sphere);
       const auto& sphere_weights = std::get<1>(sphere);
 
+      std::vector< std::tuple< point_type, double > > 
+        sphere_zip(sphere_points.size());
+
+      for(auto i = 0; i < sphere_points.size(); ++i)
+        sphere_zip[i] = { sphere_points[i], sphere_weights[i] };
+
+
 
       const point_type box_lo_bound = {
         center[0] - 0.5*box_dim,
@@ -512,8 +519,9 @@ namespace IntegratorXX {
           return point_in_box( pt, micro_box_lo_bound, micro_box_up_bound );
         };
 
-      std::vector<size_t> indx_keep;
 
+      // Iterator for un partitioned points
+      auto cur_batch_it = sphere_zip.begin();
 
       // Generate the big macro batches
       for( auto i = 0; i < n_macro_subdivide; ++i ) {
@@ -534,29 +542,39 @@ namespace IntegratorXX {
         const point_type lo_bnd = {x_lo, y_lo, z_lo};
         const point_type up_bnd = {x_hi, y_hi, z_hi};
 
+        auto partition_fn = [=]( const auto& q_pt ) {
+          const auto& pt = std::get<0>(q_pt);
+          return  point_in_box( pt, lo_bnd, up_bnd ) and
+                 !point_in_micro_box( pt );
+        };
 
-        //std::cout << lo_bnd << " -> " << up_bnd << std::endl;
+        auto new_batch_it = 
+          std::partition( cur_batch_it, sphere_zip.end(), 
+                          partition_fn );
 
-        std::vector< double >    wgt_keep;
-        std::vector< point_type> pts_keep;
-        for( auto iPt = 0; iPt < sphere_points.size(); ++iPt )
-        if( point_in_box( sphere_points[iPt], lo_bnd, up_bnd ) and
-            not point_in_micro_box( sphere_points[iPt] ) ){
+        const auto n_in_batch = 
+          std::distance( cur_batch_it, new_batch_it );
 
-          indx_keep.emplace_back(iPt);
-          pts_keep.emplace_back( sphere_points[iPt]  );
-          wgt_keep.emplace_back( sphere_weights[iPt] );
+        if( n_in_batch ) {
+          std::vector< double >    wgt_keep( n_in_batch );
+          std::vector< point_type> pts_keep( n_in_batch );
 
-        }
+          for( auto i = 0ul; i < n_in_batch; ++i ) {
+            const auto& q_pt = *(cur_batch_it++);
+            pts_keep[i] = std::get<0>( q_pt );
+            wgt_keep[i] = std::get<1>( q_pt );
+          }
 
-        if( pts_keep.size() ) 
           micro_batches.push_back(
             {
               lo_bnd, up_bnd,
               std::move(pts_keep), std::move(wgt_keep)
             }
           );
+        }
 
+        cur_batch_it = new_batch_it;
+      
       }
       }
       }
@@ -582,26 +600,37 @@ namespace IntegratorXX {
         const point_type lo_bnd = {x_lo, y_lo, z_lo};
         const point_type up_bnd = {x_hi, y_hi, z_hi};
 
-        //std::cout << lo_bnd << " -> " << up_bnd << std::endl;
+        auto partition_fn = [=]( const auto& q_pt ) {
+          const auto& pt = std::get<0>(q_pt);
+          return point_in_box( pt, lo_bnd, up_bnd );
+        };
 
-        std::vector< double >    wgt_keep;
-        std::vector< point_type> pts_keep;
-        for( auto iPt = 0; iPt < sphere_points.size(); ++iPt )
-        if( point_in_box( sphere_points[iPt], lo_bnd, up_bnd ) ){
+        auto new_batch_it = 
+          std::partition( cur_batch_it, sphere_zip.end(), 
+                          partition_fn );
 
-          indx_keep.emplace_back(iPt);
-          pts_keep.emplace_back( sphere_points[iPt]  );
-          wgt_keep.emplace_back( sphere_weights[iPt] );
+        const auto n_in_batch = 
+          std::distance( cur_batch_it, new_batch_it );
 
-        }
+        if( n_in_batch ) {
+          std::vector< double >    wgt_keep( n_in_batch );
+          std::vector< point_type> pts_keep( n_in_batch );
 
-        if( pts_keep.size() ) 
+          for( auto i = 0ul; i < n_in_batch; ++i ) {
+            const auto& q_pt = *(cur_batch_it++);
+            pts_keep[i] = std::get<0>( q_pt );
+            wgt_keep[i] = std::get<1>( q_pt );
+          }
+
           micro_batches.push_back(
             {
               lo_bnd, up_bnd,
               std::move(pts_keep), std::move(wgt_keep)
             }
           );
+        }
+
+        cur_batch_it = new_batch_it;
 
       }
       }
