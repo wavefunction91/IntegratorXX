@@ -520,121 +520,82 @@ namespace IntegratorXX {
         };
 
 
-      // Iterator for un partitioned points
-      auto cur_batch_it = sphere_zip.begin();
 
-      // Generate the big macro batches
-      for( auto i = 0; i < n_macro_subdivide; ++i ) {
+      constexpr auto segregate_boxes = 
+        []( const auto& lo_bnd, const auto& up_bnd, const auto nseg ) {
 
-        const auto x_lo = box_lo_bound[0] + i * macro_step;
-        const auto x_hi = x_lo + macro_step;
 
-      for( auto j = 0; j < n_macro_subdivide; ++j ) {
+        std::vector< std::tuple< point_type, point_type > > boxes;
+        const auto step = (up_bnd[0] - lo_bnd[0]) / nseg;
+        
 
-        const auto y_lo = box_lo_bound[1] + j * macro_step;
-        const auto y_hi = y_lo + macro_step;
+        for( auto i = 0; i < nseg; ++i ) {
 
-      for( auto k = 0; k < n_macro_subdivide; ++k ) {
+          const auto x_lo = lo_bnd[0] + i * step;
+          const auto x_hi = x_lo + step;
 
-        const auto z_lo = box_lo_bound[2] + k * macro_step;
-        const auto z_hi = z_lo + macro_step;
+        for( auto j = 0; j < nseg; ++j ) {
 
-        const point_type lo_bnd = {x_lo, y_lo, z_lo};
-        const point_type up_bnd = {x_hi, y_hi, z_hi};
+          const auto y_lo = lo_bnd[1] + j * step;
+          const auto y_hi = y_lo + step;
 
-        auto partition_fn = [=]( const auto& q_pt ) {
-          const auto& pt = std::get<0>(q_pt);
-          return  point_in_box( pt, lo_bnd, up_bnd ) and
-                 !point_in_micro_box( pt );
-        };
+        for( auto k = 0; k < nseg; ++k ) {
 
-        auto new_batch_it = 
-          std::partition( cur_batch_it, sphere_zip.end(), 
-                          partition_fn );
+          const auto z_lo = lo_bnd[2] + k * step;
+          const auto z_hi = z_lo + step;
 
-        const auto n_in_batch = 
-          std::distance( cur_batch_it, new_batch_it );
+          const point_type lo = {x_lo, y_lo, z_lo};
+          const point_type up = {x_hi, y_hi, z_hi};
+        
+          boxes.push_back( { lo, up } );
 
-        if( n_in_batch ) {
-          std::vector< double >    wgt_keep( n_in_batch );
-          std::vector< point_type> pts_keep( n_in_batch );
-
-          for( auto i = 0ul; i < n_in_batch; ++i ) {
-            const auto& q_pt = *(cur_batch_it++);
-            pts_keep[i] = std::get<0>( q_pt );
-            wgt_keep[i] = std::get<1>( q_pt );
-          }
-
-          micro_batches.push_back(
-            {
-              lo_bnd, up_bnd,
-              std::move(pts_keep), std::move(wgt_keep)
-            }
-          );
+        }
+        }
         }
 
-        cur_batch_it = new_batch_it;
+        return boxes;
+      };
+
+
+
+      const size_t n_macro_dim = (n_macro_subdivide - n_micro_subdivide) / 2;
+      const size_t n_micro_dim = n_micro_subdivide * 2;
+
+      // Create big box place holders
+      const auto big_boxes = segregate_boxes( box_lo_bound, box_up_bound, 3 );
+
+      // Get the index of the center box
+      const auto center_box = std::find_if( big_boxes.begin(), big_boxes.end(),
+        [&]( const auto& bx ) { return point_in_box( point_type({0.,0.,0.}), std::get<0>(bx), std::get<1>(bx) ); } );
+
+      // Loop over boxes and bisect
+      for( auto bx_it = big_boxes.begin(); bx_it != big_boxes.end(); bx_it++ ) {
+        const auto& bx = *bx_it;
+        const size_t nseg = (bx_it == center_box) ? n_micro_dim : n_macro_dim;
+
+        auto boxes = segregate_boxes( std::get<0>(bx), std::get<1>(bx), nseg );
+
+        for( const auto &b : boxes )
+          micro_batches.push_back(
+            { 
+              std::get<0>(b), std::get<1>(b),
+              std::vector<point_type>(), std::vector<double>()
+            }
+          );
+
+      }
+
+      // Assign points to boxes
+      for( auto iPt = 0; iPt < sphere_points.size(); ++iPt )
+      for( auto& bx : micro_batches ) 
+      if( point_in_box( sphere_points[iPt], std::get<0>(bx), std::get<1>(bx) ) ) {
+        std::get<2>(bx).emplace_back( sphere_points[iPt] );
+        std::get<3>(bx).emplace_back( sphere_weights[iPt] );
+      }
+
       
-      }
-      }
-      }
 
 
-      size_t n_micro_dim = n_micro_subdivide * 2;
-      // Generate the small micro batches
-      for( auto i = 0; i < n_micro_dim; ++i ) {
-
-        const auto x_lo = micro_box_lo_bound[0] + i * micro_step;
-        const auto x_hi = x_lo + micro_step;
-
-      for( auto j = 0; j < n_micro_dim; ++j ) {
-
-        const auto y_lo = micro_box_lo_bound[1] + j * micro_step;
-        const auto y_hi = y_lo + micro_step;
-
-      for( auto k = 0; k < n_micro_dim; ++k ) {
-
-        const auto z_lo = micro_box_lo_bound[2] + k * micro_step;
-        const auto z_hi = z_lo + micro_step;
-
-        const point_type lo_bnd = {x_lo, y_lo, z_lo};
-        const point_type up_bnd = {x_hi, y_hi, z_hi};
-
-        auto partition_fn = [=]( const auto& q_pt ) {
-          const auto& pt = std::get<0>(q_pt);
-          return point_in_box( pt, lo_bnd, up_bnd );
-        };
-
-        auto new_batch_it = 
-          std::partition( cur_batch_it, sphere_zip.end(), 
-                          partition_fn );
-
-        const auto n_in_batch = 
-          std::distance( cur_batch_it, new_batch_it );
-
-        if( n_in_batch ) {
-          std::vector< double >    wgt_keep( n_in_batch );
-          std::vector< point_type> pts_keep( n_in_batch );
-
-          for( auto i = 0ul; i < n_in_batch; ++i ) {
-            const auto& q_pt = *(cur_batch_it++);
-            pts_keep[i] = std::get<0>( q_pt );
-            wgt_keep[i] = std::get<1>( q_pt );
-          }
-
-          micro_batches.push_back(
-            {
-              lo_bnd, up_bnd,
-              std::move(pts_keep), std::move(wgt_keep)
-            }
-          );
-        }
-
-        cur_batch_it = new_batch_it;
-
-      }
-      }
-      }
     
 
 /*
@@ -658,6 +619,7 @@ namespace IntegratorXX {
       std::cout << "NP  = " <<
         std::accumulate( micro_batches.begin(), micro_batches.end(), 0,
                          [](auto x, auto y){ return x + std::get<2>(y).size(); } ) << std::endl;
+
 */
 
     }
