@@ -1,6 +1,7 @@
 #ifndef __INCLUDED_INTEGRATORXX_QUADRATURE_GAUSSLEGENDRE_HPP__
 #define __INCLUDED_INTEGRATORXX_QUADRATURE_GAUSSLEGENDRE_HPP__
 
+#include "util/bound_transform.hpp"
 namespace IntegratorXX {
 
   /**
@@ -51,6 +52,9 @@ namespace IntegratorXX {
     generate_impl(const size_t nPts, const PointType lo, const PointType up) {
 
     assert( nPts % 2 == 0 );
+    assert( lo != -std::numeric_limits<double>::infinity() );
+    assert( up != std::numeric_limits<double>::infinity() );
+
     point_container   pts(nPts);
     weight_container  wghts(nPts);
 
@@ -89,7 +93,8 @@ namespace IntegratorXX {
       PointType wgt = 2. / (1. - z*z) / pp / pp;
 
       // Transform points and populate arrays
-      //std::tie(pts[i-1],wghts[i-1]) = unitBoundTransform(lowBound,upBound,pt,wgt);
+      std::tie(pt,wgt) = 
+        transform_minus_one_to_one(lo,up,pt,wgt);
       pts[i-1]   = pt;
       wghts[i-1] = wgt;
 
@@ -98,6 +103,7 @@ namespace IntegratorXX {
       wghts[nPts-i] = wgt;
 
     }; // Loop over points
+
 
     return std::tuple( std::move(pts), std::move(wghts) );
 

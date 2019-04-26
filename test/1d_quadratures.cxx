@@ -81,19 +81,40 @@ constexpr T real_spherical_harmonics( int64_t l, int64_t m, Args&&... args ) {
 TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
   constexpr unsigned order = 10;
-  GaussLegendre<double> quad( order, -1, 1 );
 
-  const auto& pts = quad.points();
-  const auto& wgt = quad.weights();
+  SECTION( "untransformed bounds" ) {
+    GaussLegendre<double> quad( order, -1, 1 );
 
-  auto f = [=]( double x ){ return gaussian(x); };
+    const auto& pts = quad.points();
+    const auto& wgt = quad.weights();
 
-  double res = 0.;
-  for( auto i = 0; i < pts.size(); ++i )
-    res += wgt[i] * f(pts[i]);
+    auto f = [=]( double x ){ return gaussian(x); };
 
-  CHECK( res == Approx(ref_gaussian_int(-1.,1.)) );
+    double res = 0.;
+    for( auto i = 0; i < pts.size(); ++i )
+      res += wgt[i] * f(pts[i]);
 
+    CHECK( res == Approx(ref_gaussian_int(-1.,1.)) );
+  }
+
+
+  SECTION( "transformed bounds" ) {
+    const double lo = 0.;
+    const double up = 4.;
+    GaussLegendre<double> quad( 100, lo, up );
+
+    const auto& pts = quad.points();
+    const auto& wgt = quad.weights();
+
+    auto f = [=]( double x ){ return gaussian(x); };
+
+    double res = 0.;
+    for( auto i = 0; i < pts.size(); ++i )
+      res += wgt[i] * f(pts[i]);
+
+    CHECK( res == Approx(ref_gaussian_int(lo,up)) );
+  }
+  
 }
 
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
