@@ -1,5 +1,5 @@
-add_executable( my_test test.cxx )
-target_link_libraries( my_test       PUBLIC integratorxx )
+#add_executable( my_test test.cxx )
+#target_link_libraries( my_test       PUBLIC integratorxx )
 
 
 add_library( catch2_main STATIC ut_main.cxx )
