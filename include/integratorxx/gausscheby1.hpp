@@ -9,7 +9,7 @@ namespace IntegratorXX {
   template <
     typename PointType, 
     typename wght_t,
-    template<typename> class ContiguousContainer
+    template<typename...> class ContiguousContainer
   >
   class GenerateQuadrature< GaussChebyshev1<PointType,wght_t,ContiguousContainer> > {
 
@@ -44,7 +44,7 @@ namespace IntegratorXX {
   template <
     typename PointType, 
     typename wght_t,
-    template<typename> class ContiguousContainer
+    template<typename...> class ContiguousContainer
   >
   auto GenerateQuadrature< GaussChebyshev1<PointType,wght_t,ContiguousContainer> >::
     generate_impl(const size_t nPts, const PointType lo, const PointType up) {
