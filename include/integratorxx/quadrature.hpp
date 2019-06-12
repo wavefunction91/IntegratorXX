@@ -28,7 +28,7 @@ namespace IntegratorXX {
   template <
     typename PointType, 
     typename wght_t,
-    template<typename> class ContiguousContainer,
+    template<typename ...> class ContiguousContainer,
     typename Derived 
   >
   class Quadrature;
@@ -37,7 +37,7 @@ namespace IntegratorXX {
    *  \brief Placeholder class to perform template specialization
    *  for quadrature generation
    */ 
-  template <typename QuadratureType> class GenerateQuadrature;
+  template <typename ...> class GenerateQuadrature;
 
 
 
@@ -49,7 +49,7 @@ namespace IntegratorXX {
   template <
     typename PointType, 
     typename wght_t,
-    template<typename> class ContiguousContainer
+    template<typename ... > class ContiguousContainer
   >
   class QuadratureBase
   {
@@ -136,7 +136,7 @@ namespace IntegratorXX {
   template <
     typename PointType, 
     typename wght_t,
-    template<typename> class ContiguousContainer,
+    template<typename ...> class ContiguousContainer,
     typename Derived
   >
   class Quadrature : public QuadratureBase< PointType, wght_t, ContiguousContainer >
@@ -153,10 +153,7 @@ namespace IntegratorXX {
      *  GenerateQuadrature<Derived> implementation.
      */ 
     template <typename... Args>
-    Quadrature( const size_t nPts, Args&&... args ) :
-      QuadratureBase< PointType, wght_t, ContiguousContainer >( 
-        std::move(GenerateQuadrature<Derived>::generate(nPts,std::forward<Args>(args)...)) 
-      ) { }
+    Quadrature( const size_t nPts, Args&&... args );
 
   }; // class Quadrature
 
@@ -167,12 +164,14 @@ namespace IntegratorXX {
   template <                                                                              \
     typename PointType,                                                                   \
     typename wght_t = double,                                                             \
-    template<typename> class ContiguousContainer = std::vector                            \
+    template<typename ... Args> class ContiguousContainer = std::vector                   \
   >                                                                                       \
   class NAME : public Quadrature<PointType,wght_t,ContiguousContainer,NAME<PointType>>    \
   {                                                                                       \
+  public:                                                                                 \
     using Base = Quadrature<PointType,wght_t,ContiguousContainer,NAME<PointType>>;        \
-    using Base::Quadrature;                                                               \
+    template <typename... Args> NAME( const size_t nPts, Args&&... args ) :               \
+    Base(nPts, std::forward<Args>(args)...) {}                                            \
   };
 
 
@@ -203,16 +202,18 @@ namespace IntegratorXX {
   template <                  
     typename PointType,       
     typename wght_t = double, 
-    template<typename> class ContiguousContainer = std::vector
+    template<typename ... > class ContiguousContainer = std::vector
   >                                                           
   class Lebedev : public Quadrature<cartesian_pt_t<PointType>,wght_t,ContiguousContainer,Lebedev<PointType>>
-  {                                                                                   
-    using Base = Quadrature<cartesian_pt_t<PointType>,wght_t,ContiguousContainer,Lebedev<PointType>>;    
-    using Base::Quadrature;                                                           
+  {
+  public:
+    using Base = Quadrature<cartesian_pt_t<PointType>,wght_t,ContiguousContainer,Lebedev<PointType>>;
+    template <typename... Args> Lebedev( const size_t nPts, Args&&... args ) :
+    Base(nPts, std::forward<Args>(args)...) {}
   };
 
 
-};
+}  // namespace IntegratorXX
 
 // Instantiations of quadrature rules
 #include "gausslegendre.hpp"
@@ -220,5 +221,18 @@ namespace IntegratorXX {
 #include "gausscheby2.hpp"
 #include "eulermaclaurin.hpp"
 #include "lebedev.hpp"
+
+namespace IntegratorXX {
+
+// Instantiation of Quadrature base class
+template <typename PointType, typename wght_t,
+          template <typename...> class ContiguousContainer, typename Derived>
+template <typename ... Args>
+Quadrature<PointType,wght_t,ContiguousContainer,Derived>::Quadrature(const size_t nPts, Args &&... args)
+    : QuadratureBase<PointType, wght_t, ContiguousContainer>(
+          std::move(GenerateQuadrature<Derived>::generate(
+              nPts, std::forward<Args>(args)...))) {}
+
+}
 
 #endif
