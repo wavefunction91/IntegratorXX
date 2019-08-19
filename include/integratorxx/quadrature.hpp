@@ -200,6 +200,11 @@ namespace IntegratorXX {
    */ 
   QuadratureImpl( Aldrichs );
 
+  /**
+   *  \brief Knowles quadrature rule
+   */ 
+  QuadratureImpl( Knowles );
+
 
   /**
    *  \brief Lebedev-Laikov spherical quadrature rule
@@ -226,6 +231,7 @@ namespace IntegratorXX {
 #include "gausscheby2.hpp"
 #include "eulermaclaurin.hpp"
 #include "aldrichs.hpp"
+#include "knowles.hpp"
 #include "lebedev.hpp"
 
 namespace IntegratorXX {

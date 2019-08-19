@@ -193,6 +193,23 @@ TEST_CASE( "Aldrichs Quadratures", "[1d-quad]" ) {
 
 }
 
+TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
+
+  Knowles<double> quad( 150 );
+
+  const auto& pts = quad.points();
+  const auto& wgt = quad.weights();
+
+  auto f = [=]( double x ){ return gaussian(x); };
+
+  double res = 0.;
+  for( auto i = 0; i < pts.size(); ++i )
+    res += wgt[i] * f(pts[i]);
+
+  CHECK( res == Approx(ref_gaussian_int(0.,inf)) );
+
+}
+
 TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
 
 
