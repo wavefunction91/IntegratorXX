@@ -191,9 +191,14 @@ namespace IntegratorXX {
   QuadratureImpl( GaussChebyshev2 );
 
   /**
-   *  \brief Euler-Maclaurin (1st kind) quadrature rule
+   *  \brief Euler-Maclaurin quadrature rule
    */ 
   QuadratureImpl( EulerMaclaurin );
+
+  /**
+   *  \brief Aldrichs quadrature rule
+   */ 
+  QuadratureImpl( Aldrichs );
 
 
   /**
@@ -220,6 +225,7 @@ namespace IntegratorXX {
 #include "gausscheby1.hpp"
 #include "gausscheby2.hpp"
 #include "eulermaclaurin.hpp"
+#include "aldrichs.hpp"
 #include "lebedev.hpp"
 
 namespace IntegratorXX {

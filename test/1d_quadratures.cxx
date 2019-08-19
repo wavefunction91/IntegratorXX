@@ -3,6 +3,48 @@
 #include <cmath>
 #include <complex>
 
+
+// NR
+template <typename T, typename IntT>
+std::enable_if_t< std::is_arithmetic_v<T>, T>
+assoc_legendre( const IntT l, const IntT m, const T x ) {
+
+  if( m < 0 or m > l or std::abs(x) > 1. )
+    throw std::runtime_error("Bad args to assoc_legendre");
+
+  T pmm = 1.;
+  if( m > 0 ) {
+
+    const T somx2 = std::sqrt( (1. - x)*(1. + x) );
+    T fact = 1.;
+    for( IntT i = 0; i < m; ++i ) {
+      pmm *= fact*somx2;
+      fact += 2.; 
+    }
+
+  }
+
+  if( l == m ) return pmm;
+  else {
+    T pmmp1 = x * (2*m + 1) * pmm;
+
+    if( l == (m+1) ) return pmmp1;
+    else {
+
+      T pll;
+      for( IntT ll = m+1; ll < l; ++ll ) {
+        pll = (x*(2*ll+1)*pmmp1-(ll+m)*pmm)/(ll-m+1);
+        pmm = pmmp1;
+        pmmp1 = pll;
+      }
+
+      return pll;
+    }
+  }
+
+}
+
+
 using namespace IntegratorXX;
 
 inline constexpr double inf = std::numeric_limits<double>::infinity();
@@ -48,7 +90,7 @@ constexpr std::complex<T> spherical_harmonics( int64_t l, int64_t m, T theta, T 
     prefactor *= std::pow(-1,std::abs(m)) * T(factorial(l-m))/T(factorial(l+m));
 
 
-  return prefactor * std::assoc_legendre( l, std::abs(m), std::cos(theta) ) * 
+  return prefactor * assoc_legendre( l, std::abs(m), std::cos(theta) ) * 
          std::complex<T>( std::cos(m*phi), std::sin(m*phi) );
 
 }
@@ -120,6 +162,23 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
   EulerMaclaurin<double> quad( 150 );
+
+  const auto& pts = quad.points();
+  const auto& wgt = quad.weights();
+
+  auto f = [=]( double x ){ return gaussian(x); };
+
+  double res = 0.;
+  for( auto i = 0; i < pts.size(); ++i )
+    res += wgt[i] * f(pts[i]);
+
+  CHECK( res == Approx(ref_gaussian_int(0.,inf)) );
+
+}
+
+TEST_CASE( "Aldrichs Quadratures", "[1d-quad]" ) {
+
+  Aldrichs<double> quad( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
