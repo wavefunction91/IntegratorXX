@@ -5,8 +5,8 @@
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/batch/spherical_micro_batcher.hpp>
 
-#include <integratorxx/deprecated/batch.hpp>
-#include <integratorxx/deprecated/quadrature.hpp>
+//#include <integratorxx/deprecated/batch.hpp>
+//#include <integratorxx/deprecated/quadrature.hpp>
 
 TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
@@ -32,6 +32,7 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
     CHECK( res == Approx( M_PI * std::sqrt(M_PI) ) );
   }
 
+#if 0
   SECTION("Consistency") {
 
     std::array<double,3> cen = {0., 0., 1.};
@@ -70,6 +71,7 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       CHECK( p_old[2] == Approx( p_new[2] ) );
     }
   }
+#endif
 
   SECTION("Batching") {
 
