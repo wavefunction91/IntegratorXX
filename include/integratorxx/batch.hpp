@@ -656,6 +656,229 @@ namespace IntegratorXX {
   };
 
 
+#if 0
+  template <typename CombinedType, typename RadialQuadrature, typename AngularQuadrature,
+            typename CombineOp = detail::spherical_from_radial_cart_combine_op >
+  class FastSphericalMicroBatch_t {
+
+  public:
+
+    using radial_point_type = typename RadialQuadrature::point_type;
+    using point_type = cartesian_pt_t< radial_point_type >;
+
+    struct spherical_microbatch {
+      point_type                lo_bound;
+      point_type                up_bound;
+      std::vector< point_type > points;
+      std::vector< double >     weights;
+    };
+
+  private:
+
+
+    SphericalBatch_t<CombinedType, RadialQuadrature, AngularQuadrature, CombineOp> 
+      sphere_generator;
+
+    decltype( *sphere_generator.begin() ) sphere;
+
+    std::vector<spherical_micro_batch> micro_batches;
+
+    void generate_micro_batches() {
+
+      const auto& sphere_points  = std::get<0>(sphere);
+      const auto& sphere_weights = std::get<1>(sphere);
+      const auto  npts           = sphere_points.size();
+
+      
+
+      constexpr auto point_in_box = 
+        []( const auto& pt, const auto& box_lo, const auto& box_hi ) {
+
+          return (pt[0] >= box_lo[0] and pt[0] < box_hi[0] ) and
+                 (pt[1] >= box_lo[1] and pt[1] < box_hi[1] ) and
+                 (pt[2] >= box_lo[2] and pt[2] < box_hi[2] );
+
+        };
+
+     
+      constexpr auto segregate_box_27 =
+        []( const auto& points, auto p_idx_begin, auto p_idx_end, const auto& box_lo, const auto& box_up ) {
+
+        const auto x_extent = box_up[0] - box_lo[0];
+        const auto y_extent = box_up[1] - box_lo[1];
+        const auto z_extent = box_up[2] - box_lo[2];
+
+        const std::vector x_part_points = {
+          box_lo[0],
+          box_lo[0] + (x_extent / 3.),
+          box_lo[0] + (x_extent / 6.),
+          box_up[0] 
+        };
+
+        const std::vector y_part_points = {
+          box_lo[1],
+          box_lo[1] + (y_extent / 3.),
+          box_lo[1] + (y_extent / 6.),
+          box_up[1] 
+        };
+
+        const std::vector z_part_points = {
+          box_lo[2],
+          box_lo[2] + (z_extent / 3.),
+          box_lo[2] + (z_extent / 6.),
+          box_up[2] 
+        };
+
+        std::vector<decltype(p_idx_begin)> partition_its = { p_idx_begin };
+        partition_its.reserve(28);
+
+        std::vector< std::pair<point_type, point_type> > box_bounds;
+        box_bounds.reserve(27);
+
+        for( auto i = 0; i < 3; ++i )
+        for( auto j = 0; j < 3; ++j )
+        for( auto k = 0; k < 3; ++k ) {
+          point_type local_box_lo = { x_part_points[i], y_part_points[j], z_part_points[k] };
+          point_type local_box_up = { x_part_points[i+1], y_part_points[j+1], z_part_points[k+1] };
+          auto it = std::partition( partition_its.back(), p_idx_end,
+            [&](const auto& p_idx){ return point_in_box( points[p_idx], local_box_lo, local_box_up ); }
+          );
+          partition_its.emplace_back(it);
+          box_bounds.push_back({local_box_lo}, {local_box_up}); 
+        }
+
+        return std::tuple( partition_its, box_bounds );
+
+      };
+ 
+      constexpr auto segregate_box_8 =
+        []( const auto& points, auto p_idx_begin, auto p_idx_end, const auto& box_lo, const auto& box_up ) {
+
+        const auto x_extent = box_up[0] - box_lo[0];
+        const auto y_extent = box_up[1] - box_lo[1];
+        const auto z_extent = box_up[2] - box_lo[2];
+
+        const std::vector x_part_points = {
+          box_lo[0],
+          box_lo[0] + (x_extent / 2.),
+          box_up[0] 
+        };
+
+        const std::vector y_part_points = {
+          box_lo[1],
+          box_lo[1] + (y_extent / 2.),
+          box_up[1] 
+        };
+
+        const std::vector z_part_points = {
+          box_lo[2],
+          box_lo[2] + (z_extent / 2.),
+          box_up[2] 
+        };
+
+        std::vector<decltype(p_idx_begin)> partition_its = { p_idx_begin };
+        partition_its.reserve(9);
+        for( auto i = 0; i < 2; ++i )
+        for( auto j = 0; j < 2; ++j )
+        for( auto k = 0; k < 2; ++k ) {
+          point_type local_box_lo = { x_part_points[i], y_part_points[j], z_part_points[k] };
+          point_type local_box_up = { x_part_points[i+1], y_part_points[j+1], z_part_points[k+1] };
+          auto it = std::partition( partition_its.back(), p_idx_end,
+            [&](const auto& p_idx){ return point_in_box( points[p_idx], local_box_lo, local_box_up ); }
+          );
+          partition_its.emplace_back(it);
+        }
+
+        return partition_its;
+
+      };
+
+      auto [min_x_it, max_x_it] = 
+        *std::minmax_element( sphere_points.begin(), sphere_points.end(),
+        [](const auto& p1, const auto& p2 ){
+          return p1[0] < p2[0];
+        } );
+      auto [min_y_it, max_y_it] = 
+        *std::minmax_element( sphere_points.begin(), sphere_points.end(),
+        [](const auto& p1, const auto& p2 ){
+          return p1[1] < p2[1];
+        } );
+      auto [min_z_it, max_z_it] = 
+        *std::minmax_element( sphere_points.begin(), sphere_points.end(),
+        [](const auto& p1, const auto& p2 ){
+          return p1[2] < p2[2];
+        } );
+
+      const auto max_x = *max_x_it;
+      const auto max_y = *max_y_it;
+      const auto max_x = *max_x_it;
+
+      const auto min_y = *min_y_it;
+      const auto min_z = *min_z_it;
+      const auto min_z = *min_z_it;
+
+      const point_type big_box_lo_bound = {
+        min_x, min_y, min_z
+      };
+        
+      const point_type big_box_up_bound = {
+        max_x, max_y, max_z
+      };
+
+    
+      std::vector<int64_t> point_idx( npts );
+      std::iota( point_idx.begin(), point_idx.end(), 0 );
+
+      // Get initial partition
+      auto [partition_its, box_bounds] = segregate_box_27( points, point_idx.begin(), point_idx.end(), 
+        big_box_lo_bound, big_box_up_bound );
+      assert( partition_its.size() == 28 );
+      assert( box_bounds.size() == 27 );
+
+
+      std::vector<point_type> new_points( npts );
+      std::vector<double>     new_weights( npts );
+
+      for( auto i = 0; i < npts; ++i ) {
+        new_points[i]  = sphere_points[point_idx[i]];
+        new_weights[i] = sphere_weights[point_idx[i]];
+      }
+      sphere_points  = std::move( new_points );
+      sphere_weights = std::move( new_weights );
+
+      for( auto i = 0; i < box_bounds.size(); ++i ) {
+
+        auto [box_lo, box_up] = box_bounds[i];
+        auto np_local = std::distance( partition_its[i], partition_its[i+1] );
+        
+        spherical_microbatch
+
+      }
+/*
+      const size_t max_npts = 512;
+      while( std::any_of( partition_its.begin(), partition_its.end()-1,
+        [&](const auto it){ return std::distance( it, it+1 ) > max_npts; }
+      )) {
+
+        const auto npart = partition_its.size();
+        decltype(partition_its) new_parts;
+        for(auto ipart = 0; ipart < npart-1; ++ipart ) {
+          auto box_st  = partition_its[ipart];
+          auto box_end = partition_its[ipart+1];
+          if( std::distance( partition_its[ipart], partition_its[ipart+1] ) > 512 ) {
+            new_parts = segragate_box_27( points, box_st, box_end ); 
+          }
+        }
+
+      }          
+*/
+    }
+
+
+  }; // FastSphericalMicroBatch_t
+#endif
+
+
 
 
 

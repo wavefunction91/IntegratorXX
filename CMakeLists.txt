@@ -32,7 +32,6 @@ if( INTEGRATORXX_ENABLE_TESTS )
   add_subdirectory( test )
 endif()
 
-
 # Target features
 target_compile_features( integratorxx INTERFACE cxx_std_17 )
 target_include_directories( integratorxx

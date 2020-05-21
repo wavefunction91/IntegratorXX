@@ -51,7 +51,7 @@ namespace IntegratorXX {
 
     for(size_t i = 0; i < nPts; i++) {
 
-      const PointType x = PointType(i) / (nPts + 1);
+      const PointType x = PointType(i+1) / (nPts + 1);
       const PointType x2 = x*x;
       const PointType omx3 = 1. - x2*x;
 
