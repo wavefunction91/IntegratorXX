@@ -1,10 +1,9 @@
 #include "catch2/catch.hpp"
-#include <integratorxx/quadrature.hpp>
-#include <integratorxx_new/quadratures/gausslegendre.hpp>
-#include <integratorxx_new/quadratures/mhl.hpp>
-#include <integratorxx_new/quadratures/muraknowles.hpp>
-#include <integratorxx_new/quadratures/treutleraldrichs.hpp>
-#include <integratorxx_new/quadratures/lebedev_laikov.hpp>
+#include <integratorxx/quadratures/gausslegendre.hpp>
+#include <integratorxx/quadratures/mhl.hpp>
+#include <integratorxx/quadratures/muraknowles.hpp>
+#include <integratorxx/quadratures/treutleraldrichs.hpp>
+#include <integratorxx/quadratures/lebedev_laikov.hpp>
 #include <cmath>
 #include <complex>
 
@@ -130,7 +129,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
   constexpr unsigned order = 10;
 
   SECTION( "untransformed bounds" ) {
-    IntegratorXX::redeux::GaussLegendre<double,double> quad( order, -1, 1 );
+    IntegratorXX::GaussLegendre<double,double> quad( order, -1, 1 );
 
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();
@@ -148,7 +147,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
   SECTION( "transformed bounds" ) {
     const double lo = 0.;
     const double up = 4.;
-    IntegratorXX::redeux::GaussLegendre<double,double> quad( 100, lo, up );
+    IntegratorXX::GaussLegendre<double,double> quad( 100, lo, up );
 
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();
@@ -166,7 +165,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
-  IntegratorXX::redeux::MurrayHandyLaming<double,double> quad( 150 );
+  IntegratorXX::MurrayHandyLaming<double,double> quad( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -183,8 +182,7 @@ TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Aldrichs Quadratures", "[1d-quad]" ) {
 
-  //Aldrichs<double> quad( 150 );
-  IntegratorXX::redeux::TreutlerAldrichs<double,double> quad( 150 );
+  IntegratorXX::TreutlerAldrichs<double,double> quad( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -203,8 +201,7 @@ TEST_CASE( "Aldrichs Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
 
-  //Knowles<double> quad( 150 );
-  IntegratorXX::redeux::MuraKnowles<double,double> quad( 150 );
+  IntegratorXX::MuraKnowles<double,double> quad( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -224,8 +221,7 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
 
   auto test_fn = [&]( size_t nPts ) {
   
-    //Lebedev<double> quad( nPts );
-    IntegratorXX::redeux::LebedevLaikov<double> quad( nPts );
+    IntegratorXX::LebedevLaikov<double> quad( nPts );
   
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();

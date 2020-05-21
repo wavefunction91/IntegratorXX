@@ -1,12 +1,12 @@
 #include "catch2/catch.hpp"
 
-#include <integratorxx_new/quadratures/muraknowles.hpp>
-#include <integratorxx_new/quadratures/lebedev_laikov.hpp>
-#include <integratorxx_new/composite_quadratures/spherical_quadrature.hpp>
-#include <integratorxx_new/batch/spherical_micro_batcher.hpp>
+#include <integratorxx/quadratures/muraknowles.hpp>
+#include <integratorxx/quadratures/lebedev_laikov.hpp>
+#include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
+#include <integratorxx/batch/spherical_micro_batcher.hpp>
 
-#include <integratorxx/batch.hpp>
-#include <integratorxx/quadrature.hpp>
+#include <integratorxx/deprecated/batch.hpp>
+#include <integratorxx/deprecated/quadrature.hpp>
 
 TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
@@ -14,10 +14,10 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
   size_t nang = 770;
 
   SECTION("Correctness") {
-    IntegratorXX::redeux::MuraKnowles<double,double> r(nrad);
-    IntegratorXX::redeux::LebedevLaikov<double> q(nang);
+    IntegratorXX::MuraKnowles<double,double> r(nrad);
+    IntegratorXX::LebedevLaikov<double> q(nang);
 
-    IntegratorXX::redeux::SphericalQuadrature s( r, q );
+    IntegratorXX::SphericalQuadrature s( r, q );
     size_t npts = s.npts();
 
     REQUIRE( npts == nrad * nang );
@@ -36,20 +36,20 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
     std::array<double,3> cen = {0., 0., 1.};
     double scale_factor = 0.5;
-    IntegratorXX::redeux::MuraKnowles<double,double> r(nrad, scale_factor);
-    IntegratorXX::redeux::LebedevLaikov<double> q(nang);
+    IntegratorXX::MuraKnowles<double,double> r(nrad, scale_factor);
+    IntegratorXX::LebedevLaikov<double> q(nang);
     
-    IntegratorXX::Knowles<double>       r_old(nrad);
-    IntegratorXX::Lebedev<double> q_old(nang);
+    IntegratorXX::deprecated::Knowles<double>       r_old(nrad);
+    IntegratorXX::deprecated::Lebedev<double> q_old(nang);
 
 #if 0
-    IntegratorXX::redeux::SphericalQuadrature s( r, q, cen );
+    IntegratorXX::SphericalQuadrature s( r, q, cen );
 #else
-    IntegratorXX::redeux::SphericalQuadrature s( r, q );
+    IntegratorXX::SphericalQuadrature s( r, q );
     s.recenter( cen );
 #endif
 
-    auto s_old = IntegratorXX::SphericalBatch( r_old, q_old,
+    auto s_old = IntegratorXX::deprecated::SphericalBatch( r_old, q_old,
       cen, scale_factor, nrad, nang );
 
     auto [points_old, weights_old] = *s_old.begin();
@@ -74,12 +74,12 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
   SECTION("Batching") {
 
     size_t max_batch_sz = 512;
-    IntegratorXX::redeux::MuraKnowles<double,double> r(nrad);
-    IntegratorXX::redeux::LebedevLaikov<double> q(nang);
-    IntegratorXX::redeux::SphericalQuadrature s( r, q );
+    IntegratorXX::MuraKnowles<double,double> r(nrad);
+    IntegratorXX::LebedevLaikov<double> q(nang);
+    IntegratorXX::SphericalQuadrature s( r, q );
 
     size_t npts = s.npts();
-    IntegratorXX::redeux::SphericalMicroBatcher batcher( max_batch_sz, s );
+    IntegratorXX::SphericalMicroBatcher batcher( max_batch_sz, s );
 
     size_t npts_c = 0;
     for( auto&& [box_lo, box_up, points_b, weights_b] : batcher ) {
