@@ -71,6 +71,8 @@ public:
   SphericalQuadrature( SphericalQuadrature&& ) noexcept = default;
 
 
+  auto center() const { return center_; }
+
   inline void recenter( point_type new_center ) {
     if( new_center != center_ ) {
       point_type shift = new_center;
@@ -78,6 +80,8 @@ public:
       shift[1] -= center_[1];
       shift[2] -= center_[2];
       traits::shift_grid( this->points_, shift );
+
+      center_ = new_center;
     }
   }
 

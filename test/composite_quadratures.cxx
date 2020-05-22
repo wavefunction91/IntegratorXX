@@ -32,6 +32,78 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
     CHECK( res == Approx( M_PI * std::sqrt(M_PI) ) );
   }
 
+
+  SECTION("Centering") {
+
+    std::array<double,3> cen = {0., 1., 0.};
+    std::array<double,3> org = {0., 0., 0.};
+
+    IntegratorXX::LebedevLaikov<double>      ang( nang );
+    IntegratorXX::MuraKnowles<double,double> rad( nrad );
+    
+    IntegratorXX::SphericalQuadrature s_origin( rad, ang );
+    IntegratorXX::SphericalQuadrature s_cen(rad, ang, cen);
+    IntegratorXX::SphericalQuadrature so_cpy( s_origin );
+    IntegratorXX::SphericalQuadrature sc_cpy( s_cen    );
+
+    // Center on construction
+    CHECK( s_origin.center() == org );
+    CHECK( s_cen.center()    == cen );
+
+    auto npts = s_origin.npts();
+    CHECK( s_cen.npts() == npts );
+
+    for(size_t i = 0; i < npts; ++i) {
+      auto po = s_origin.points()[i];
+      auto pc = s_cen.points()[i];
+
+      CHECK( pc[0] == Approx( po[0] + cen[0] ) );
+      CHECK( pc[1] == Approx( po[1] + cen[1] ) );
+      CHECK( pc[2] == Approx( po[2] + cen[2] ) );
+    }
+
+
+    // Single recenter 
+    s_origin.recenter( cen );
+    s_cen.recenter( org );
+
+    CHECK( s_origin.center() == cen );
+    CHECK( s_cen.center()    == org );
+
+    for(size_t i = 0; i < npts; ++i) {
+      auto po = s_origin.points()[i];
+      auto pc = s_cen.points()[i];
+      auto po_ref = so_cpy.points()[i];
+      auto pc_ref = sc_cpy.points()[i];
+
+      for(int x = 0; x < 3; ++x) {
+        CHECK( po[x] == Approx(pc_ref[x]) );
+        CHECK( pc[x] == Approx(po_ref[x]) );
+      }
+
+    }
+    
+    // Multiple recenter
+    s_origin.recenter( org );
+    s_cen.recenter( cen );
+
+    CHECK( s_origin.center() == org );
+    CHECK( s_cen.center()    == cen );
+
+    for(size_t i = 0; i < npts; ++i) {
+      auto po = s_origin.points()[i];
+      auto pc = s_cen.points()[i];
+      auto po_ref = so_cpy.points()[i];
+      auto pc_ref = sc_cpy.points()[i];
+
+      for(int x = 0; x < 3; ++x) {
+        CHECK( po[x] == Approx(po_ref[x]) );
+        CHECK( pc[x] == Approx(pc_ref[x]) );
+      }
+    }
+
+
+  }
 #if 0
   SECTION("Consistency") {
 
@@ -88,12 +160,16 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
       auto npts_b = points_b.size();
       CHECK( npts_b != 0 );
-
       npts_c += npts_b;
-      //for( auto& p : points_b ) {
-      //  auto pc = std::count( s.points().begin(), s.points().end(), p );
-      //  CHECK( pc == 1 );
-      //}
+
+    }
+
+    npts_c = 0;
+    for( auto&& [box_lo, box_up, points_b, weights_b] : batcher ) {
+
+      auto npts_b = points_b.size();
+      CHECK( npts_b != 0 );
+      npts_c += npts_b;
 
     }
 
