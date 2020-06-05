@@ -5,6 +5,20 @@
 namespace IntegratorXX {
 
 
+/**
+ *  @brief Implementation of the Treutler-Aldrichs radial quadrature.
+ *
+ *  Generates a quadrature on the bounds (0, inf). Suitable for integrands
+ *  which tend to zero as their argument tends to 0 and inf. Tailored for
+ *  radial integrands, i.e. r^2 * f(r), with lim_{r->inf} f(r) = 0.
+ *
+ *  Reference:
+ *  J. Chem. Phys. 102, 346 (1995) 
+ *  DOI: https://doi.org/10.1063/1.469408
+ *
+ *  @tparam PointType  Type describing the quadrature points  
+ *  @tparam WeightType Type describing the quadrature weights 
+ */
 template <typename PointType, typename WeightType>
 class TreutlerAldrichs : 
   public Quadrature<TreutlerAldrichs<PointType,WeightType>> {
@@ -18,10 +32,19 @@ public:
   using point_container  = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
   
+  /**
+   *  @brief Construct the Truetler-Aldrichs radial quadrature
+   *
+   *  @param[in] npts   Number of quadrature points to generate
+   *  @param[in] R      Radial scaling factor. Table for suggested
+   *                    values is given in the original reference. 
+   *  @param[in] alpha  Exponent factor for the quadrature. 0.6 was the
+   *                    default suggested in the reference. 
+   */
   TreutlerAldrichs(size_t npts, weight_type R = 1., weight_type alpha = 0.6): 
     base_type( npts, R, alpha ) { }
 
-  TreutlerAldrichs( const TreutlerAldrichs& ) = default;
+  TreutlerAldrichs( const TreutlerAldrichs& )     = default;
   TreutlerAldrichs( TreutlerAldrichs&& ) noexcept = default;
 };
 
@@ -30,6 +53,12 @@ public:
 
 
 
+/**
+ *  @brief Quadrature traits for the Treutler-Aldrichs quadrature
+ *
+ *  @tparam PointType  Type describing the quadrature points  
+ *  @tparam WeightType Type describing the quadrature weights 
+ */
 
 template <typename PointType, typename WeightType>
 struct quadrature_traits<
@@ -42,6 +71,16 @@ struct quadrature_traits<
   using point_container  = std::vector< point_type >;
   using weight_container = std::vector< weight_type >;
 
+  /**
+   *  @brief Generator for the Treutler-Aldrichs quadrature
+   *
+   *  @param[in] npts   Number of quadrature points to generate
+   *  @param[in] R      Radial scaling factor. Table for suggested
+   *                    values is given in the original reference. 
+   *  @param[in] alpha  Exponent factor for the quadrature. 0.6 was the
+   *
+   *  @returns Tuple of quadrature points and weights
+   */
   inline static std::tuple<point_container,weight_container>
     generate( size_t npts, weight_type R, weight_type alpha ) {
 
@@ -52,6 +91,18 @@ struct quadrature_traits<
     point_container  points( npts );
     weight_container weights( npts );
 
+    /*
+     * Treutler-Aldrichs quadrature 
+     *
+     * Original reference:
+     *  J. Chem. Phys. 102, 346 (1995) 
+     *  DOI: https://doi.org/10.1063/1.469408
+     *
+     * Closed form for points / weights obtained from:
+     * Journal of Computational Chemistry, 24: 732–740, 2003
+     * DOI: https://doi.org/10.1002/jcc.10211
+     * 
+     */
     for( size_t i = 0; i < npts; ++i ) {
       const auto xi = std::cos( (i+1) * pi_ov_npts_p1 );
 

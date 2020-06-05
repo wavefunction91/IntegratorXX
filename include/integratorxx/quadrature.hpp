@@ -5,7 +5,7 @@
 namespace IntegratorXX {
 
 // Forward decl of quadrature traits
-template <typename Quadrature>
+template <typename Quadrature, typename = std::void_t<>>
 struct quadrature_traits;
 
 
@@ -62,20 +62,138 @@ protected:
 
 public:
 
+  /**
+   *  @brief Construct a Quadrature object from options.
+   *
+   *  Generates the implemented quadrature and populates internal
+   *  storage.
+   *
+   *  @tparam Args Parameter pack to be forwarded to quadrature generator
+   *
+   *  @param[in] args Parameter pack to be forwarded to quadrature generator
+   *
+   */
   template <typename... Args>
   Quadrature( Args&&... args ) :
     Quadrature( generate( std::forward<Args>(args)... ) ) { } 
 
-  Quadrature( const Quadrature& ) = default;
+
+  // Default copy and move ctors
+
+  Quadrature( const Quadrature& )     = default;
   Quadrature( Quadrature&& ) noexcept = default;
 
+
+
+  /**
+   *  @brief Getter for internal storage of quadrature points
+   *  
+   *  Const variant.
+   *
+   *  @returns A const reference to internal point storage
+   */
   const auto& points()  const { return points_; }
+
+  /**
+   *  @brief Getter for internal storage of quadrature points
+   *  
+   *  Non-const variant.
+   *
+   *  @returns A non-const reference to internal point storage
+   */
   auto&       points()        { return points_; }
+
+  /**
+   *  @brief Getter for internal storage of quadrature weights
+   *  
+   *  Const variant.
+   *
+   *  @returns A const reference to internal weight storage
+   */
   const auto& weights() const { return weights_; }
+
+  /**
+   *  @brief Getter for internal storage of quadrature weights
+   *  
+   *  Non-const variant.
+   *
+   *  @returns A non-const reference to internal weight storage
+   */
   auto&       weights()       { return weights_; }
 
+
+
+  /**
+   *  @brief Obtain a pointer for underlying quadrature point storage
+   *  
+   *  Const variant.
+   *
+   *  @returns A const pointer to quadrature point storage
+   */
+  const auto* points_data()  const { return points_.data();  }
+
+  /**
+   *  @brief Obtain a pointer for underlying quadrature point storage
+   *  
+   *  Non-const variant.
+   *
+   *  @returns A non-const pointer to quadrature point storage
+   */
+  auto*       points_data()        { return points_.data();  }
+
+  /**
+   *  @brief Obtain a pointer for underlying quadrature weight storage
+   *  
+   *  Const variant.
+   *
+   *  @returns A const pointer to quadrature weight storage
+   */
+  const auto* weights_data() const { return weights_.data(); }
+
+  /**
+   *  @brief Obtain a pointer for underlying quadrature weight storage
+   *  
+   *  Non-const variant.
+   *
+   *  @returns A non-const pointer to quadrature weight storage
+   */
+  auto*       weights_data()       { return weights_.data(); }
+
+
+
+
+
+
+
+
+  /**
+   *  @brief Obtain number of points in implemented quadrature
+   *  @returns Number of points in implemented quadrature
+   */
   size_t npts() const { return points_.size(); }
 
+
+  /**
+   *  @brief Obtain a copy of a particular quadrature point
+   *
+   *  Performs a bounds check, should not use in performance
+   *  critial code
+   *
+   *  @param[in] i Point index of desired quadrature point
+   *  @returns   Quadrature point at index i
+   */
+  point_type  points(size_t i)  const { return points_.at(i);  }
+
+  /**
+   *  @brief Obtain a copy of a particular quadrature weight
+   *
+   *  Performs a bounds check, should not use in performance
+   *  critial code
+   *
+   *  @param[in] i Point index of desired quadrature weight
+   *  @returns   Quadrature weight at index i
+   */
+  weight_type weights(size_t i) const { return weights_.at(i); }
 };
 
 

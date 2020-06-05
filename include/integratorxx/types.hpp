@@ -1,8 +1,9 @@
 #include <array>
+#include <type_traits>
 
 namespace IntegratorXX {
 
-template <typename T>
+template < typename T >
 using cartesian_pt_t = std::array<T, 3>;
 
 }
