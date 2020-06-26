@@ -349,6 +349,12 @@ public:
       quad_->weights().begin() );
   }
 
+  typename iterator::value_type at( size_t i ) {
+    if( i >= nbatches() )
+      throw std::runtime_error("Index out of bounds");
+
+    return *(begin() + i);
+  }
 
 
   SphericalMicroBatcher( const SphericalMicroBatcher& ) = default;
