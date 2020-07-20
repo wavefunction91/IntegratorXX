@@ -1,6 +1,7 @@
 #pragma once
 
-#include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
+//#include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
+#include <integratorxx/type_traits.hpp>
 #include <chrono>
 #include <iostream>
 #include <iomanip>
@@ -213,10 +214,14 @@ auto partition_box(
 
 }
 
-template <typename RadialQuad, typename AngularQuad>
+template <typename PointContainer, typename WeightContainer >
 class SphericalMicroBatcher {
 
-  using quad_type   = SphericalQuadrature<RadialQuad,AngularQuad>;
+
+  using quad_type   = QuadratureBase<PointContainer,WeightContainer>;
+  static_assert( detail::is_cartesian_quadrature_v<quad_type> );
+
+
   using point_type  = typename quad_type::point_type;
   using weight_type = typename quad_type::weight_type;
   using point_container  = typename quad_type::point_container;
@@ -229,6 +234,7 @@ class SphericalMicroBatcher {
   using point_iterator  = typename point_container::iterator;
   using weight_iterator = typename weight_container::iterator;
   using index_iterator  = typename index_container::iterator;
+
 
   size_t max_batch_sz_;
 
@@ -383,8 +389,8 @@ public:
 
 };
 
-template <typename RadialQuad, typename AngularQuad>
-std::vector<size_t> SphericalMicroBatcher<RadialQuad,AngularQuad>::generate_batches() {
+template <typename PointContainer, typename WeightContainer>
+std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::generate_batches() {
 
 
 
