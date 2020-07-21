@@ -155,7 +155,7 @@ auto partition_box(
   const auto delta_x = extent_x / npart;
   const auto delta_y = extent_y / npart;
   const auto delta_z = extent_z / npart;
-  for( auto i = 0; i < npart; ++i ) {
+  for( auto i = 0ul; i < npart; ++i ) {
     x_part[i] = bbox_lo[0] + i * delta_x;
     y_part[i] = bbox_lo[1] + i * delta_y;
     z_part[i] = bbox_lo[2] + i * delta_z;
@@ -166,9 +166,9 @@ auto partition_box(
 
   std::vector partition_its = { pw_batch_begin };
 
-  for( int i = 0; i < npart; ++i )
-  for( int j = 0; j < npart; ++j )
-  for( int k = 0; k < npart; ++k ) {
+  for( auto i = 0ul; i < npart; ++i )
+  for( auto j = 0ul; j < npart; ++j )
+  for( auto k = 0ul; k < npart; ++k ) {
     std::array box_lo = {
       x_part[i], y_part[j], z_part[k]
     };
@@ -406,7 +406,7 @@ std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::gener
   auto partition_its = detail::partition_box( 3, q.begin(), q.end() );
   auto nparts = partition_its.size()-1;
   std::vector<size_t> part_counts( nparts );
-  for( auto ip = 0; ip < nparts; ++ip ) {
+  for( auto ip = 0ul; ip < nparts; ++ip ) {
     part_counts[ip] = std::distance(partition_its[ip], partition_its[ip+1]);
   }
 
