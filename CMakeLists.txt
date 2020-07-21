@@ -7,7 +7,7 @@ project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 add_library( integratorxx INTERFACE )
 add_library( IntegratorXX::integratorxx ALIAS integratorxx )
 
-option( INTEGRATORXX_ENABLE_TESTS "Enable Tets" OFF )
+option( INTEGRATORXX_ENABLE_TESTS "Enable Tets" ON )
 
 if( INTEGRATORXX_ENABLE_TESTS )
   find_package( Catch2 QUIET )
