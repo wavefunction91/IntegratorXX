@@ -165,7 +165,23 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
     }
 
     npts_c = 0;
-    for( auto&& [box_lo, box_up, points_b, weights_b] : batcher ) {
+    for( size_t i = 0; i < batcher.nbatches(); ++i ) {
+
+      auto&& [box_lo, box_up, points_b, weights_b] = batcher.at(i);
+
+      auto npts_b = points_b.size();
+      CHECK( npts_b != 0 );
+      npts_c += npts_b;
+
+    }
+
+    CHECK( npts_c == npts );
+
+    const auto& cbatcher = batcher;
+    npts_c = 0;
+    for( size_t i = 0; i < cbatcher.nbatches(); ++i ) {
+
+      auto&& [box_lo, box_up, points_b, weights_b] = cbatcher.at(i);
 
       auto npts_b = points_b.size();
       CHECK( npts_b != 0 );

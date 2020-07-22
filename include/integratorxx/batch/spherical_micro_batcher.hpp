@@ -235,6 +235,10 @@ class SphericalMicroBatcher {
   using weight_iterator = typename weight_container::iterator;
   using index_iterator  = typename index_container::iterator;
 
+  using const_point_iterator  = typename point_container::const_iterator;
+  using const_weight_iterator = typename weight_container::const_iterator;
+  using const_index_iterator  = typename index_container::const_iterator;
+
 
   size_t max_batch_sz_;
 
@@ -246,7 +250,8 @@ class SphericalMicroBatcher {
 
   struct iterator {
   
-    using value_type        = std::tuple<point_type,point_type,point_container,weight_container>;
+    using value_type        = 
+      std::tuple<point_type,point_type,point_container,weight_container>;
     using different_type    = size_t;
     using pointer           = value_type*;
     using reference         = value_type&;
@@ -268,6 +273,77 @@ class SphericalMicroBatcher {
     }
 
     iterator& operator+(int i) {
+      idx_it += i;
+      return *this;
+    } 
+
+    bool operator==( iterator other ){ return idx_it == other.idx_it; }
+    bool operator!=( iterator other ){ return not (*this == other);   }
+
+
+
+    auto range() {
+
+      const auto idx      = *idx_it;
+      const auto idx_next = *(idx_it+1);
+
+      const auto npts = idx_next - idx;
+    
+      return std::tuple(
+        npts,
+        point_begin + idx,
+        point_begin + idx + npts,
+        weight_begin + idx,
+        weight_begin + idx + npts 
+      );
+
+    }
+
+    value_type operator*() {
+
+      auto [npts,pb,pe,wb,we] = range();
+      auto [box_lo, box_up]   = detail::get_box_bounds_points(pb, pe);
+
+      return std::tuple(
+        box_lo,
+        box_up,
+        std::vector( pb, pe ),
+        std::vector( wb, we )
+      );
+
+    }
+
+    
+  };
+
+
+
+  struct const_iterator {
+  
+    using value_type        = 
+      std::tuple<point_type,point_type,point_container,weight_container>;
+    using different_type    = size_t;
+    using pointer           = value_type*;
+    using reference         = value_type&;
+    using iterator_catagory = std::input_iterator_tag;
+
+    const_index_iterator idx_it;
+    const_point_iterator  point_begin;
+    const_weight_iterator weight_begin;
+
+    const_iterator() = delete;
+    const_iterator( const_index_iterator it, const_point_iterator pb, 
+      const_weight_iterator wb ) : 
+      idx_it(it), point_begin(pb), weight_begin(wb) { }
+
+    const_iterator& operator++(){ idx_it++; return *this; }
+    const_iterator  operator++(int) { 
+      const_iterator retval = *this;
+      ++(*this);
+      return retval;
+    }
+
+    const_iterator& operator+(int i) {
       idx_it += i;
       return *this;
     } 
@@ -355,11 +431,27 @@ public:
       quad_->weights().begin() );
   }
 
+  const_iterator cbegin() const { 
+    return const_iterator( partition_idx_.cbegin(), quad_->points().cbegin(),
+      quad_->weights().cbegin() );
+  }
+  const_iterator cend() const { 
+    return const_iterator( partition_idx_.cend()-1, quad_->points().cbegin(),
+      quad_->weights().cbegin() );
+  }
+
   typename iterator::value_type at( size_t i ) {
     if( i >= nbatches() )
       throw std::runtime_error("Index out of bounds");
 
     return *(begin() + i);
+  }
+
+  typename const_iterator::value_type at( size_t i ) const {
+    if( i >= nbatches() )
+      throw std::runtime_error("Index out of bounds");
+
+    return *(cbegin() + i);
   }
 
 
