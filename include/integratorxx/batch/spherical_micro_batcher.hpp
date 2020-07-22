@@ -508,9 +508,11 @@ std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::gener
   while( std::any_of( part_counts.begin(), part_counts.end(), 
          check_max_batch ) ) {
 
+#if INTEGRATORXX_VERBOSITY_LEVEL > 0
     std::cout << "REFINE ITER = " << std::setw(4) << refine_iter++ 
               << " NBATCH = " << std::setw(6) << nparts 
               << " MAX BATCH  = " << *std::max_element(part_counts.begin(), part_counts.end() ) << std::endl;
+#endif
 
 
     // Partition large boxes
@@ -560,8 +562,10 @@ std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::gener
 
   }
 
+#if INTEGRATORXX_VERBOSITY_LEVEL > 0
   std::cout << std::endl;
   std::cout << "FINAL NBATCH = " <<  nparts << "     FINAL MAX BATCH = " << *std::max_element(part_counts.begin(), part_counts.end() ) << std::endl;
+#endif
 
 
 
@@ -576,7 +580,9 @@ std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::gener
   auto part_en = std::chrono::high_resolution_clock::now();
 
   double part_dur = std::chrono::duration<double,std::milli>( part_en-part_st ).count();
+#if INTEGRATORXX_VERBOSITY_LEVEL > 0
   std::cout << "Part Dur = " << part_dur << std::endl;
+#endif
   
   for( size_t i = 0; i < quad_->npts(); ++i )
     std::tie( quad_->points()[i], quad_->weights()[i] ) = q[i];
