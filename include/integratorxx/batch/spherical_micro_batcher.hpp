@@ -1,6 +1,6 @@
 #pragma once
 
-//#include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
+#include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/type_traits.hpp>
 #include <chrono>
 #include <iostream>
