@@ -214,11 +214,12 @@ auto partition_box(
 
 }
 
+
 template <typename PointContainer, typename WeightContainer >
 class SphericalMicroBatcher {
 
 
-  using quad_type   = QuadratureBase<PointContainer,WeightContainer>;
+  using quad_type   = SphericalQuadratureBase<PointContainer,WeightContainer>;
   static_assert( detail::is_cartesian_quadrature_v<quad_type> );
 
 
@@ -401,25 +402,45 @@ public:
 
   }
     
-  SphericalMicroBatcher( size_t batch_size, const quad_type& quad ):
+
+  template <typename RadQuad, typename AngQuad>
+  SphericalMicroBatcher( size_t batch_size, 
+                         const SphericalQuadrature<RadQuad,AngQuad>& quad ):
     SphericalMicroBatcher( 
-      batch_size, std::make_shared<quad_type>( quad ) 
-    ) { }
-  SphericalMicroBatcher( size_t batch_size, const quad_type& quad, 
-    index_container idx ):
-    SphericalMicroBatcher( 
-      batch_size, std::make_shared<quad_type>( quad ), idx 
+      batch_size, 
+      std::make_shared<SphericalQuadrature<RadQuad,AngQuad>>( quad ) 
     ) { }
 
-  SphericalMicroBatcher( size_t batch_size, quad_type&& quad ):
+
+  template <typename RadQuad, typename AngQuad>
+  SphericalMicroBatcher( size_t batch_size, 
+                         const SphericalQuadrature<RadQuad,AngQuad>& quad,
+                         index_container idx ):
     SphericalMicroBatcher( 
-      batch_size, std::make_shared<quad_type>( std::move(quad) ) 
+      batch_size, 
+      std::make_shared<SphericalQuadrature<RadQuad,AngQuad>>( quad ),
+      idx
     ) { }
-  SphericalMicroBatcher( size_t batch_size, quad_type&& quad, 
-    index_container idx ):
+
+  template <typename RadQuad, typename AngQuad>
+  SphericalMicroBatcher( size_t batch_size, 
+                         SphericalQuadrature<RadQuad,AngQuad>&& quad ):
     SphericalMicroBatcher( 
-      batch_size, std::make_shared<quad_type>( std::move(quad) ), idx 
+      batch_size, 
+      std::make_shared<SphericalQuadrature<RadQuad,AngQuad>>( std::move(quad) ) 
     ) { }
+
+
+  template <typename RadQuad, typename AngQuad>
+  SphericalMicroBatcher( size_t batch_size, 
+                         SphericalQuadrature<RadQuad,AngQuad>&& quad,
+                         index_container idx ):
+    SphericalMicroBatcher( 
+      batch_size, 
+      std::make_shared<SphericalQuadrature<RadQuad,AngQuad>>( std::move(quad) ),
+      idx
+    ) { }
+
 
 
   iterator begin() { 
@@ -460,7 +481,7 @@ public:
 
 
   SphericalMicroBatcher clone() const {
-    return SphericalMicroBatcher( max_batch_sz_, *quad_, partition_idx_ );
+    return SphericalMicroBatcher( max_batch_sz_, quad_->clone(), partition_idx_ );
   }
 
 
@@ -478,6 +499,11 @@ public:
 
   size_t npts()     const { return quad_->npts();           }
   size_t nbatches() const { return partition_idx_.size()-1; }
+
+
+  inline void recenter( point_type new_center ) {
+    quad_->recenter(new_center);
+  }
 
 };
 
@@ -596,5 +622,40 @@ std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::gener
   return partition_idx;
 
 }
+
+
+
+
+template <typename QuadType>
+SphericalMicroBatcher< 
+  typename QuadType::point_container, 
+  typename QuadType::weight_container
+> make_batcher( size_t batch_size, const QuadType& quad ) {
+
+  using point_container = typename QuadType::point_container;
+  using weight_container = typename QuadType::weight_container;
+
+  return SphericalMicroBatcher<point_container,weight_container>(
+    batch_size, quad
+  );
+
+}
+
+template <typename QuadType>
+SphericalMicroBatcher< 
+  typename QuadType::point_container, 
+  typename QuadType::weight_container
+> make_batcher( size_t batch_size, QuadType&& quad ) {
+
+  using point_container = typename QuadType::point_container;
+  using weight_container = typename QuadType::weight_container;
+
+  return SphericalMicroBatcher<point_container,weight_container>(
+    batch_size, std::move(quad)
+  );
+
+}
+
+
 
 }

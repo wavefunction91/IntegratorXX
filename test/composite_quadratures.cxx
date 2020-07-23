@@ -145,6 +145,7 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
   }
 #endif
 
+#if 1
   SECTION("Batching") {
 
     size_t max_batch_sz = 512;
@@ -153,8 +154,12 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
     IntegratorXX::SphericalQuadrature s( r, q );
 
     size_t npts = s.npts();
-    IntegratorXX::SphericalMicroBatcher batcher( max_batch_sz, s );
+    //IntegratorXX::SphericalMicroBatcher batcher = 
+    //  make_batcher( max_batch_sz, s );
 
+    IntegratorXX::SphericalMicroBatcher batcher = 
+      make_batcher( max_batch_sz, s );
+  
     size_t npts_c = 0;
     for( auto&& [box_lo, box_up, points_b, weights_b] : batcher ) {
 
@@ -198,5 +203,8 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
   
     CHECK( batcher.points() == batcher_clone.points() );
     CHECK( batcher.weights() == batcher_clone.weights() );
+  
+    batcher.quadrature().recenter({0.,0.,0.}); // just check if this compiles....
   }
+#endif
 };

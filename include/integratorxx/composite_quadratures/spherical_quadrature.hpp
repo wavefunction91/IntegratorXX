@@ -2,6 +2,7 @@
 
 #include <integratorxx/composite_quadratures/product_quadrature.hpp>
 #include <integratorxx/types.hpp>
+#include <integratorxx/type_traits.hpp>
 
 namespace IntegratorXX {
 
@@ -24,6 +25,80 @@ struct spherical_combine_op {
 }
 
 
+template <typename PointContainer, typename WeightContainer >
+class SphericalQuadratureBase { 
+
+public:
+
+  using point_container   = PointContainer;
+  using weight_container  = WeightContainer;
+
+  using weight_type       = typename weight_container::value_type;
+  using point_type        = typename point_container::value_type;
+
+protected:
+
+  point_type center_;
+
+  virtual const point_container& sph_points_adaptor() const = 0;
+  virtual       point_container& sph_points_adaptor()       = 0;
+  virtual const weight_container& sph_weights_adaptor() const = 0;
+  virtual       weight_container& sph_weights_adaptor()       = 0;
+
+public:
+
+  SphericalQuadratureBase( point_type center ) : center_(center) { }
+  
+  auto center() const { return center_; }
+
+  inline void recenter( point_type new_center ) {
+
+    if( new_center != center_ ) {
+      point_type shift = new_center;
+      shift[0] -= center_[0];
+      shift[1] -= center_[1];
+      shift[2] -= center_[2];
+
+      auto& points_ = points();
+      size_t npts = points_.size();
+      for( size_t i = 0; i < npts; ++i ) {
+        auto& p = points_[i];
+        p[0] += shift[0];
+        p[1] += shift[1];
+        p[2] += shift[2];
+      }
+
+      center_ = new_center;
+    }
+
+  }
+
+  const point_container& points() const { return sph_points_adaptor(); }
+        point_container& points()       { return sph_points_adaptor(); }
+  const weight_container& weights() const { return sph_weights_adaptor(); }
+        weight_container& weights()       { return sph_weights_adaptor(); }
+
+  
+  size_t npts() const { return points().size(); }
+
+  virtual std::shared_ptr<SphericalQuadratureBase> clone() const = 0;
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 template <typename RadialQuad, typename AngularQuad>
 class SphericalQuadrature : 
   public Quadrature<SphericalQuadrature<RadialQuad,AngularQuad>>,
@@ -31,11 +106,21 @@ class SphericalQuadrature :
     detail::spherical_combine_op<typename RadialQuad::point_type>,
     RadialQuad,
     AngularQuad
+  >,
+  public SphericalQuadratureBase<
+    typename AngularQuad::point_container,
+    typename AngularQuad::weight_container
   > {
 
 
   using self_type = SphericalQuadrature<RadialQuad,AngularQuad>;
   using traits    = quadrature_traits<self_type>;
+
+  using sph_base = SphericalQuadratureBase<
+    typename AngularQuad::point_container,
+    typename AngularQuad::weight_container
+  >;
+
 
 public:
 
@@ -51,9 +136,20 @@ public:
   using point_container  = typename traits::point_container;
   using weight_container = typename traits::weight_container;
 
-private:
+protected:
 
-  point_type center_;
+  const point_container& sph_points_adaptor() const override { 
+    return quad_base_type::points();
+  }
+  point_container& sph_points_adaptor() override {;
+    return quad_base_type::points();
+  }
+  const weight_container& sph_weights_adaptor() const override {;
+    return quad_base_type::weights();
+  }
+  weight_container& sph_weights_adaptor() override {;
+    return quad_base_type::weights();
+  }
 
 public:
 
@@ -64,29 +160,34 @@ public:
   ) :
     quad_base_type( rq, aq, cen ),
     prod_base_type( rq, aq ),
-    center_(cen) { }
+    sph_base(cen) { }
 
 
   SphericalQuadrature( const SphericalQuadrature& ) = default;
   SphericalQuadrature( SphericalQuadrature&& ) noexcept = default;
 
 
-  auto center() const { return center_; }
+  const auto& points() const { return quad_base_type::points(); }
+        auto& points()       { return quad_base_type::points(); }
+  const auto& weights() const { return quad_base_type::weights(); }
+        auto& weights()       { return quad_base_type::weights(); }
 
-  inline void recenter( point_type new_center ) {
-    if( new_center != center_ ) {
-      point_type shift = new_center;
-      shift[0] -= center_[0];
-      shift[1] -= center_[1];
-      shift[2] -= center_[2];
-      traits::shift_grid( this->points_, shift );
+  size_t npts() const { return quad_base_type::npts(); }
 
-      center_ = new_center;
-    }
+
+  std::shared_ptr<sph_base> clone() const override {
+    return std::make_shared<self_type>( *this );
   }
+
+  //inline void recenter( point_type new_center ) {
+  //  sph_base::recenter( new_center, this->points_ );
+  //}
 
 
 }; 
+
+
+
 
 
 template <typename RadialQuad, typename AngularQuad>
