@@ -48,6 +48,7 @@ protected:
 public:
 
   SphericalQuadratureBase( point_type center ) : center_(center) { }
+  virtual ~SphericalQuadratureBase() noexcept = default;
   
   auto center() const { return center_; }
 

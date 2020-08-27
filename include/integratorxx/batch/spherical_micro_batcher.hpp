@@ -535,16 +535,17 @@ std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::gener
          check_max_batch ) ) {
 
 #if INTEGRATORXX_VERBOSITY_LEVEL > 0
-    std::cout << "REFINE ITER = " << std::setw(4) << refine_iter++ 
+    std::cout << "REFINE ITER = " << std::setw(4) << refine_iter 
               << " NBATCH = " << std::setw(6) << nparts 
               << " MAX BATCH  = " << *std::max_element(part_counts.begin(), part_counts.end() ) << std::endl;
 #endif
+    refine_iter++;
 
 
     // Partition large boxes
     decltype( partition_its ) new_part_its;
 
-    for( auto ip = 0; ip < nparts; ++ip ) 
+    for( auto ip = 0ul; ip < nparts; ++ip ) 
     if( check_max_batch( part_counts[ip] ) ) {
 
       auto batch_st = partition_its[ip];
@@ -580,7 +581,7 @@ std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::gener
     partition_its = std::move( union_part_its );
     nparts = partition_its.size()-1;
     part_counts.resize( nparts );
-    for( auto ip = 0; ip < nparts; ++ip ) {
+    for( auto ip = 0ul; ip < nparts; ++ip ) {
       part_counts[ip] = std::distance(partition_its[ip], partition_its[ip+1]);
     }
 
@@ -608,6 +609,8 @@ std::vector<size_t> SphericalMicroBatcher<PointContainer,WeightContainer>::gener
   double part_dur = std::chrono::duration<double,std::milli>( part_en-part_st ).count();
 #if INTEGRATORXX_VERBOSITY_LEVEL > 0
   std::cout << "Part Dur = " << part_dur << std::endl;
+#else
+  (void)(part_dur); // Unused pascification
 #endif
   
   for( size_t i = 0; i < quad_->npts(); ++i )
