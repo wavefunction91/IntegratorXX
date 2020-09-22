@@ -117,7 +117,7 @@ struct quadrature_traits<
     
 
 
-    return std::tuple( points, weights );
+    return std::make_tuple( points, weights );
 
   }
 

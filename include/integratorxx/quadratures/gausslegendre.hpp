@@ -100,7 +100,7 @@ struct quadrature_traits<
 
     }; // Loop over points
 
-    return std::tuple( points, weights );
+    return std::make_tuple( points, weights );
 
   }
 

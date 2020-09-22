@@ -249,7 +249,7 @@ struct quadrature_traits<
     // Recenter
     shift_grid( points, cen );
 
-    return std::tuple( points, weights );
+    return std::make_tuple( points, weights );
 
   }
 

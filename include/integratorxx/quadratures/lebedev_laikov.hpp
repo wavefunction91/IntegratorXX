@@ -118,7 +118,7 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
     else if( npts == 5810 ) 
       detail::copy_grid<lebedev_laikov_5810<RealType>>( points, weights );
         
-    return std::tuple( points, weights );
+    return std::make_tuple( points, weights );
 
   }
 };

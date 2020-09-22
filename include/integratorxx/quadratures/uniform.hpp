@@ -56,7 +56,7 @@ struct quadrature_traits<
     weights.front() *= 0.5;
     weights.back()  *= 0.5;
 
-    return std::tuple( points, weights );
+    return std::make_tuple( points, weights );
 
   }
 

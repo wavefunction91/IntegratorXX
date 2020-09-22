@@ -5,6 +5,8 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
+#include <vector>
+#include <array>
 
 
 namespace IntegratorXX {
@@ -87,7 +89,7 @@ auto get_box_bounds(
   const auto min_z = min_z_it->first[2];
   const auto max_z = max_z_it->first[2];
 
-  return std::tuple(
+  return std::make_tuple(
     cartesian_pt_t<cart_type>{ min_x, min_y, min_z },
     cartesian_pt_t<cart_type>{ max_x, max_y, max_z }
   );
@@ -127,7 +129,7 @@ auto get_box_bounds_points(
   const auto min_z = (*min_z_it)[2];
   const auto max_z = (*max_z_it)[2];
 
-  return std::tuple(
+  return std::make_tuple(
     cartesian_pt_t<cart_type>{ min_x, min_y, min_z },
     cartesian_pt_t<cart_type>{ max_x, max_y, max_z }
   );
@@ -164,16 +166,16 @@ auto partition_box(
   y_part.back() = bbox_up[1];
   z_part.back() = bbox_up[2];
 
-  std::vector partition_its = { pw_batch_begin };
+  std::vector<pw_iterator<T>> partition_its = { pw_batch_begin };
 
   for( auto i = 0ul; i < npart; ++i )
   for( auto j = 0ul; j < npart; ++j )
   for( auto k = 0ul; k < npart; ++k ) {
-    std::array box_lo = {
+    std::array<T,3> box_lo = {
       x_part[i], y_part[j], z_part[k]
     };
 
-    std::array box_up = {
+    std::array<T,3> box_up = {
       x_part[i+1], y_part[j+1], z_part[k+1]
     };
 
@@ -290,7 +292,7 @@ class SphericalMicroBatcher {
 
       const auto npts = idx_next - idx;
     
-      return std::tuple(
+      return std::make_tuple(
         npts,
         point_begin + idx,
         point_begin + idx + npts,
@@ -305,11 +307,11 @@ class SphericalMicroBatcher {
       auto [npts,pb,pe,wb,we] = range();
       auto [box_lo, box_up]   = detail::get_box_bounds_points(pb, pe);
 
-      return std::tuple(
+      return std::make_tuple(
         box_lo,
         box_up,
-        std::vector( pb, pe ),
-        std::vector( wb, we )
+        std::vector<point_type>( pb, pe ),
+        std::vector<weight_type>( wb, we )
       );
 
     }
@@ -361,7 +363,7 @@ class SphericalMicroBatcher {
 
       const auto npts = idx_next - idx;
     
-      return std::tuple(
+      return std::make_tuple(
         npts,
         point_begin + idx,
         point_begin + idx + npts,
@@ -376,7 +378,7 @@ class SphericalMicroBatcher {
       auto [npts,pb,pe,wb,we] = range();
       auto [box_lo, box_up]   = detail::get_box_bounds_points(pb, pe);
 
-      return std::tuple(
+      return std::make_tuple(
         box_lo,
         box_up,
         std::vector( pb, pe ),

@@ -56,7 +56,7 @@ struct quadrature_traits<
       points[i] = std::cos( (i+1) * pi_ov_npts_p_1 ); 
     }
 
-    return std::tuple( points, weights );
+    return std::make_tuple( points, weights );
 
   }
 

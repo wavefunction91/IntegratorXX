@@ -126,7 +126,7 @@ struct quadrature_traits<
       weights[i] = R * uw[i+1] * 3 * xi * xi / one_m_xi3;
     }
     
-    return std::tuple( points, weights );
+    return std::make_tuple( points, weights );
 
   }
 

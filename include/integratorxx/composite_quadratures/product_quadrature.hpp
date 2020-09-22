@@ -88,7 +88,7 @@ struct quadrature_traits< ProductQuadrature<CombineOp,Quad1,Quad2> > {
 
     }
 
-    return std::tuple( points, weights );
+    return std::make_tuple( points, weights );
   }
 
 
