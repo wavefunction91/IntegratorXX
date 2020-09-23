@@ -32,6 +32,7 @@ if( INTEGRATORXX_ENABLE_TESTS )
   add_subdirectory( test )
 endif()
 
+
 # Target features
 target_compile_features( integratorxx INTERFACE cxx_std_17 )
 target_include_directories( integratorxx
@@ -39,6 +40,14 @@ target_include_directories( integratorxx
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
+
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-Wno-missing-braces" INTEGRATORXX_HAS_NO_MISSING_BRACES )
+if( INTEGRATORXX_HAS_NO_MISSING_BRACES )
+	target_compile_options( integratorxx INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wno-missing-braces> )
+endif()
+
+
 
 # INSTALL rules
 include( GNUInstallDirs )
