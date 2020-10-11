@@ -67,6 +67,10 @@ install(EXPORT integratorxx-targets
     ${INSTALL_CONFIGDIR}
 )
 
+# Export build-tree targets also (e.g. to be usable by FetchContent)
+export(EXPORT integratorxx-targets
+    NAMESPACE IntegratorXX::
+    FILE "${PROJECT_BINARY_DIR}/IntegratorXXTargets.cmake")
 
 # Create a ConfigVersion.cmake file
 include(CMakePackageConfigHelpers)
