@@ -21,7 +21,7 @@ if( INTEGRATORXX_ENABLE_TESTS )
     download_project(
       PROJ                Catch2
       GIT_REPOSITORY      https://github.com/catchorg/Catch2.git
-      GIT_TAG             master
+      GIT_TAG             v2.13.2
       UPDATE_DISCONNECTED 1
     )
   
