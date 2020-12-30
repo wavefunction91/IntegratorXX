@@ -5,7 +5,7 @@ project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 
 
 add_library( integratorxx INTERFACE )
-add_library( IntegratorXX::integratorxx ALIAS integratorxx )
+add_library( IntegratorXX::IntegratorXX ALIAS integratorxx )
 
 option( INTEGRATORXX_ENABLE_TESTS "Enable Tets" ON )
 
