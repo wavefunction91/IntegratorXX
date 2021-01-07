@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.11 ) # Require CMake 3.11+
+cmake_minimum_required( VERSION 3.17 ) # Require CMake 3.17+
 
 # Set up project definition + version information
 project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
@@ -7,30 +7,10 @@ project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 add_library( integratorxx INTERFACE )
 add_library( IntegratorXX::IntegratorXX ALIAS integratorxx )
 
-option( INTEGRATORXX_ENABLE_TESTS "Enable Tets" ON )
+#option( INTEGRATORXX_ENABLE_TESTS "Enable Tets" ON )
 
-if( INTEGRATORXX_ENABLE_TESTS )
-  find_package( Catch2 QUIET )
-  if( Catch2-FOUND )
-    target_link_libraries( integratorxx INTERFACE Catch2::Catch2)
-  else()
-  
-    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-    include( DownloadProject )
-  
-    download_project(
-      PROJ                Catch2
-      GIT_REPOSITORY      https://github.com/catchorg/Catch2.git
-      GIT_TAG             v2.13.2
-      UPDATE_DISCONNECTED 1
-    )
-  
-    add_subdirectory(${Catch2_SOURCE_DIR} ${Catch2_BINARY_DIR})
-  
-  endif()
 
-  add_subdirectory( test )
-endif()
+
 
 
 # Target features
@@ -45,6 +25,26 @@ include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-Wno-missing-braces" INTEGRATORXX_HAS_NO_MISSING_BRACES )
 if( INTEGRATORXX_HAS_NO_MISSING_BRACES )
 	target_compile_options( integratorxx INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wno-missing-braces> )
+endif()
+
+
+
+
+
+
+
+
+# Testing
+if( NOT DEFINED INTEGRATORXX_ENABLE_TESTS )
+  set( INTEGRATORXX_ENABLE_TESTS ON )
+endif()
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  include(CTest)
+endif()
+
+if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND INTEGRATORXX_ENABLE_TESTS AND BUILD_TESTING )
+  add_subdirectory( test )
 endif()
 
 
