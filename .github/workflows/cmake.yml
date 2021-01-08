@@ -17,11 +17,11 @@ jobs:
         build_type: [Release, Debug]
         compiler_suite: [gnu]
         compiler_version: [7,8,9]
-        #exclude:
-        #  - compiler_suite: llvm
-        #    compiler_version: 7
-        #  - compiler_suite: llvm
-        #    compiler_version: 8
+        exclude:
+          - compiler_suite: llvm
+            compiler_version: 7
+          - compiler_suite: llvm
+            compiler_version: 8
 
     steps:
     - uses: actions/checkout@v2
@@ -45,7 +45,9 @@ jobs:
            sudo apt install software-properties-common &&
            sudo add-apt-repository ppa:ubuntu-toolchain-r/test &&
            sudo apt install ${CC} ${CXX} ${FC} &&
-           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 --slave /usr/bin/g++ g++ /usr/bin/${CXX} --slave /usr/bin/gfortran gfortran /usr/bin/${FC} &&
+           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 
+                                    --slave /usr/bin/g++ g++ /usr/bin/${CXX} 
+                                    --slave /usr/bin/gfortran gfortran /usr/bin/${FC} &&
            sed -i -e "s/CI_CXX/${CXX}/g"  ${GH_ACTIONS_TOOLCHAIN} &&
            sed -i -e "s/CI_C/${CC}/g" ${GH_ACTIONS_TOOLCHAIN} &&
            cat ${GH_ACTIONS_TOOLCHAIN}
@@ -60,7 +62,6 @@ jobs:
            sudo apt install software-properties-common &&
            sudo add-apt-repository ppa:ubuntu-toolchain-r/test &&
            sudo apt install ${CC} ${CXX} &&
-           sudo update-alternatives --install /usr/bin/clang clang /usr/bin/${CC} 1000 --slave /usr/bin/clang++ clang++ /usr/bin/${CXX} &&
            sed -i -e "s/CI_CXX/${CXX}/g"  ${GH_ACTIONS_TOOLCHAIN} &&
            sed -i -e "s/CI_C/${CC}/g" ${GH_ACTIONS_TOOLCHAIN} &&
            cat ${GH_ACTIONS_TOOLCHAIN}
