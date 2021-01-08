@@ -7,10 +7,6 @@ env:
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -56,12 +52,10 @@ jobs:
       run: ${GITHUB_WORKSPACE}/.github/workflows/scripts/compiler_setup.sh ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
 
     - name: Configure CMake
-      env:
-        BUILD_TYPE: ${{matrix.build_type}}
       shell: bash
       run: cmake -H$GITHUB_WORKSPACE 
                  -B${{runner.workspace}}/build
-                 -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
+                 -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
                  -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/install 
                  -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
 
@@ -70,9 +64,7 @@ jobs:
       run: cmake --build ${{runner.workspace}}/build -j2 
 
     - name: Test
-      #working-directory: ${{runner.workspace}}/build
       shell: bash
-      #run: ctest -C $BUILD_TYPE
       run: cmake --build ${{runner.workspace}}/build --target test
 
     - name: Install
@@ -80,7 +72,6 @@ jobs:
       run: cmake --build ${{runner.workspace}}/build --target install
 
     - name: CMake Subproject Configure
-      #working-directory: ${{runner.workspace}}
       shell: bash
       run: cmake -H$GITHUB_WORKSPACE/test/cmake/subproject 
                  -B${{runner.workspace}}/cmake_subproject_build 
@@ -88,12 +79,10 @@ jobs:
                  -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
 
     - name: CMake Subproject Build
-      #working-directory: ${{runner.workspace}}
       shell: bash
       run: cmake --build ${{runner.workspace}}/cmake_subproject_build
 
     - name: CMake Discovery Configure
-      #working-directory: ${{runner.workspace}}
       shell: bash
       run: cmake -H$GITHUB_WORKSPACE/test/cmake/discovery 
                  -B${{runner.workspace}}/cmake_discovery_build 
@@ -101,6 +90,5 @@ jobs:
                  -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
 
     - name: CMake Discovery Build
-      #working-directory: ${{runner.workspace}}
       shell: bash
       run: cmake --build ${{runner.workspace}}/cmake_discovery_build
