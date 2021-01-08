@@ -12,14 +12,12 @@ jobs:
       matrix:
         build_type: [Release, Debug]
         compiler_suite: [gnu,llvm]
-        compiler_version: [7,8,9,10,11]
+        compiler_version: [7,8,9,10]
         exclude:
           - compiler_suite: llvm
             compiler_version: 7
           - compiler_suite: llvm
             compiler_version: 8
-          - compiler_suite: gnu
-            compiler_version: 11
 
     steps:
     - uses: actions/checkout@v2
