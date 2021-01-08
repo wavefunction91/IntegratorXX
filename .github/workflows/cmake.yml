@@ -12,6 +12,13 @@ jobs:
     strategy:
       matrix:
         build_type: [Release, Debug]
+        compiler_suite: [gnu]
+        compiler_version: [7,8,9]
+        #exclude:
+        #  - compiler_suite: llvm
+        #    compiler_version: 7
+        #  - compiler_suite: llvm
+        #    compiler_version: 8
 
     steps:
     - uses: actions/checkout@v2
@@ -23,6 +30,18 @@ jobs:
       run: mkdir -p ${{runner.workspace}}/install/cmake &&
            wget --no-check-certificate -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${CMAKE_PREFIX} &&
            export PATH=${CMAKE_PREFIX}/bin:${PATH} && cmake --version
+
+    - name: Install GNU Compiler Version
+      if: ${{ matrix.compiler_suite == 'gnu' }}
+      env:
+        GNU_VERSION: ${{matrix.compiler_version}}
+        CC:  gcc-${GNU_VERSION}
+        CXX: g++-${GNU_VERSION}
+        FC:  gfortran-${GNU_VERSION}
+      run: sudo apt install software-properties-common
+           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+           sudo apt install ${CC} ${CXX} ${FC}
+           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 --slave /usr/bin/g++ g++ /usr/bin/${CXX} --slave /usr/bin/gfortran gfortran /usr/bin/${FC}
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
