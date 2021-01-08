@@ -75,7 +75,9 @@ jobs:
         BUILD_TYPE: ${{matrix.build_type}}
       shell: bash
       working-directory: ${{runner.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/install -DCMAKE_TOOLCHAIN_FILE=${GH_ACTIONS_TOOLCHAIN}
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
+                                   -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/install 
+                                   -DCMAKE_TOOLCHAIN_FILE=${GH_ACTIONS_TOOLCHAIN}
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
@@ -98,7 +100,10 @@ jobs:
     - name: CMake Subproject Configure
       working-directory: ${{runner.workspace}}
       shell: bash
-      run: cmake -H$GITHUB_WORKSPACE/test/cmake/subproject -B${{runner.workspace}}/cmake_subproject_build -DGIT_REVISION=$GITHUB_HEAD_REF 
+      run: cmake -H$GITHUB_WORKSPACE/test/cmake/subproject 
+                 -B${{runner.workspace}}/cmake_subproject_build 
+                 -DGIT_REVISION=$GITHUB_HEAD_REF 
+                 -DCMAKE_TOOLCHAIN_FILE=${GH_ACTIONS_TOOLCHAIN}
 
     - name: CMake Subproject Build
       working-directory: ${{runner.workspace}}
@@ -108,7 +113,10 @@ jobs:
     - name: CMake Discovery Configure
       working-directory: ${{runner.workspace}}
       shell: bash
-      run: cmake -H$GITHUB_WORKSPACE/test/cmake/discovery -B${{runner.workspace}}/cmake_discovery_build -DCMAKE_PREFIX_PATH=${{runner.workspace}}/install 
+      run: cmake -H$GITHUB_WORKSPACE/test/cmake/discovery 
+                 -B${{runner.workspace}}/cmake_discovery_build 
+                 -DCMAKE_PREFIX_PATH=${{runner.workspace}}/install 
+                 -DCMAKE_TOOLCHAIN_FILE=${GH_ACTIONS_TOOLCHAIN}
 
     - name: CMake Discovery Build
       working-directory: ${{runner.workspace}}
