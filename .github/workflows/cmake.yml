@@ -3,7 +3,6 @@ name: CMake
 on: [pull_request]
 
 env:
-  GH_ACTIONS_TOOLCHAIN: .github/workflows/toolchains/gh-actions.cmake
 
 jobs:
   build:
@@ -40,14 +39,15 @@ jobs:
         CC:  gcc-${{matrix.compiler_version}}
         CXX: g++-${{matrix.compiler_version}}
         FC:  gfortran-${{matrix.compiler_version}}
+        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
       shell: bash
       run: echo $CC && echo $CXX && echo $FC &&
            sudo apt install software-properties-common &&
            sudo add-apt-repository ppa:ubuntu-toolchain-r/test &&
            sudo apt install ${CC} ${CXX} ${FC} &&
-           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 
-                                    --slave /usr/bin/g++ g++ /usr/bin/${CXX} 
-                                    --slave /usr/bin/gfortran gfortran /usr/bin/${FC} &&
+           #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 
+           #                         --slave /usr/bin/g++ g++ /usr/bin/${CXX} 
+           #                         --slave /usr/bin/gfortran gfortran /usr/bin/${FC} &&
            sed -i -e "s/CI_CXX/${CXX}/g"  ${GH_ACTIONS_TOOLCHAIN} &&
            sed -i -e "s/CI_C/${CC}/g" ${GH_ACTIONS_TOOLCHAIN} &&
            cat ${GH_ACTIONS_TOOLCHAIN}
@@ -57,6 +57,7 @@ jobs:
       env:
         CC:  clang-${{matrix.compiler_version}}
         CXX: clang++-${{matrix.compiler_version}}
+        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
       shell: bash
       run: echo $CC && echo $CXX && echo $FC &&
            sudo apt install software-properties-common &&
@@ -74,6 +75,7 @@ jobs:
     - name: Configure CMake
       env:
         BUILD_TYPE: ${{matrix.build_type}}
+        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
       shell: bash
       working-directory: ${{runner.workspace}}/build
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
@@ -101,6 +103,8 @@ jobs:
     - name: CMake Subproject Configure
       working-directory: ${{runner.workspace}}
       shell: bash
+      env:
+        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
       run: cmake -H$GITHUB_WORKSPACE/test/cmake/subproject 
                  -B${{runner.workspace}}/cmake_subproject_build 
                  -DGIT_REVISION=$GITHUB_HEAD_REF 
@@ -114,6 +118,8 @@ jobs:
     - name: CMake Discovery Configure
       working-directory: ${{runner.workspace}}
       shell: bash
+      env:
+        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
       run: cmake -H$GITHUB_WORKSPACE/test/cmake/discovery 
                  -B${{runner.workspace}}/cmake_discovery_build 
                  -DCMAKE_PREFIX_PATH=${{runner.workspace}}/install 
