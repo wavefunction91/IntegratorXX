@@ -3,7 +3,7 @@ name: CMake
 on: [pull_request]
 
 env:
-  GH_ACTIONS_TOOLCHAIN: .github/workflows/toolchains/gh-actions.cmake
+  GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
 
 jobs:
   build:
