@@ -34,10 +34,9 @@ jobs:
     - name: Install GNU Compiler Version
       if: ${{ matrix.compiler_suite == 'gnu' }}
       env:
-        GNU_VERSION: ${{matrix.compiler_version}}
-        CC:  gcc-$GNU_VERSION
-        CXX: g++-$GNU_VERSION
-        FC:  gfortran-$GNU_VERSION
+        CC:  gcc-${{matrix.compiler_version}}
+        CXX: g++-${{matrix.compiler_version}}
+        FC:  gfortran-${{matrix.compiler_version}}
       shell: bash
       run: echo $CC && echo $CXX && echo $FC &&
            sudo apt install software-properties-common &&
