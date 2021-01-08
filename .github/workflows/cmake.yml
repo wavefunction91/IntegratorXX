@@ -36,7 +36,7 @@ jobs:
       env:
         CC:  gcc-${{matrix.compiler_version}}
         CXX: g++-${{matrix.compiler_version}}
-        GH_ACTIONS_TOOLCHAIN: .github/workflows/toolchains/gh-actions.cmake
+        GH_ACTIONS_TOOLCHAIN: ${GITHUB_WORKSPACE}/.github/workflows/toolchains/gh-actions.cmake
       shell: bash
       run: echo $CC && echo $CXX && echo $FC &&
            sudo apt install software-properties-common &&
