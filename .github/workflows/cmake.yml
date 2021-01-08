@@ -38,9 +38,9 @@ jobs:
         CC:  gcc-${GNU_VERSION}
         CXX: g++-${GNU_VERSION}
         FC:  gfortran-${GNU_VERSION}
-      run: sudo apt install software-properties-common
-           sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-           sudo apt install ${CC} ${CXX} ${FC}
+      run: sudo apt install software-properties-common &&
+           sudo add-apt-repository ppa:ubuntu-toolchain-r/test &&
+           sudo apt install ${CC} ${CXX} ${FC} &&
            sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 --slave /usr/bin/g++ g++ /usr/bin/${CXX} --slave /usr/bin/gfortran gfortran /usr/bin/${FC}
 
     - name: Create Build Environment
