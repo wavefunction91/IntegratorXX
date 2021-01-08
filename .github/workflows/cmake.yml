@@ -16,7 +16,7 @@ jobs:
       matrix:
         build_type: [Release, Debug]
         compiler_suite: [gnu,llvm]
-        compiler_version: [7,8,9]
+        compiler_version: [7,8,9,10]
         exclude:
           - compiler_suite: llvm
             compiler_version: 7
