@@ -2,6 +2,9 @@ name: CMake
 
 on: [pull_request]
 
+env:
+  GH_ACTIONS_TOOLCHAIN: .github/workflows/toolchains/gh-actions.cmake
+
 jobs:
   build:
     # The CMake configure and build commands are platform agnostic and should work equally
@@ -43,9 +46,9 @@ jobs:
            sudo add-apt-repository ppa:ubuntu-toolchain-r/test &&
            sudo apt install ${CC} ${CXX} ${FC} &&
            sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 --slave /usr/bin/g++ g++ /usr/bin/${CXX} --slave /usr/bin/gfortran gfortran /usr/bin/${FC} &&
-           sed -i -e "s/CI_CXX/${CXX}/g" .github/workflows/toolchains/gh-actions.cmake &&
-           sed -i -e "s/CI_C/${CC}/g" .github/workflows/toolchains/gh-actions.cmake &&
-           cat .github/workflows/toolchains/gh-actions.cmake
+           sed -i -e "s/CI_CXX/${CXX}/g"  ${GH_ACTIONS_TOOLCHAIN} &&
+           sed -i -e "s/CI_C/${CC}/g" ${GH_ACTIONS_TOOLCHAIN} &&
+           cat ${GH_ACTIONS_TOOLCHAIN}
 
     - name: Install LLVM Compiler Version
       if: ${{ matrix.compiler_suite == 'llvm' }}
@@ -57,7 +60,10 @@ jobs:
            sudo apt install software-properties-common &&
            sudo add-apt-repository ppa:ubuntu-toolchain-r/test &&
            sudo apt install ${CC} ${CXX} &&
-           sudo update-alternatives --install /usr/bin/clang clang /usr/bin/${CC} 1000 --slave /usr/bin/clang++ clang++ /usr/bin/${CXX} 
+           sudo update-alternatives --install /usr/bin/clang clang /usr/bin/${CC} 1000 --slave /usr/bin/clang++ clang++ /usr/bin/${CXX} &&
+           sed -i -e "s/CI_CXX/${CXX}/g"  ${GH_ACTIONS_TOOLCHAIN} &&
+           sed -i -e "s/CI_C/${CC}/g" ${GH_ACTIONS_TOOLCHAIN} &&
+           cat ${GH_ACTIONS_TOOLCHAIN}
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -69,7 +75,7 @@ jobs:
         BUILD_TYPE: ${{matrix.build_type}}
       shell: bash
       working-directory: ${{runner.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/install
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/install -DCMAKE_TOOLCHAIN_FILE=${GH_ACTIONS_TOOLCHAIN}
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
