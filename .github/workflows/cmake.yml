@@ -36,8 +36,7 @@ jobs:
       env:
         CC:  gcc-${{matrix.compiler_version}}
         CXX: g++-${{matrix.compiler_version}}
-        FC:  gfortran-${{matrix.compiler_version}}
-        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
+        GH_ACTIONS_TOOLCHAIN: $GITHUB_WORKSPACE/.github/workflows/toolchains/gh-actions.cmake
       shell: bash
       run: echo $CC && echo $CXX && echo $FC &&
            sudo apt install software-properties-common &&
@@ -55,7 +54,7 @@ jobs:
       env:
         CC:  clang-${{matrix.compiler_version}}
         CXX: clang++-${{matrix.compiler_version}}
-        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
+        GH_ACTIONS_TOOLCHAIN: $GITHUB_WORKSPACE/.github/workflows/toolchains/gh-actions.cmake
       shell: bash
       run: echo $CC && echo $CXX && echo $FC &&
            sudo apt install software-properties-common &&
@@ -73,7 +72,7 @@ jobs:
     - name: Configure CMake
       env:
         BUILD_TYPE: ${{matrix.build_type}}
-        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
+        GH_ACTIONS_TOOLCHAIN: $GITHUB_WORKSPACE/.github/workflows/toolchains/gh-actions.cmake
       shell: bash
       working-directory: ${{runner.workspace}}/build
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
@@ -102,7 +101,7 @@ jobs:
       working-directory: ${{runner.workspace}}
       shell: bash
       env:
-        GH_ACTIONS_TOOLCHAIN: ${{runner.workspace}}/.github/workflows/toolchains/gh-actions.cmake
+        GH_ACTIONS_TOOLCHAIN: $GITHUB_WORKSPACE/.github/workflows/toolchains/gh-actions.cmake
       run: cmake -H$GITHUB_WORKSPACE/test/cmake/subproject 
                  -B${{runner.workspace}}/cmake_subproject_build 
                  -DGIT_REVISION=$GITHUB_HEAD_REF 
