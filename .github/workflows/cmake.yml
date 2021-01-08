@@ -36,7 +36,7 @@ jobs:
       env:
         CC:  gcc-${{matrix.compiler_version}}
         CXX: g++-${{matrix.compiler_version}}
-        GH_ACTIONS_TOOLCHAIN: $GITHUB_WORKSPACE/.github/workflows/toolchains/gh-actions.cmake
+        GH_ACTIONS_TOOLCHAIN: .github/workflows/toolchains/gh-actions.cmake
       shell: bash
       run: echo $CC && echo $CXX && echo $FC &&
            sudo apt install software-properties-common &&
@@ -44,7 +44,7 @@ jobs:
            sudo apt install ${CC} ${CXX} ${FC} &&
            sed -i -e "s/CI_CXX/${CXX}/g"  ${GH_ACTIONS_TOOLCHAIN} &&
            sed -i -e "s/CI_C/${CC}/g" ${GH_ACTIONS_TOOLCHAIN} &&
-           cat ${GH_ACTIONS_TOOLCHAIN}
+           echo $PWD && cat ${GH_ACTIONS_TOOLCHAIN}
            #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 
            #                         --slave /usr/bin/g++ g++ /usr/bin/${CXX} 
            #                         --slave /usr/bin/gfortran gfortran /usr/bin/${FC} &&
