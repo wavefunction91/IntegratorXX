@@ -34,22 +34,23 @@ jobs:
            wget --no-check-certificate -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${CMAKE_PREFIX} &&
            export PATH=${CMAKE_PREFIX}/bin:${PATH} && cmake --version
 
+    - name: Ubuntu Apt Setup
+      shell: bash
+      run: sudo apt install software-properties-common &&
+           sudo add-apt-repository ppa:ubuntu-toolchain-r/test 
+
     - name: Install GNU Compiler Version
       if: ${{ matrix.compiler_suite == 'gnu' }}
       env:
         CC:  gcc-${{matrix.compiler_version}}
         CXX: g++-${{matrix.compiler_version}}
       shell: bash
-      run: echo $CC && echo $CXX && echo $FC &&
-           sudo apt install software-properties-common &&
-           sudo add-apt-repository ppa:ubuntu-toolchain-r/test &&
-           sudo apt install ${CC} ${CXX} ${FC} &&
-           sed -i -e "s/CI_CXX/${CXX}/g"  ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN} &&
-           sed -i -e "s/CI_C/${CC}/g" ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN} &&
-           echo $PWD && cat ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
-           #sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${CC} 1000 
-           #                         --slave /usr/bin/g++ g++ /usr/bin/${CXX} 
-           #                         --slave /usr/bin/gfortran gfortran /usr/bin/${FC} &&
+#      run: echo $CC && echo $CXX && echo $FC &&
+#           sudo apt install ${CC} ${CXX} &&
+#           sed -i -e "s/CI_CXX/${CXX}/g"  ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN} &&
+#           sed -i -e "s/CI_C/${CC}/g" ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN} &&
+#           echo $PWD && cat ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
+      run: ${GITHUB_WORKSPACE}/.github/workflows/scripts/compiler_setup.sh ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
 
     - name: Install LLVM Compiler Version
       if: ${{ matrix.compiler_suite == 'llvm' }}
@@ -58,8 +59,6 @@ jobs:
         CXX: clang++-${{matrix.compiler_version}}
       shell: bash
       run: echo $CC && echo $CXX && echo $FC &&
-           sudo apt install software-properties-common &&
-           sudo add-apt-repository ppa:ubuntu-toolchain-r/test &&
            sudo apt install ${CC} ${CXX} &&
            sed -i -e "s/CI_CXX/${CXX}/g"  ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN} &&
            sed -i -e "s/CI_C/${CC}/g" ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN} &&
