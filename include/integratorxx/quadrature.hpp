@@ -1,6 +1,8 @@
 #pragma once
 
 #include <tuple>
+#include <cstdint>
+#include <cstddef>
 
 namespace IntegratorXX {
 

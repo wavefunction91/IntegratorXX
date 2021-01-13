@@ -381,8 +381,8 @@ class SphericalMicroBatcher {
       return std::make_tuple(
         box_lo,
         box_up,
-        std::vector( pb, pe ),
-        std::vector( wb, we )
+        std::vector<point_type>( pb, pe ),
+        std::vector<weight_type>( wb, we )
       );
 
     }
