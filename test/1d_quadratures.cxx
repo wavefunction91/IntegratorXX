@@ -1,5 +1,9 @@
 #include "catch2/catch.hpp"
-#include <integratorxx/quadrature.hpp>
+#include <integratorxx/quadratures/gausslegendre.hpp>
+#include <integratorxx/quadratures/mhl.hpp>
+#include <integratorxx/quadratures/muraknowles.hpp>
+#include <integratorxx/quadratures/treutleraldrichs.hpp>
+#include <integratorxx/quadratures/lebedev_laikov.hpp>
 #include <cmath>
 #include <complex>
 
@@ -125,7 +129,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
   constexpr unsigned order = 10;
 
   SECTION( "untransformed bounds" ) {
-    GaussLegendre<double> quad( order, -1, 1 );
+    IntegratorXX::GaussLegendre<double,double> quad( order, -1, 1 );
 
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();
@@ -133,7 +137,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
     auto f = [=]( double x ){ return gaussian(x); };
 
     double res = 0.;
-    for( auto i = 0; i < pts.size(); ++i )
+    for( auto i = 0; i < quad.npts(); ++i )
       res += wgt[i] * f(pts[i]);
 
     CHECK( res == Approx(ref_gaussian_int(-1.,1.)) );
@@ -143,7 +147,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
   SECTION( "transformed bounds" ) {
     const double lo = 0.;
     const double up = 4.;
-    GaussLegendre<double> quad( 100, lo, up );
+    IntegratorXX::GaussLegendre<double,double> quad( 100, lo, up );
 
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();
@@ -151,7 +155,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
     auto f = [=]( double x ){ return gaussian(x); };
 
     double res = 0.;
-    for( auto i = 0; i < pts.size(); ++i )
+    for( auto i = 0; i < quad.npts(); ++i )
       res += wgt[i] * f(pts[i]);
 
     CHECK( res == Approx(ref_gaussian_int(lo,up)) );
@@ -161,7 +165,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
-  EulerMaclaurin<double> quad( 150 );
+  IntegratorXX::MurrayHandyLaming<double,double> quad( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -169,7 +173,7 @@ TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
   auto f = [=]( double x ){ return gaussian(x); };
 
   double res = 0.;
-  for( auto i = 0; i < pts.size(); ++i )
+  for( auto i = 0; i < quad.npts(); ++i )
     res += wgt[i] * f(pts[i]);
 
   CHECK( res == Approx(ref_gaussian_int(0.,inf)) );
@@ -178,7 +182,7 @@ TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Aldrichs Quadratures", "[1d-quad]" ) {
 
-  Aldrichs<double> quad( 150 );
+  IntegratorXX::TreutlerAldrichs<double,double> quad( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -186,8 +190,10 @@ TEST_CASE( "Aldrichs Quadratures", "[1d-quad]" ) {
   auto f = [=]( double x ){ return gaussian(x); };
 
   double res = 0.;
-  for( auto i = 0; i < pts.size(); ++i )
+  for( auto i = 0; i < quad.npts(); ++i ) {
+    //std::cout << wgt[i] << ", " << pts[i] << std::endl;
     res += wgt[i] * f(pts[i]);
+  }
 
   CHECK( res == Approx(ref_gaussian_int(0.,inf)) );
 
@@ -195,7 +201,7 @@ TEST_CASE( "Aldrichs Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
 
-  Knowles<double> quad( 150 );
+  IntegratorXX::MuraKnowles<double,double> quad( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -203,7 +209,7 @@ TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
   auto f = [=]( double x ){ return gaussian(x); };
 
   double res = 0.;
-  for( auto i = 0; i < pts.size(); ++i )
+  for( auto i = 0; i < quad.npts(); ++i )
     res += wgt[i] * f(pts[i]);
 
   CHECK( res == Approx(ref_gaussian_int(0.,inf)) );
@@ -215,7 +221,7 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
 
   auto test_fn = [&]( size_t nPts ) {
   
-    Lebedev<double> quad( nPts );
+    IntegratorXX::LebedevLaikov<double> quad( nPts );
   
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();
@@ -228,7 +234,7 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
       };
   
       std::complex<double> res = 0.;
-      for( auto i = 0; i < pts.size(); ++i )
+      for( auto i = 0; i < quad.npts(); ++i )
         res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
   
       CHECK( 4.*M_PI*std::real(res) == Approx(1.) );

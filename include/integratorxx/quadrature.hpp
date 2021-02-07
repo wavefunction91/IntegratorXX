@@ -1,250 +1,227 @@
-#ifndef __INCLUDED_INTEGRATORXX_QUADRATURE_HPP__
-#define __INCLUDED_INTEGRATORXX_QUADRATURE_HPP__
+#pragma once
 
-#include <array>
-#include <vector>
 #include <tuple>
-#include <iostream>
-#include <cassert>
-#include <cmath>
+#include <cstdint>
+#include <cstddef>
 
 namespace IntegratorXX {
 
+// Forward decl of quadrature traits
+template <typename Quadrature, typename = std::void_t<>>
+struct quadrature_traits;
+
+
+/**
+ *  \brief Base class for Quadrature.
+ */
+template <typename PointContainer, typename WeightContainer>
+class QuadratureBase {
+
+public:
+
+  using point_container  = PointContainer;
+  using weight_container = WeightContainer;
+
+  using point_type  = typename point_container::value_type;
+  using weight_type = typename weight_container::value_type;
+
+protected:
+
+  point_container  points_;
+  weight_container weights_;
+
+  QuadratureBase( const point_container& p, const weight_container& w ):
+    points_(p), weights_(w) { }
+  QuadratureBase( point_container&& p, weight_container&& w ):
+    points_(std::move(p)), weights_(std::move(w)) { }
+
+public:
+
 
   /**
-   *  \brief 3D Cartesian Point
-   */ 
-  template <typename T = double>
-  using cartesian_pt_t = std::array<T, 3>;
-
-
-  /**
-   *  \brief The Quatrature Interface
+   *  @brief Getter for internal storage of quadrature points
+   *  
+   *  Const variant.
    *
-   *  Details the interface for the instantiation of
-   *  quadrature rules. All definitions for quadrature
-   *  rules should derive from this class
-   */ 
-  template <
-    typename PointType, 
-    typename wght_t,
-    template<typename ...> class ContiguousContainer,
-    typename Derived 
-  >
-  class Quadrature;
+   *  @returns A const reference to internal point storage
+   */
+  const auto& points()  const { return points_; }
 
   /**
-   *  \brief Placeholder class to perform template specialization
-   *  for quadrature generation
-   */ 
-  template <typename ...> class GenerateQuadrature;
+   *  @brief Getter for internal storage of quadrature points
+   *  
+   *  Non-const variant.
+   *
+   *  @returns A non-const reference to internal point storage
+   */
+  auto&       points()        { return points_; }
 
+  /**
+   *  @brief Getter for internal storage of quadrature weights
+   *  
+   *  Const variant.
+   *
+   *  @returns A const reference to internal weight storage
+   */
+  const auto& weights() const { return weights_; }
 
+  /**
+   *  @brief Getter for internal storage of quadrature weights
+   *  
+   *  Non-const variant.
+   *
+   *  @returns A non-const reference to internal weight storage
+   */
+  auto&       weights()       { return weights_; }
 
-
-
-
-
-  // Instantiation of Quadrature base class
-  template <
-    typename PointType, 
-    typename wght_t,
-    template<typename ... > class ContiguousContainer
-  >
-  class QuadratureBase
-  {
-
-  public:
-    using point_type = PointType; 
-      ///< Storage type for the points
-    using weight_type = wght_t;
-      ///< Storage type for the weights
-
-    template <typename T>
-    using container_type = ContiguousContainer<T>;
-      ///< Contiguous container type
-
-    using point_container = 
-      container_type< point_type >;
-      ///< Contiguous point storage
-
-    using weight_container = 
-      container_type< weight_type >;
-      ///< Contiguous weight storage
-
-  protected:
-
-    point_container  pts; ///< Integration points
-    weight_container wghts; ///< Quadrature weights
-
-    
-    // Internal constructors
-
-    // Construct from const points / weights
-    QuadratureBase(
-      const point_container&  _pts,
-      const weight_container& _wgt
-    ): pts( _pts ), wghts( _wgt ){ }
-
-    // Construct from rvalue points / weights
-    QuadratureBase(
-      point_container&&  _pts,
-      weight_container&& _wgt
-    ): pts( std::move(_pts) ), wghts( std::move(_wgt) ){ }
-
-
-    // Construct from const tuple of points / weights
-    QuadratureBase(
-      const std::tuple<point_container, weight_container>& tup
-    ) : QuadratureBase( std::get<0>(tup), std::get<1>(tup) ){ };
-
-    // Construct from rvalue tuple of points / weights
-    QuadratureBase(
-      std::tuple<point_container, weight_container>&& tup
-    ) : QuadratureBase( 
-          std::move(std::get<0>(tup)), 
-          std::move(std::get<1>(tup)) 
-        ){ }
-
-
-    public:
-
-    /**
-     *  \brief Return number of integration points
-     */ 
-    inline auto nPts() const { return pts.size(); };
-    
-    /**
-     *  \brief Return const reference to the quadrature points.
-     */ 
-    inline const point_container&  points()  const { return pts; };
-
-    /**
-     *  \brief Return const reference to the quadrature weights.
-     */ 
-    inline const weight_container& weights() const { return wghts; };
-
-  }; // class QuadratureBase
-
-
-
-
-
-
-
-  // Instantiation of Quadrature base class
-  template <
-    typename PointType, 
-    typename wght_t,
-    template<typename ...> class ContiguousContainer,
-    typename Derived
-  >
-  class Quadrature : public QuadratureBase< PointType, wght_t, ContiguousContainer >
-  {
-
-    public:
-
-    Quadrature() = delete; // no default ctor
-
-    /**
-     *  \brief Construct a Quadrature object
-     *
-     *  Delagate Quadrature constuction to specific
-     *  GenerateQuadrature<Derived> implementation.
-     */ 
-    template <typename... Args>
-    Quadrature( const size_t nPts, Args&&... args );
-
-  }; // class Quadrature
-
-
-  // Define quadrature rules
-
-  #define QuadratureImpl(NAME)                                                            \
-  template <                                                                              \
-    typename PointType,                                                                   \
-    typename wght_t = double,                                                             \
-    template<typename ... Args> class ContiguousContainer = std::vector                   \
-  >                                                                                       \
-  class NAME : public Quadrature<PointType,wght_t,ContiguousContainer,NAME<PointType>>    \
-  {                                                                                       \
-  public:                                                                                 \
-    using Base = Quadrature<PointType,wght_t,ContiguousContainer,NAME<PointType>>;        \
-    template <typename... Args> NAME( const size_t nPts, Args&&... args ) :               \
-    Base(nPts, std::forward<Args>(args)...) {}                                            \
-  };
 
 
   /**
-   *  \brief Gauss-Legendre quadrature rule
-   */ 
-  QuadratureImpl( GaussLegendre );
+   *  @brief Obtain a pointer for underlying quadrature point storage
+   *  
+   *  Const variant.
+   *
+   *  @returns A const pointer to quadrature point storage
+   */
+  const auto* points_data()  const { return points_.data();  }
 
   /**
-   *  \brief Gauss-Chebyshev (1st kind) quadrature rule
-   */ 
-  QuadratureImpl( GaussChebyshev1 );
+   *  @brief Obtain a pointer for underlying quadrature point storage
+   *  
+   *  Non-const variant.
+   *
+   *  @returns A non-const pointer to quadrature point storage
+   */
+  auto*       points_data()        { return points_.data();  }
 
   /**
-   *  \brief Gauss-Chebyshev (2nd kind) quadrature rule
-   */ 
-  QuadratureImpl( GaussChebyshev2 );
+   *  @brief Obtain a pointer for underlying quadrature weight storage
+   *  
+   *  Const variant.
+   *
+   *  @returns A const pointer to quadrature weight storage
+   */
+  const auto* weights_data() const { return weights_.data(); }
 
   /**
-   *  \brief Euler-Maclaurin quadrature rule
-   */ 
-  QuadratureImpl( EulerMaclaurin );
+   *  @brief Obtain a pointer for underlying quadrature weight storage
+   *  
+   *  Non-const variant.
+   *
+   *  @returns A non-const pointer to quadrature weight storage
+   */
+  auto*       weights_data()       { return weights_.data(); }
+
+
+
+
+
+
+
 
   /**
-   *  \brief Aldrichs quadrature rule
-   */ 
-  QuadratureImpl( Aldrichs );
-
-  /**
-   *  \brief Knowles quadrature rule
-   */ 
-  QuadratureImpl( Knowles );
+   *  @brief Obtain number of points in implemented quadrature
+   *  @returns Number of points in implemented quadrature
+   */
+  size_t npts() const { return points_.size(); }
 
 
   /**
-   *  \brief Lebedev-Laikov spherical quadrature rule
-   */ 
-  template <                  
-    typename PointType,       
-    typename wght_t = double, 
-    template<typename ... > class ContiguousContainer = std::vector
-  >                                                           
-  class Lebedev : public Quadrature<cartesian_pt_t<PointType>,wght_t,ContiguousContainer,Lebedev<PointType>>
-  {
-  public:
-    using Base = Quadrature<cartesian_pt_t<PointType>,wght_t,ContiguousContainer,Lebedev<PointType>>;
-    template <typename... Args> Lebedev( const size_t nPts, Args&&... args ) :
-    Base(nPts, std::forward<Args>(args)...) {}
-  };
+   *  @brief Obtain a copy of a particular quadrature point
+   *
+   *  Performs a bounds check, should not use in performance
+   *  critial code
+   *
+   *  @param[in] i Point index of desired quadrature point
+   *  @returns   Quadrature point at index i
+   */
+  point_type  points(size_t i)  const { return points_.at(i);  }
+
+  /**
+   *  @brief Obtain a copy of a particular quadrature weight
+   *
+   *  Performs a bounds check, should not use in performance
+   *  critial code
+   *
+   *  @param[in] i Point index of desired quadrature weight
+   *  @returns   Quadrature weight at index i
+   */
+  weight_type weights(size_t i) const { return weights_.at(i); }
+
+};
+
+/**
+ *  @brief Quadrature base class: Provides minimal storage and user interface 
+ *  for quadrature manipulation
+ *
+ *  @tparam DerivedQuadrature Implemented quadrature type, must admit template
+ *  specialization for quadrature_traits
+ */
+template <typename DerivedQuadrature>
+class Quadrature : public
+  QuadratureBase< 
+    typename quadrature_traits<DerivedQuadrature>::point_container,
+    typename quadrature_traits<DerivedQuadrature>::weight_container
+  > {
+
+private:
+
+  using derived_traits = quadrature_traits<DerivedQuadrature>;
+
+public:
+
+  using point_type  = typename derived_traits::point_type;
+  using weight_type = typename derived_traits::weight_type;
+
+  using point_container  = typename derived_traits::point_container;
+  using weight_container = typename derived_traits::weight_container;
+
+private:
+
+  using base_type = QuadratureBase< point_container, weight_container >;
+
+  template <typename... Args>
+  inline static constexpr auto 
+    generate( Args&&... args ) {
+    return derived_traits::generate( std::forward<Args>(args)... );
+  }
 
 
-}  // namespace IntegratorXX
+protected:
 
-// Instantiations of quadrature rules
-#include "gausslegendre.hpp"
-#include "gausscheby1.hpp"
-#include "gausscheby2.hpp"
-#include "eulermaclaurin.hpp"
-#include "aldrichs.hpp"
-#include "knowles.hpp"
-#include "lebedev.hpp"
+  using quadrature_return_type =
+    std::tuple<point_container,weight_container>;
 
-namespace IntegratorXX {
+  Quadrature( const quadrature_return_type& q ) :
+    base_type( std::get<0>(q), std::get<1>(q) ) { }
 
-// Instantiation of Quadrature base class
-template <typename PointType, typename wght_t,
-          template <typename...> class ContiguousContainer, typename Derived>
-template <typename ... Args>
-Quadrature<PointType,wght_t,ContiguousContainer,Derived>::Quadrature(const size_t nPts, Args &&... args)
-    : QuadratureBase<PointType, wght_t, ContiguousContainer>(
-          std::move(GenerateQuadrature<Derived>::generate(
-              nPts, std::forward<Args>(args)...))) {}
+  Quadrature( quadrature_return_type&& q ) :
+    base_type( std::move(std::get<0>(q)), std::move(std::get<1>(q)) ) { }
+
+public:
+
+  /**
+   *  @brief Construct a Quadrature object from options.
+   *
+   *  Generates the implemented quadrature and populates internal
+   *  storage.
+   *
+   *  @tparam Args Parameter pack to be forwarded to quadrature generator
+   *
+   *  @param[in] args Parameter pack to be forwarded to quadrature generator
+   *
+   */
+  template <typename... Args>
+  Quadrature( Args&&... args ) :
+    Quadrature( generate( std::forward<Args>(args)... ) ) { } 
+
+
+  // Default copy and move ctors
+
+  Quadrature( const Quadrature& )     = default;
+  Quadrature( Quadrature&& ) noexcept = default;
+
+};
+
 
 }
-
-#endif

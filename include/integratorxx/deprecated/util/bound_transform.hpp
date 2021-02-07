@@ -1,17 +1,17 @@
-#pragma once
+#ifndef __INCLUDED_INTEGRATORXX_UTIL_BOUND_TRANSFORM_HPP__
+#define __INCLUDED_INTEGRATORXX_UTIL_BOUND_TRANSFORM_HPP__
 
-#include <limits>
+namespace IntegratorXX::deprecated {
 
-namespace IntegratorXX {
 
-template <typename PointType, typename WeightType>
+template <typename PtT, typename WgtT>
 constexpr inline auto transform_minus_one_to_one( 
-  const PointType lo, const PointType up, PointType pt, WeightType wgt
+  const PtT lo, const PtT up, PtT pt, WgtT wgt
 ) {
 
   assert( lo < up );
 
-  constexpr auto inf = std::numeric_limits<PointType>::infinity();
+  constexpr auto inf = std::numeric_limits<PtT>::infinity();
   const bool up_is_inf  = up == inf;
   const bool lo_is_minf = lo == -inf;
   
@@ -69,3 +69,4 @@ constexpr inline auto transform_minus_one_to_one(
 
 }
 
+#endif
