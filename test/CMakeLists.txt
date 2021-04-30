@@ -24,6 +24,9 @@ add_library( catch2_main STATIC ut_main.cxx )
 target_link_libraries( catch2_main PUBLIC Catch2::Catch2 )
 
 
+add_executable( quadrature_manipulation quadrature_manipulation.cxx )
+target_link_libraries( quadrature_manipulation PUBLIC catch2_main integratorxx )
+
 add_executable( 1d_quadratures 1d_quadratures.cxx )
 target_link_libraries( 1d_quadratures PUBLIC catch2_main integratorxx )
 

@@ -169,11 +169,6 @@ public:
     return std::make_shared<self_type>( *this );
   }
 
-  //inline void recenter( point_type new_center ) {
-  //  sph_base::recenter( new_center, this->points_ );
-  //}
-
-
 }; 
 
 

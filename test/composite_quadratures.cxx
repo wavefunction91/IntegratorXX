@@ -173,26 +173,24 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
 TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
 
+     
   SECTION("Consistency With Spherical Quadrature") {
     size_t nrad = 4;
     size_t nang = 6;
 
     IntegratorXX::MuraKnowles<double,double> r(nrad);
     IntegratorXX::LebedevLaikov<double> q(nang);
-    std::vector< std::pair< std::pair<size_t,size_t>, decltype(q) >  > qs;
+    IntegratorXX::RadialGridPartition<decltype(q)> rgp;
 
     SECTION("Single Radial Partition") {
-      qs = decltype(qs){ {std::pair<size_t,size_t>{0, r.npts()}, q} };
+      rgp = IntegratorXX::RadialGridPartition( r, 0, q );
     }
     SECTION("Multiple Radial Partition") {
-      qs = decltype(qs){ 
-        {std::pair<size_t,size_t>{0, r.npts()/2},        q}, 
-        {std::pair<size_t,size_t>{r.npts()/2, r.npts()}, q} 
-      };
+      rgp = IntegratorXX::RadialGridPartition( r, 0, q, r.npts()/2, q );
     }
 
     IntegratorXX::SphericalQuadrature       s( r, q );
-    IntegratorXX::PrunedSphericalQuadrature ps( r, qs );
+    IntegratorXX::PrunedSphericalQuadrature ps( r, rgp );
     REQUIRE( s.npts() == ps.npts() );
 
     // Impose lexiographical ordering for check
@@ -220,6 +218,7 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
     }
 
   }
+      
 
   SECTION("Validity") {
 
@@ -228,40 +227,43 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
     IntegratorXX::LebedevLaikov<double> 
       q_6(6), q_14(14), q_302(302), q_770(770);
 
-    
-    std::vector<
-      std::pair<
-        std::pair<size_t,size_t>,
-	IntegratorXX::LebedevLaikov<double>
-      >
-    > qs = {
-      { {0ul, 4ul},  q_6   },
-      { {4ul, 6ul},  q_302 },
-      { {6ul, 9ul},  q_14  },
-      { {9ul, 12ul}, q_770 }
-    };
-
-    IntegratorXX::PrunedSphericalQuadrature ps( r, qs );
+    IntegratorXX::RadialGridPartition 
+      rgp( r, 0ul, q_6, 4ul, q_302, 6ul, q_14, 9ul, q_770 );
+    IntegratorXX::PrunedSphericalQuadrature ps( r, rgp );
 
     size_t npts = 0;
-    for( const auto& [r_range, q] : qs ) {
+    for( const auto& [r_range, q] : rgp ) {
       auto [r1,r2] = r_range;
       for( auto j = 0;  j < q.npts(); ++j )
       for( auto i = r1; i < r2;       ++i ) {
-	auto pt = ps.points()[npts];
-	CHECK( pt[0] == r.points()[i] * q.points()[j][0] );
-	CHECK( pt[1] == r.points()[i] * q.points()[j][1] );
-	CHECK( pt[2] == r.points()[i] * q.points()[j][2] );
+        auto pt = ps.points()[npts];
+        CHECK( pt[0] == r.points()[i] * q.points()[j][0] );
+        CHECK( pt[1] == r.points()[i] * q.points()[j][1] );
+        CHECK( pt[2] == r.points()[i] * q.points()[j][2] );
 
-	const auto _r = r.points()[i];
-	const auto _rw = r.weights()[i];
-	const auto _aw = q.weights()[j];
-	CHECK( ps.weights()[npts] == Approx( 4 * M_PI * _r * _r * _rw * _aw ) );
+        const auto _r = r.points()[i];
+        const auto _rw = r.weights()[i];
+        const auto _aw = q.weights()[j];
+        CHECK( ps.weights()[npts] == Approx( 4 * M_PI * _r * _r * _rw * _aw ) );
         npts++;
       }
     }
     CHECK( npts == ps.npts() );
+      
+  }
 
+  SECTION("With Batcher") {
+    IntegratorXX::MuraKnowles<double,double> r(4);
+    IntegratorXX::LebedevLaikov<double>      q(6);
+    IntegratorXX::RadialGridPartition        rgp( r, 0ul, q );
+
+    IntegratorXX::SphericalQuadrature       s(r,q);
+    IntegratorXX::PrunedSphericalQuadrature ps(r,rgp);
+
+    IntegratorXX::SphericalMicroBatcher batcher_s =
+      make_batcher( 1, s );
+    IntegratorXX::SphericalMicroBatcher batcher_ps =
+      make_batcher( 1, ps );
   }
 
 }

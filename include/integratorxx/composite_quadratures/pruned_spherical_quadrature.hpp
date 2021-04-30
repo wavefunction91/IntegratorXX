@@ -5,7 +5,132 @@
 #include <integratorxx/types.hpp>
 #include <integratorxx/type_traits.hpp>
 
+#include <utility>
+
 namespace IntegratorXX {
+
+template <typename AngularQuad>
+class RadialGridPartition {
+
+  std::vector<Quadrature<AngularQuad>> quads_;
+  std::vector<size_t>                  partition_idx_;
+
+  template <typename RadialQuad>
+  inline void add_quads(const RadialQuad& rq) { 
+    partition_idx_.emplace_back( rq.npts() ); 
+  };
+
+  template <typename RadialQuad, typename... Args>
+  void add_quads( const RadialQuad& rq, size_t idx, 
+		  const Quadrature<AngularQuad>& q, 
+		  Args&&... args ) {
+    assert( partition_idx_.size() ?
+            (idx > partition_idx_.back() && idx < (rq.npts()-1)) : (idx == 0) );
+
+    partition_idx_.emplace_back(idx);
+    quads_.emplace_back(q);
+    
+    add_quads( rq, std::forward<Args>(args)...);
+  }
+
+public:
+
+  RadialGridPartition() = default;
+
+  RadialGridPartition(const RadialGridPartition& other) :
+    partition_idx_(other.partition_idx_), quads_(other.quads_) { };
+  RadialGridPartition(RadialGridPartition&& other) noexcept :
+    partition_idx_(std::move(other.partition_idx_)), 
+    quads_(std::move(other.quads_)){ };
+
+  RadialGridPartition& operator=(const RadialGridPartition& other) {
+    partition_idx_ = other.partition_idx_;
+    quads_ = other.quads_;
+    return *this;
+  }
+  RadialGridPartition& operator=(RadialGridPartition&& other) {
+    partition_idx_ = std::move(other.partition_idx_);
+    quads_ = std::move(other.quads_);
+    return *this;
+  }
+
+  template <typename RadialQuad, typename... Args>
+  RadialGridPartition( const RadialQuad& rq, size_t idx, 
+                       const Quadrature<AngularQuad>& q, Args&&... args ) {
+    add_quads( rq, idx, q, std::forward<Args>(args)... );
+  }
+
+  auto& partition_idx() { return partition_idx_; }
+
+  template <typename index_iterator, typename quad_iterator>
+  struct rgp_iterator {
+
+    using index_range_type = std::pair<size_t,size_t>;
+    using quad_type        = Quadrature<AngularQuad>;
+    using value_type = std::pair<index_range_type, quad_type>;
+    using difference_type = size_t; 
+    using pointer           = value_type*;
+    using reference         = value_type&;
+    using iterator_catagory = std::input_iterator_tag;
+
+    index_iterator idx_it;
+    quad_iterator  quad_it;
+
+    rgp_iterator() = delete;
+    rgp_iterator( index_iterator ii, quad_iterator pi ) :
+      idx_it(ii), quad_it(pi) { }
+
+    rgp_iterator& operator++(){ idx_it++; quad_it++; return *this; }
+    rgp_iterator  operator++(int) {
+      iterator retval = *this;
+      ++(*this);
+      return retval;
+    }
+
+    rgp_iterator& operator+(int i) {
+      idx_it  += i;
+      quad_it += i;
+      return (*this);
+    }
+
+    bool operator==(rgp_iterator other) const { 
+      return idx_it == other.idx_it and quad_it == other.quad_it; 
+    }
+    bool operator!=(rgp_iterator other) const { return not (*this == other);   }
+
+    value_type operator*() {
+      return std::make_pair( std::make_pair(*idx_it, *(idx_it+1)), *quad_it );
+    }
+  };
+
+  using iterator = rgp_iterator< typename decltype(partition_idx_)::iterator, 
+                                 typename decltype(quads_)::iterator>;
+  using const_iterator = 
+    rgp_iterator<typename decltype(partition_idx_)::const_iterator, 
+	         typename decltype(quads_)::const_iterator>;
+
+
+  iterator begin() {
+    return iterator( partition_idx_.begin(), quads_.begin() );
+  }
+  iterator end() {
+    return iterator( partition_idx_.end()-1, quads_.end() );
+  }
+
+  const_iterator cbegin() const {
+    return const_iterator( partition_idx_.cbegin(), quads_.cbegin() );
+  }
+  const_iterator cend() const {
+    return const_iterator( partition_idx_.cend()-1, quads_.cend() );
+  }
+
+  const_iterator begin() const {
+    return const_iterator( partition_idx_.cbegin(), quads_.cbegin() );
+  }
+  const_iterator end() const {
+    return const_iterator( partition_idx_.cend()-1, quads_.cend() );
+  }
+};
 
 template <typename RadialQuad, typename AngularQuad>
 class PrunedSphericalQuadrature : 
@@ -50,18 +175,12 @@ protected:
 
 public:
 
-  using radial_index_range = std::pair<size_t,size_t>;
-  template <typename _Q>
-  using angular_subquadrature = 
-    std::pair<radial_index_range, _Q>;
-
-
   PrunedSphericalQuadrature( 
     const Quadrature<RadialQuad>& rq, 
-    const std::vector<angular_subquadrature<AngularQuad>>& aqs,
+    const RadialGridPartition<AngularQuad>& rgp,
     const point_type cen = point_type({0., 0., 0.}) 
   ) :
-    quad_base_type( rq, aqs, cen ),
+    quad_base_type( rq, rgp, cen ),
     sph_base(cen) { }
 
 
@@ -81,22 +200,10 @@ public:
     return std::make_shared<self_type>( *this );
   }
 
-  //inline void recenter( point_type new_center ) {
-  //  sph_base::recenter( new_center, this->points_ );
-  //}
-
-
 }; 
 
 
 
-template <typename T,size_t N>
-std::ostream& operator<<( std::ostream& os, const std::array<T,N>& arr ) {
-  os << "{";
-  for( auto i = 0; i < (N-1); ++i) os << arr[i] << ", ";
-  os << arr[N-1] << "}";
-  return os;
-}
 
 
 template <typename RadialQuad, typename AngularQuad>
@@ -136,22 +243,18 @@ struct quadrature_traits<
   }
 
 
-  using radial_index_range = std::pair<size_t,size_t>;
-  using angular_subquadrature = 
-    std::pair< radial_index_range, AngularQuad >;
-
   inline static std::tuple<point_container,weight_container>
     generate( 
-      const Quadrature<RadialQuad>&             r, 
-      const std::vector<angular_subquadrature>& as,
-      const point_type&                         cen
+      const Quadrature<RadialQuad>&           r, 
+      const RadialGridPartition<AngularQuad>& rgp,
+      const point_type&                       cen
     ) {
 
     point_container  points;
     weight_container weights;
-#if 1
+
     // Loop over angular quadratures + associated ranges
-    for( const auto& [r_range, a] : as ) {
+    for( const auto&& [r_range, a] : std::as_const(rgp) ) {
 
       // Generate radial subquadrature
       radial_subquad_type r_subquad( r_range, r );
@@ -178,7 +281,6 @@ struct quadrature_traits<
       points.insert( points.end(), sub_points.begin(), sub_points.end() );
       weights.insert( weights.end(), sub_weights.begin(), sub_weights.end() );
     }
-#endif
 
 
     // Recenter
