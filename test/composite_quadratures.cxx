@@ -254,7 +254,7 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
 
   SECTION("With Batcher") {
     IntegratorXX::MuraKnowles<double,double> r(4);
-    IntegratorXX::LebedevLaikov<double>      q(6);
+    IntegratorXX::LebedevLaikov<double>      q(302);
     IntegratorXX::RadialGridPartition        rgp( r, 0ul, q );
 
     IntegratorXX::SphericalQuadrature       s(r,q);
@@ -264,6 +264,18 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
       make_batcher( 1, s );
     IntegratorXX::SphericalMicroBatcher batcher_ps =
       make_batcher( 1, ps );
+
+    REQUIRE( batcher_s.nbatches() == batcher_ps.nbatches() );
+
+    for( auto i = 0ul; i < batcher_s.nbatches(); ++ i ) {
+      auto [s_box_lo,  s_box_up,  s_points,  s_weights ] = batcher_s.at(i);
+      auto [ps_box_lo, ps_box_up, ps_points, ps_weights] = batcher_ps.at(i);
+
+      CHECK( s_box_lo == ps_box_lo );
+      CHECK( s_box_up == ps_box_up );
+      CHECK( s_points == ps_points );
+      CHECK( s_weights == ps_weights );
+    }
   }
 
 }
