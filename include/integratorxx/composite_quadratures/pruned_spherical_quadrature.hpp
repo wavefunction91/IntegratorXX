@@ -35,6 +35,8 @@ class RadialGridPartition {
 
 public:
 
+  using angular_type = AngularQuad;
+
   RadialGridPartition() = default;
 
   RadialGridPartition(const RadialGridPartition& other) :
