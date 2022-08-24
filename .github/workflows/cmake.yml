@@ -18,6 +18,8 @@ jobs:
             compiler_version: 7
           - compiler_suite: llvm
             compiler_version: 8
+          - compiler_suite: llvm
+            compiler_version: 11
 
     steps:
     - uses: actions/checkout@v2
