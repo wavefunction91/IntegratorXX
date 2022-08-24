@@ -7,12 +7,12 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     strategy:
       matrix:
         build_type: [Release, Debug]
         compiler_suite: [gnu,llvm]
-        compiler_version: [7,8,9,10]
+        compiler_version: [7,8,9,10,11]
         exclude:
           - compiler_suite: llvm
             compiler_version: 7
