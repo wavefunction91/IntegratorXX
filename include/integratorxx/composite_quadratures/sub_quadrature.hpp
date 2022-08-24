@@ -1,6 +1,7 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
+#include <cassert>
 
 namespace IntegratorXX {
 

@@ -12,28 +12,42 @@ namespace IntegratorXX {
 template <typename AngularQuad>
 class RadialGridPartition {
 
-  std::vector<Quadrature<AngularQuad>> quads_;
   std::vector<size_t>                  partition_idx_;
+  std::vector<Quadrature<AngularQuad>> quads_;
 
   template <typename RadialQuad>
-  inline void add_quads(const RadialQuad& rq) { 
-    partition_idx_.emplace_back( rq.npts() ); 
-  };
+  inline void add_quads(const RadialQuad& rq) { finalize(rq); }
 
   template <typename RadialQuad, typename... Args>
   void add_quads( const RadialQuad& rq, size_t idx, 
 		  const Quadrature<AngularQuad>& q, 
 		  Args&&... args ) {
-    assert( partition_idx_.size() ?
-            (idx > partition_idx_.back() && idx < (rq.npts()-1)) : (idx == 0) );
 
-    partition_idx_.emplace_back(idx);
-    quads_.emplace_back(q);
-    
+    add_quad(rq, idx, q);
     add_quads( rq, std::forward<Args>(args)...);
   }
 
+
+
 public:
+
+  template <typename RadialQuad>
+  void add_quad( const RadialQuad& rq, size_t idx, 
+		  const Quadrature<AngularQuad>& q ) { 
+    assert(partition_idx_.size() ?
+      (idx > partition_idx_.back() && idx < (rq.npts()-1)) : (idx == 0));
+    (void)(rq);
+
+    partition_idx_.emplace_back(idx);
+    quads_.emplace_back(q);
+  }
+
+
+  template <typename RadialQuad>
+  void finalize( const RadialQuad& rq ) {
+    if( partition_idx_.back() != rq.npts() )
+      partition_idx_.emplace_back( rq.npts() ); 
+  }
 
   using angular_type = AngularQuad;
 

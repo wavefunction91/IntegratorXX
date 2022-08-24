@@ -123,4 +123,123 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
   }
 };
 
+namespace detail::lebedev {
+
+  inline static int64_t npts_by_algebraic_order(int64_t order) {
+  
+    switch(order) {
+      case 3  : return 6    ; 
+      case 5  : return 14   ; 
+      case 7  : return 26   ; 
+      case 9  : return 38   ; 
+      case 11 : return 50   ; 
+      case 13 : return 74   ; 
+      case 15 : return 86   ; 
+      case 17 : return 110  ; 
+      case 19 : return 146  ; 
+      case 21 : return 170  ; 
+      case 23 : return 194  ; 
+      case 25 : return 230  ; 
+      case 27 : return 266  ; 
+      case 29 : return 302  ; 
+      case 31 : return 350  ; 
+      case 35 : return 434  ; 
+      case 41 : return 590  ; 
+      case 47 : return 770  ; 
+      case 53 : return 974  ; 
+      case 59 : return 1202 ; 
+      case 65 : return 1454 ; 
+      case 71 : return 1730 ; 
+      case 77 : return 2030 ; 
+      case 83 : return 2354 ; 
+      case 89 : return 2702 ; 
+      case 95 : return 3074 ; 
+      case 101: return 3470 ; 
+      case 107: return 3890 ; 
+      case 113: return 4334 ; 
+      case 119: return 4802 ; 
+      case 131: return 5810 ; 
+      default:  return -1;
+    }
+
+  }
+
+  inline static int64_t algebraic_order_by_npts(int64_t npts) {
+  
+    switch(npts) {
+      case 6   : return 3   ; 
+      case 14  : return 5   ; 
+      case 26  : return 7   ; 
+      case 38  : return 9   ; 
+      case 50  : return 11  ; 
+      case 74  : return 13  ; 
+      case 86  : return 15  ; 
+      case 110 : return 17  ; 
+      case 146 : return 19  ; 
+      case 170 : return 21  ; 
+      case 194 : return 23  ; 
+      case 230 : return 25  ; 
+      case 266 : return 27  ; 
+      case 302 : return 29  ; 
+      case 350 : return 31  ; 
+      case 434 : return 35  ; 
+      case 590 : return 41  ; 
+      case 770 : return 47  ; 
+      case 974 : return 53  ; 
+      case 1202: return 59  ; 
+      case 1454: return 65  ; 
+      case 1730: return 71  ; 
+      case 2030: return 77  ; 
+      case 2354: return 83  ; 
+      case 2702: return 89  ; 
+      case 3074: return 95  ; 
+      case 3470: return 101 ; 
+      case 3890: return 107 ; 
+      case 4334: return 113 ; 
+      case 4802: return 119 ; 
+      case 5810: return 131 ; 
+      default:  return -1;
+    }
+
+  }
+
+
+  inline static int64_t next_algebraic_order(int64_t order) {
+  
+     if( order <= 3  )      return 3  ; 
+     else if( order <= 5  ) return 5  ; 
+     else if( order <= 7  ) return 7  ; 
+     else if( order <= 9  ) return 9  ; 
+     else if( order <= 11 ) return 11 ; 
+     else if( order <= 13 ) return 13 ; 
+     else if( order <= 15 ) return 15 ; 
+     else if( order <= 17 ) return 17 ; 
+     else if( order <= 19 ) return 19 ; 
+     else if( order <= 21 ) return 21 ; 
+     else if( order <= 23 ) return 23 ; 
+     else if( order <= 25 ) return 25 ; 
+     else if( order <= 27 ) return 27 ; 
+     else if( order <= 29 ) return 29 ; 
+     else if( order <= 31 ) return 31 ; 
+     else if( order <= 35 ) return 35 ; 
+     else if( order <= 41 ) return 41 ; 
+     else if( order <= 47 ) return 47 ; 
+     else if( order <= 53 ) return 53 ; 
+     else if( order <= 59 ) return 59 ; 
+     else if( order <= 65 ) return 65 ; 
+     else if( order <= 71 ) return 71 ; 
+     else if( order <= 77 ) return 77 ; 
+     else if( order <= 83 ) return 83 ; 
+     else if( order <= 89 ) return 89 ; 
+     else if( order <= 95 ) return 95 ; 
+     else if( order <= 101) return 101; 
+     else if( order <= 107) return 107; 
+     else if( order <= 113) return 113; 
+     else if( order <= 119) return 119; 
+     else                   return 131; 
+
+  }
+
+}
+
 }
