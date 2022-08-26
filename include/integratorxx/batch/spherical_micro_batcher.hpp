@@ -503,6 +503,7 @@ public:
 
   size_t npts()     const { return quad_->npts();           }
   size_t nbatches() const { return partition_idx_.size()-1; }
+  size_t max_batch_size() const { return max_batch_sz_;     }
 
 
   inline void recenter( point_type new_center ) {
