@@ -52,7 +52,6 @@ struct quadrature_traits<
     const weight_type pi_ov_npts    = M_PI / npts;
     const weight_type two_npts_x_pi = 2 * npts * M_PI;
 
-    #pragma omp parallel for
     for( size_t i = 0; i < npts; ++i ) {
       // Generate raw points and wghts on (-1,1)
       point_type pt = std::cos( (2.0*(i+1)-1.) / two_npts_x_pi );

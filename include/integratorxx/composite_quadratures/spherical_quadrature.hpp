@@ -103,11 +103,6 @@ public:
 template <typename RadialQuad, typename AngularQuad>
 class SphericalQuadrature : 
   public Quadrature<SphericalQuadrature<RadialQuad,AngularQuad>>,
-  public ProductQuadrature<
-    detail::spherical_combine_op<typename RadialQuad::point_type>,
-    RadialQuad,
-    AngularQuad
-  >,
   public SphericalQuadratureBase<
     typename AngularQuad::point_container,
     typename AngularQuad::weight_container
@@ -126,11 +121,6 @@ class SphericalQuadrature :
 public:
 
   using quad_base_type = Quadrature<SphericalQuadrature<RadialQuad,AngularQuad>>;
-  using prod_base_type = ProductQuadrature<
-    detail::spherical_combine_op<typename RadialQuad::point_type>,
-    RadialQuad,
-    AngularQuad
-  >; 
 
   using point_type       = typename traits::point_type;
   using weight_type      = typename traits::weight_type;
@@ -160,7 +150,6 @@ public:
     const point_type cen = point_type({0., 0., 0.}) 
   ) :
     quad_base_type( rq, aq, cen ),
-    prod_base_type( rq, aq ),
     sph_base(cen) { }
 
 
@@ -179,11 +168,6 @@ public:
   std::shared_ptr<sph_base> clone() const override {
     return std::make_shared<self_type>( *this );
   }
-
-  //inline void recenter( point_type new_center ) {
-  //  sph_base::recenter( new_center, this->points_ );
-  //}
-
 
 }; 
 

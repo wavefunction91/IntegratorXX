@@ -3,6 +3,7 @@
 #include <tuple>
 #include <cstdint>
 #include <cstddef>
+#include <integratorxx/type_traits.hpp>
 
 namespace IntegratorXX {
 
@@ -157,16 +158,16 @@ public:
  *  @tparam DerivedQuadrature Implemented quadrature type, must admit template
  *  specialization for quadrature_traits
  */
-template <typename DerivedQuadrature>
+template <typename Derived>
 class Quadrature : public
   QuadratureBase< 
-    typename quadrature_traits<DerivedQuadrature>::point_container,
-    typename quadrature_traits<DerivedQuadrature>::weight_container
+    typename quadrature_traits<Derived>::point_container,
+    typename quadrature_traits<Derived>::weight_container
   > {
 
 private:
 
-  using derived_traits = quadrature_traits<DerivedQuadrature>;
+  using derived_traits = quadrature_traits<Derived>;
 
 public:
 
@@ -211,15 +212,26 @@ public:
    *  @param[in] args Parameter pack to be forwarded to quadrature generator
    *
    */
-  template <typename... Args>
+  template <typename... Args,
+    typename = std::enable_if_t<
+      // Disable generic construction for copy/move to and from base type
+      detail::all_are_not< Quadrature<Derived>, std::decay_t<Args>... >::value and
+      detail::all_are_not<            Derived , std::decay_t<Args>... >::value
+    >
+  >
   Quadrature( Args&&... args ) :
     Quadrature( generate( std::forward<Args>(args)... ) ) { } 
 
 
   // Default copy and move ctors
 
-  Quadrature( const Quadrature& )     = default;
-  Quadrature( Quadrature&& ) noexcept = default;
+  Quadrature( const Quadrature<Derived>& )     = default;
+  Quadrature( Quadrature<Derived>&& ) noexcept = default;
+
+  Quadrature( const Derived& d ) :
+    Quadrature( dynamic_cast<const Quadrature&>(d) ) { }
+  Quadrature( Derived&& d ) noexcept :
+    Quadrature( dynamic_cast<Quadrature&&>(std::move(d)) ) { }
 
 };
 

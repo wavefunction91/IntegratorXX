@@ -51,7 +51,6 @@ struct quadrature_traits<
 
 
     point_container  points( npts );
-    #pragma omp parallel for
     for( size_t i = 0; i < npts; ++i ) {
       points[i] = std::cos( (i+1) * pi_ov_npts_p_1 ); 
     }

@@ -404,42 +404,44 @@ public:
 
   }
     
+  template <typename Quad>
+  using enable_if_spherical_quad = 
+    std::enable_if< std::is_base_of_v<quad_type,Quad> >;
 
-  template <typename RadQuad, typename AngQuad>
-  SphericalMicroBatcher( size_t batch_size, 
-                         const SphericalQuadrature<RadQuad,AngQuad>& quad ):
+  template <typename Quad>
+  using enable_if_spherical_quad_t = 
+    typename enable_if_spherical_quad<Quad>::type;
+  
+
+  template <typename Quad, typename = enable_if_spherical_quad_t<Quad> >
+  SphericalMicroBatcher( size_t batch_size, const Quad& quad ):
     SphericalMicroBatcher( 
       batch_size, 
-      std::make_shared<SphericalQuadrature<RadQuad,AngQuad>>( quad ) 
+      std::make_shared<Quad>( quad ) 
     ) { }
 
 
-  template <typename RadQuad, typename AngQuad>
-  SphericalMicroBatcher( size_t batch_size, 
-                         const SphericalQuadrature<RadQuad,AngQuad>& quad,
-                         index_container idx ):
+  template <typename Quad, typename = enable_if_spherical_quad_t<Quad> >
+  SphericalMicroBatcher( size_t batch_size, const Quad& quad, index_container idx ):
     SphericalMicroBatcher( 
       batch_size, 
-      std::make_shared<SphericalQuadrature<RadQuad,AngQuad>>( quad ),
+      std::make_shared<Quad>( quad ),
       idx
     ) { }
 
-  template <typename RadQuad, typename AngQuad>
-  SphericalMicroBatcher( size_t batch_size, 
-                         SphericalQuadrature<RadQuad,AngQuad>&& quad ):
+  template <typename Quad, typename = enable_if_spherical_quad_t<Quad> >
+  SphericalMicroBatcher( size_t batch_size, Quad&& quad ):
     SphericalMicroBatcher( 
       batch_size, 
-      std::make_shared<SphericalQuadrature<RadQuad,AngQuad>>( std::move(quad) ) 
+      std::make_shared<Quad>( std::move(quad) ) 
     ) { }
 
 
-  template <typename RadQuad, typename AngQuad>
-  SphericalMicroBatcher( size_t batch_size, 
-                         SphericalQuadrature<RadQuad,AngQuad>&& quad,
-                         index_container idx ):
+  template <typename Quad, typename = enable_if_spherical_quad_t<Quad> >
+  SphericalMicroBatcher( size_t batch_size, Quad&& quad, index_container idx ):
     SphericalMicroBatcher( 
       batch_size, 
-      std::make_shared<SphericalQuadrature<RadQuad,AngQuad>>( std::move(quad) ),
+      std::make_shared<Quad>( std::move(quad) ),
       idx
     ) { }
 
@@ -501,6 +503,7 @@ public:
 
   size_t npts()     const { return quad_->npts();           }
   size_t nbatches() const { return partition_idx_.size()-1; }
+  size_t max_batch_size() const { return max_batch_sz_;     }
 
 
   inline void recenter( point_type new_center ) {

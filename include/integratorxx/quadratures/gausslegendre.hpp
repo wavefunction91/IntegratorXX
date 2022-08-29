@@ -56,9 +56,6 @@ struct quadrature_traits<
     const size_t mid = (npts + 1) / 2;
     const double eps = 3.e-11; // Convergence tolerance
 
-    #ifdef _OPENMP
-    #pragma omp parallel for
-    #endif
     for( size_t i = 1; i <= mid; ++i ) {
 
       const point_type ip = i;
