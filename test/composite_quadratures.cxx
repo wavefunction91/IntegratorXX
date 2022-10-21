@@ -5,7 +5,7 @@
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 #include <integratorxx/batch/spherical_micro_batcher.hpp>
-//#include <integratorxx/batch/hilbert_partition.hpp>
+#include <integratorxx/batch/hilbert_partition.hpp>
 
 TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
@@ -142,34 +142,30 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       
 }
 
-#if 0
 TEST_CASE("Hilbert") {
-  std::vector<std::array<uint32_t,2>> Xs = {
-    {0,0}, {0,1}, {1,1}, {1,0}, {2,0}, {3,0}, {3,1}, {2,1}, {2,2}, {3,2}
-  };
-  for( auto X : Xs ) {
-  IntegratorXX::detail::AxestoTranspose(X.data(),3,2);
-  printf("Hilbert Integer = %d%d%d%d%d%d\n",
-    X[0] >> 2 & 1, X[1] >> 2 & 1, X[0] >> 1 & 1, X[1] >> 1 & 1,
-    X[0] & 1, X[1] & 1);
-  
-  
-  uint32_t X_pack = 0;
-  X_pack |= ((X[0] & 4) << 3) | ((X[1] & 4) << 2);
-  X_pack |= ((X[0] & 2) << 2) | ((X[1] & 2) << 1);
-  X_pack |= ((X[0] & 1) << 1) | ((X[1] & 1) << 0);
+  SECTION("Exhaustive 3x2 -> uint64_t") {
+    std::vector<std::array<uint32_t,2>> Xs = {
+      {0,0}, {0,1}, {1,1}, {1,0}, {2,0}, {3,0}, {3,1}, {2,1}, {2,2}, {3,2},
+      {3,3}, {2,3}, {1,3}, {1,2}, {0,2}, {0,3}, {0,4}, {1,4}, {1,5}, {0,5},
+      {0,6}, {0,7}, {1,7}, {1,6}, {2,6}, {2,7}, {3,7}, {3,6}, {3,5}, {2,5},
+      {2,4}, {3,4}, {4,4}, {5,4}, {5,5}, {4,5}, {4,6}, {4,7}, {5,7}, {5,6},
+      {6,6}, {6,7}, {7,7}, {7,6}, {7,5}, {6,5}, {6,4}, {7,4}, {7,3}, {7,2},
+      {6,2}, {6,3}, {5,3}, {4,3}, {4,2}, {5,2}, {5,1}, {4,1}, {4,0}, {5,0},
+      {6,0}, {6,1}, {7,1}, {7,0}
+    };
+    size_t i = 0;
+    for( auto X : Xs ) {
+      auto h = IntegratorXX::hilbert_encode<uint64_t,3>(X);
+      REQUIRE(h == i++);
+    }
+  }
 
-
-  //uint32_t X_pack = X_packl;
-  //printf("Hilbert Integer = %d%d%d%d%d%d\n",
-  //  X_pack >> 5 & 1, X_pack >> 4 & 1, X_pack >> 3 & 1, X_pack >> 2 & 1,
-  //  X_pack >> 1 & 1, X_pack & 1);
-  std::cout << X_pack << std::endl;
-  std::swap(X[0],X[1]);
-  std::cout << IntegratorXX::detail::gray_to_binary<3>(X) << std::endl;
+  SECTION("Spot check 3D -> uint64_t") {
+    std::array<uint32_t,3> X = {5, 10, 20};
+    auto hh = IntegratorXX::hilbert_encode<uint64_t,5>(X);
+    REQUIRE(hh == 7865ul);
   }
 }
-#endif
 
 
 
