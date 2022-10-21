@@ -5,9 +5,7 @@
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 #include <integratorxx/batch/spherical_micro_batcher.hpp>
-
-//#include <integratorxx/deprecated/batch.hpp>
-//#include <integratorxx/deprecated/quadrature.hpp>
+//#include <integratorxx/batch/hilbert_partition.hpp>
 
 TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
@@ -114,47 +112,22 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
     IntegratorXX::SphericalQuadrature s( r, q );
 
     size_t npts = s.npts();
-    //IntegratorXX::SphericalMicroBatcher batcher = 
-    //  make_batcher( max_batch_sz, s );
 
     IntegratorXX::SphericalMicroBatcher batcher = 
       make_batcher( max_batch_sz, s );
-  
+
     size_t npts_c = 0;
-    for( auto&& [box_lo, box_up, points_b, weights_b] : batcher ) {
-
-      auto npts_b = points_b.size();
-      CHECK( npts_b != 0 );
-      npts_c += npts_b;
-
-    }
-
-    npts_c = 0;
     for( size_t i = 0; i < batcher.nbatches(); ++i ) {
 
       auto&& [box_lo, box_up, points_b, weights_b] = batcher.at(i);
 
       auto npts_b = points_b.size();
-      CHECK( npts_b != 0 );
+      REQUIRE( npts_b != 0 );
       npts_c += npts_b;
 
     }
 
-    CHECK( npts_c == npts );
-
-    const auto& cbatcher = batcher;
-    npts_c = 0;
-    for( size_t i = 0; i < cbatcher.nbatches(); ++i ) {
-
-      auto&& [box_lo, box_up, points_b, weights_b] = cbatcher.at(i);
-
-      auto npts_b = points_b.size();
-      CHECK( npts_b != 0 );
-      npts_c += npts_b;
-
-    }
-
-    CHECK( npts_c == npts );
+    REQUIRE( npts_c == npts );
 
     auto batcher_clone = batcher.clone();
     CHECK( &batcher.quadrature() != &batcher_clone.quadrature() );
@@ -168,6 +141,35 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
   }
       
 }
+
+#if 0
+TEST_CASE("Hilbert") {
+  std::vector<std::array<uint32_t,2>> Xs = {
+    {0,0}, {0,1}, {1,1}, {1,0}, {2,0}, {3,0}, {3,1}, {2,1}, {2,2}, {3,2}
+  };
+  for( auto X : Xs ) {
+  IntegratorXX::detail::AxestoTranspose(X.data(),3,2);
+  printf("Hilbert Integer = %d%d%d%d%d%d\n",
+    X[0] >> 2 & 1, X[1] >> 2 & 1, X[0] >> 1 & 1, X[1] >> 1 & 1,
+    X[0] & 1, X[1] & 1);
+  
+  
+  uint32_t X_pack = 0;
+  X_pack |= ((X[0] & 4) << 3) | ((X[1] & 4) << 2);
+  X_pack |= ((X[0] & 2) << 2) | ((X[1] & 2) << 1);
+  X_pack |= ((X[0] & 1) << 1) | ((X[1] & 1) << 0);
+
+
+  //uint32_t X_pack = X_packl;
+  //printf("Hilbert Integer = %d%d%d%d%d%d\n",
+  //  X_pack >> 5 & 1, X_pack >> 4 & 1, X_pack >> 3 & 1, X_pack >> 2 & 1,
+  //  X_pack >> 1 & 1, X_pack & 1);
+  std::cout << X_pack << std::endl;
+  std::swap(X[0],X[1]);
+  std::cout << IntegratorXX::detail::gray_to_binary<3>(X) << std::endl;
+  }
+}
+#endif
 
 
 

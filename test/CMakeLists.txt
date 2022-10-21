@@ -33,5 +33,6 @@ target_link_libraries( 1d_quadratures PUBLIC catch2_main integratorxx )
 add_executable( composite_quadratures composite_quadratures.cxx )
 target_link_libraries( composite_quadratures PUBLIC catch2_main integratorxx )
 
-add_test( NAME QUADRATURES_1D        COMMAND 1d_quadratures        )
-add_test( NAME QUADRATURES_COMPOSITE COMMAND composite_quadratures )
+add_test( NAME QUADRATURES_1D          COMMAND 1d_quadratures          )
+add_test( NAME QUADRATURES_COMPOSITE   COMMAND composite_quadratures   )
+add_test( NAME QUADRATURE_MANIPULATION COMMAND quadrature_manipulation )
