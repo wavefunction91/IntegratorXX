@@ -103,43 +103,6 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
 
   }
-
-  SECTION("Batching") {
-
-    size_t max_batch_sz = 512;
-    IntegratorXX::MuraKnowles<double,double> r(nrad);
-    IntegratorXX::LebedevLaikov<double> q(nang);
-    IntegratorXX::SphericalQuadrature s( r, q );
-
-    size_t npts = s.npts();
-
-    IntegratorXX::SphericalMicroBatcher batcher = 
-      make_batcher( max_batch_sz, s );
-
-    size_t npts_c = 0;
-    for( size_t i = 0; i < batcher.nbatches(); ++i ) {
-
-      auto&& [box_lo, box_up, points_b, weights_b] = batcher.at(i);
-
-      auto npts_b = points_b.size();
-      REQUIRE( npts_b != 0 );
-      npts_c += npts_b;
-
-    }
-
-    REQUIRE( npts_c == npts );
-
-    auto batcher_clone = batcher.clone();
-    CHECK( &batcher.quadrature() != &batcher_clone.quadrature() );
-    CHECK( batcher.npts() == batcher_clone.npts() );
-    CHECK( batcher.nbatches() == batcher_clone.nbatches() );
-  
-    CHECK( batcher.points() == batcher_clone.points() );
-    CHECK( batcher.weights() == batcher_clone.weights() );
-  
-    batcher.quadrature().recenter({0.,0.,0.}); // just check if this compiles....
-  }
-      
 }
 
 TEST_CASE("Hilbert") {
@@ -161,11 +124,67 @@ TEST_CASE("Hilbert") {
   }
 
   SECTION("Spot check 3D -> uint64_t") {
+    // This comes from the Skilling paper
     std::array<uint32_t,3> X = {5, 10, 20};
     auto hh = IntegratorXX::hilbert_encode<uint64_t,5>(X);
     REQUIRE(hh == 7865ul);
   }
 }
+
+
+TEMPLATE_TEST_CASE("SphericalMicroBatching", "[sph-quad]",
+  IntegratorXX::OctreeGridPartitioner, IntegratorXX::HilbertGridPartitioner<21>) {
+
+  using grid_partitioner_type = TestType;
+
+  const size_t nrad = 35;
+  const size_t nang = 110;
+
+  size_t max_batch_sz = 512;
+  IntegratorXX::MuraKnowles<double,double> r(nrad);
+  IntegratorXX::LebedevLaikov<double> q(nang);
+  IntegratorXX::SphericalQuadrature s( r, q );
+
+  size_t npts = s.npts();
+
+  IntegratorXX::SphericalMicroBatcher batcher = 
+    IntegratorXX::make_batcher<grid_partitioner_type>( max_batch_sz, s );
+
+  size_t npts_c = 0;
+  for( size_t i = 0; i < batcher.nbatches(); ++i ) {
+
+    auto&& [box_lo, box_up, points_b, weights_b] = batcher.at(i);
+
+    auto npts_b = points_b.size();
+    REQUIRE( npts_b != 0 );
+    npts_c += npts_b;
+
+    const double vol = 
+      (box_up[0] - box_lo[0]) *
+      (box_up[1] - box_lo[1]) *
+      (box_up[2] - box_lo[2]); 
+
+    //std::cout << "b" << i << " = [" << std::endl;
+    //for( auto pt : points_b ) std::cout << pt[0] << ", " << pt[1] << ", " << pt[2] << std::endl;
+    //std::cout << "];" << std::endl;
+  }
+  
+
+  REQUIRE( npts_c == npts );
+
+  auto batcher_clone = batcher.clone();
+  CHECK( &batcher.quadrature() != &batcher_clone.quadrature() );
+  CHECK( batcher.npts() == batcher_clone.npts() );
+  CHECK( batcher.nbatches() == batcher_clone.nbatches() );
+  
+  CHECK( batcher.points() == batcher_clone.points() );
+  CHECK( batcher.weights() == batcher_clone.weights() );
+  
+  batcher.quadrature().recenter({0.,0.,0.}); // just check if this compiles....
+
+}
+
+
 
 
 
@@ -258,10 +277,11 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
     IntegratorXX::SphericalQuadrature       s(r,q);
     IntegratorXX::PrunedSphericalQuadrature ps(r,rgp);
 
+    using partitioner_type = IntegratorXX::OctreeGridPartitioner;
     IntegratorXX::SphericalMicroBatcher batcher_s =
-      make_batcher( 1, s );
+      IntegratorXX::make_batcher<partitioner_type>( 1, s );
     IntegratorXX::SphericalMicroBatcher batcher_ps =
-      make_batcher( 1, ps );
+      IntegratorXX::make_batcher<partitioner_type>( 1, ps );
 
     REQUIRE( batcher_s.nbatches() == batcher_ps.nbatches() );
 

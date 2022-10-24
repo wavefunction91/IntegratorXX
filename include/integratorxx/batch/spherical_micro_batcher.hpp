@@ -3,6 +3,7 @@
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/type_traits.hpp>
 #include <integratorxx/batch/octree_partition.hpp>
+#include <integratorxx/batch/hilbert_partition.hpp>
 #include <chrono>
 #include <iostream>
 #include <iomanip>
@@ -15,7 +16,7 @@ namespace IntegratorXX {
 
 
 template <typename PointContainer, typename WeightContainer, 
-  typename GridPartitioner = OctreeGridPartitioner >
+  typename GridPartitioner >
 class SphericalMicroBatcher {
 
 
@@ -327,31 +328,33 @@ public:
 
 
 
-template <typename QuadType>
+template <typename GridPartitioner, typename QuadType> 
 SphericalMicroBatcher< 
   typename QuadType::point_container, 
-  typename QuadType::weight_container
+  typename QuadType::weight_container,
+  GridPartitioner
 > make_batcher( size_t batch_size, const QuadType& quad ) {
 
   using point_container = typename QuadType::point_container;
   using weight_container = typename QuadType::weight_container;
 
-  return SphericalMicroBatcher<point_container,weight_container>(
+  return SphericalMicroBatcher<point_container,weight_container,GridPartitioner>(
     batch_size, quad
   );
 
 }
 
-template <typename QuadType>
+template <typename GridPartitioner, typename QuadType> 
 SphericalMicroBatcher< 
   typename QuadType::point_container, 
-  typename QuadType::weight_container
+  typename QuadType::weight_container,
+  GridPartitioner
 > make_batcher( size_t batch_size, QuadType&& quad ) {
 
   using point_container = typename QuadType::point_container;
   using weight_container = typename QuadType::weight_container;
 
-  return SphericalMicroBatcher<point_container,weight_container>(
+  return SphericalMicroBatcher<point_container,weight_container,GridPartitioner>(
     batch_size, std::move(quad)
   );
 
