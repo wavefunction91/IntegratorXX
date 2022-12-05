@@ -1,5 +1,8 @@
 #pragma once
 #include <integratorxx/batch/batching_util.hpp>
+#include <chrono>
+#include <iomanip>
+//#define INTEGRATORXX_VERBOSITY_LEVEL 1
 
 namespace IntegratorXX {
 
@@ -48,6 +51,27 @@ auto partition_box(
     auto point_in_this_box = [&]( const auto& pw ) {
       return detail::point_in_box( box_lo, box_up, pw.first );
     };
+#if 0
+    auto point_on_boundary = [&]( const auto& pw ) {
+      auto min_x = std::min( 
+        std::abs(pw.first[0] - box_lo[0]), 
+        std::abs(pw.first[0] - box_up[0])
+      );
+      auto min_y = std::min( 
+        std::abs(pw.first[1] - box_lo[2]), 
+        std::abs(pw.first[1] - box_up[2])
+      );
+      auto min_z = std::min( 
+        std::abs(pw.first[2] - box_lo[2]), 
+        std::abs(pw.first[2] - box_up[2])
+      );
+
+      return min_x < 1e-18 or min_y < 1e-18 or min_z < 1e-18;
+    };
+    if( std::any_of(partition_its.back(), pw_batch_end, point_on_boundary) ) {
+      std::cout << "POINT ON BOUNDARY" << std::endl;
+    }
+#endif
 
     partition_its.emplace_back(
       std::partition( partition_its.back(), pw_batch_end,

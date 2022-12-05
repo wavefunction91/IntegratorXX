@@ -360,6 +360,22 @@ SphericalMicroBatcher<
 
 }
 
+template <typename GridPartitioner, typename QuadType> 
+SphericalMicroBatcher< 
+  typename QuadType::point_container, 
+  typename QuadType::weight_container,
+  GridPartitioner
+> make_batcher( size_t batch_size, std::shared_ptr<QuadType> quad ) {
+
+  using point_container = typename QuadType::point_container;
+  using weight_container = typename QuadType::weight_container;
+
+  return SphericalMicroBatcher<point_container,weight_container,GridPartitioner>(
+    batch_size, quad
+  );
+
+}
+
 
 
 }

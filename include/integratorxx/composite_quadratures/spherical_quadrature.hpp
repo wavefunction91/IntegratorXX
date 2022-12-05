@@ -240,4 +240,14 @@ struct quadrature_traits<
 
 };
 
+template <typename RadialQuad, typename AngularQuad>
+auto make_shared_spherical_quad(
+  const RadialQuad& r, const AngularQuad& a) {
+ 
+  using clean_rad_t = std::decay_t<RadialQuad>; 
+  using clean_ang_t = std::decay_t<AngularQuad>; 
+  return std::make_shared<SphericalQuadrature<clean_rad_t,clean_ang_t>>(r, a);
+
+}
+
 }

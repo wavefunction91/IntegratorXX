@@ -17,7 +17,9 @@ void inplace_hilbert_encode_transpose( WordType* X ) {
     } // exchange
   }
   // Gray encode
-  for( i = 1; i < N; i++ ) X[i] ^= X[i-1]; t = 0;
+  for( i = 1; i < N; i++ ) X[i] ^= X[i-1]; 
+
+  t = 0;
   for( Q = M; Q > 1; Q >>= 1 ) {
     if( X[N-1] & Q ) t ^= Q-1; 
   }
@@ -64,11 +66,37 @@ ResultType hilbert_encode(const std::array<WordType,N>& _X) {
 
 
 template <typename WordType, size_t B, size_t N, typename CoordContainer>
-std::vector<uint64_t> points_to_hilbert(const CoordContainer& points) {
+std::vector<uint64_t> points_to_hilbert(
+  const std::array<double,3>& box_lo, double box_dim,
+  const CoordContainer& points) {
+
   const size_t npts = points.size();
   std::vector<uint64_t> hilbert_indices(npts);
 
-  auto [box_lo, box_hi] = detail::get_box_bounds_points(points.begin(),points.end());
+  const double spacing = box_dim/double((WordType(1) << B) - 1);
+  for(size_t i = 0; i < npts; ++i) {
+    const auto& pt = points[i];
+    const std::array<WordType,3> coords = {
+      std::round((pt[0] - box_lo[0]) / spacing),
+      std::round((pt[1] - box_lo[1]) / spacing),
+      std::round((pt[2] - box_lo[2]) / spacing)
+    };
+    hilbert_indices[i] = hilbert_encode<uint64_t,B>(coords);
+  }
+
+  return hilbert_indices;
+}
+
+
+
+template <typename WordType, size_t B, size_t N, typename CoordContainer>
+std::vector<uint64_t> points_to_hilbert(const CoordContainer& points) {
+
+  const size_t npts = points.size();
+
+  auto [box_lo, box_hi] = 
+    detail::get_box_bounds_points(points.begin(),points.end());
+
   const std::array<double,3> box_center = {
     0.5 * (box_hi[0] + box_lo[0]),
     0.5 * (box_hi[1] + box_lo[1]),
@@ -91,6 +119,7 @@ std::vector<uint64_t> points_to_hilbert(const CoordContainer& points) {
   box_lo[0] = box_scal_factors[0] * (box_lo[0] - box_center[0]) + box_center[0];
   box_lo[1] = box_scal_factors[1] * (box_lo[1] - box_center[1]) + box_center[1];
   box_lo[2] = box_scal_factors[2] * (box_lo[2] - box_center[2]) + box_center[2];
+#if 0
   box_hi[0] = box_scal_factors[0] * (box_hi[0] - box_center[0]) + box_center[0];
   box_hi[1] = box_scal_factors[1] * (box_hi[1] - box_center[1]) + box_center[1];
   box_hi[2] = box_scal_factors[2] * (box_hi[2] - box_center[2]) + box_center[2];
@@ -106,8 +135,11 @@ std::vector<uint64_t> points_to_hilbert(const CoordContainer& points) {
     };
     hilbert_indices[i] = hilbert_encode<uint64_t,B>(coords);
   }
-
   return hilbert_indices;
+#else
+  return points_to_hilbert<WordType,B,N>(box_lo, max_box_dim, points);
+#endif
+
 }
 
 
@@ -134,9 +166,6 @@ struct HilbertGridPartitioner {
     using weight_container = typename QuadType::weight_container;
     using point_type  = typename point_container::value_type;
     using weight_type = typename weight_container::value_type;
-
-
-    using quad_aos_type = std::pair<point_type,weight_type>;
 
     // Compute Hilbert indices and sort grid index
     const size_t npts = quad.npts();

@@ -143,9 +143,10 @@ TEMPLATE_TEST_CASE("SphericalMicroBatching", "[sph-quad]",
   size_t max_batch_sz = 512;
   IntegratorXX::MuraKnowles<double,double> r(nrad);
   IntegratorXX::LebedevLaikov<double> q(nang);
-  IntegratorXX::SphericalQuadrature s( r, q );
+  //IntegratorXX::SphericalQuadrature s( r, q );
+  auto s = IntegratorXX::make_shared_spherical_quad(r,q);
 
-  size_t npts = s.npts();
+  size_t npts = s->npts();
 
   IntegratorXX::SphericalMicroBatcher batcher = 
     IntegratorXX::make_batcher<grid_partitioner_type>( max_batch_sz, s );
@@ -182,6 +183,11 @@ TEMPLATE_TEST_CASE("SphericalMicroBatching", "[sph-quad]",
   
   batcher.quadrature().recenter({0.,0.,0.}); // just check if this compiles....
 
+  IntegratorXX::SphericalMicroBatcher batcher2 = 
+    IntegratorXX::make_batcher<grid_partitioner_type>( max_batch_sz, s );
+
+  REQUIRE(batcher2.points() == batcher.points());
+  REQUIRE(batcher2.weights() == batcher.weights());
 }
 
 
