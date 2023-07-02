@@ -8,6 +8,7 @@
 #include <integratorxx/quadratures/gausscheby2.hpp>
 #include <integratorxx/quadratures/gausscheby2_mod.hpp>
 #include <integratorxx/quadratures/gausscheby3.hpp>
+#include <integratorxx/quadratures/ahrens_beylkin.hpp>
 #include <cmath>
 #include <complex>
 
@@ -276,7 +277,7 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
       for( auto i = 0; i < quad.npts(); ++i )
         res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
   
-      CHECK( 4.*M_PI*std::real(res) == Catch::Approx(1.) );
+      CHECK( std::real(res) == Catch::Approx(1.) );
   
     }
 
@@ -286,4 +287,36 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
   test_fn(770);
   test_fn(974);
 
+}
+
+TEST_CASE( "Ahrens-Beylkin", "[1d-quad]" ) {
+
+
+  auto test_fn = [&]( size_t nPts ) {
+
+    IntegratorXX::AhrensBeylkin<double> quad( nPts );
+
+    const auto& pts = quad.points();
+    const auto& wgt = quad.weights();
+
+    for( auto l = 1; l < 10; ++l )
+    for( auto m = 0; m <= l; ++m ) {
+
+      auto f = [=]( decltype(pts[0]) x ){
+        return spherical_harmonics(l,m,x[0],x[1],x[2]);
+      };
+
+      std::complex<double> res = 0.;
+      for( auto i = 0; i < quad.npts(); ++i )
+        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
+
+      CHECK( std::real(res) == Catch::Approx(1.) );
+
+    }
+
+  };
+
+  test_fn(312);
+  test_fn(792);
+  test_fn(972);
 }
