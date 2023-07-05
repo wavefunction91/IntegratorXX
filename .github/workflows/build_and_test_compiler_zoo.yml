@@ -96,7 +96,7 @@ jobs:
                  -B ${{runner.workspace}}/cmake_subproject_build 
                  -DGITHUB_REPOSITORY=$GITHUB_ACTOR/IntegratorXX
                  -DGIT_REVISION=$GITHUB_HEAD_REF 
-                 -DFETCHCONTENT_SOURCE_DIR_GAUXC=$GITHUB_WORKSPACE
+                 -DFETCHCONTENT_SOURCE_DIR_INTEGRATORXX=$GITHUB_WORKSPACE
                  -DCMAKE_PREFIX_PATH=${ENV_PREFIX_PATH}
                  -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
 
