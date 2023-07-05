@@ -4,7 +4,7 @@ if( NOT Catch2_FOUND )
   FetchContent_Declare(
     catch2_download
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG        v2.13.2
+    GIT_TAG        v2.13.10
   )
   if( NOT catch2_download_POPULATED )
     FetchContent_Populate( catch2_download )
@@ -33,5 +33,6 @@ target_link_libraries( 1d_quadratures PUBLIC catch2_main integratorxx )
 add_executable( composite_quadratures composite_quadratures.cxx )
 target_link_libraries( composite_quadratures PUBLIC catch2_main integratorxx )
 
-add_test( NAME QUADRATURES_1D        COMMAND 1d_quadratures        )
-add_test( NAME QUADRATURES_COMPOSITE COMMAND composite_quadratures )
+add_test( NAME QUADRATURE_MANIP      COMMAND quadrature_manipulation )
+add_test( NAME QUADRATURES_1D        COMMAND 1d_quadratures          )
+add_test( NAME QUADRATURES_COMPOSITE COMMAND composite_quadratures   )
