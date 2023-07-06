@@ -196,9 +196,9 @@ namespace IntegratorXX::deprecated {
   QuadratureImpl( EulerMaclaurin );
 
   /**
-   *  \brief Aldrichs quadrature rule
+   *  \brief Ahlrichs quadrature rule
    */ 
-  QuadratureImpl( Aldrichs );
+  QuadratureImpl( Ahlrichs );
 
   /**
    *  \brief Knowles quadrature rule

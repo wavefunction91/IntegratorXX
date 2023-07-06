@@ -11,10 +11,10 @@ namespace IntegratorXX::deprecated {
     typename wght_t,
     template<typename...> class ContiguousContainer
   >
-  class GenerateQuadrature< Aldrichs<PointType,wght_t,ContiguousContainer> > {
+  class GenerateQuadrature< Ahlrichs<PointType,wght_t,ContiguousContainer> > {
 
-    using point_container  = typename Aldrichs<PointType,wght_t,ContiguousContainer>::point_container;
-    using weight_container = typename Aldrichs<PointType,wght_t,ContiguousContainer>::weight_container;
+    using point_container  = typename Ahlrichs<PointType,wght_t,ContiguousContainer>::point_container;
+    using weight_container = typename Ahlrichs<PointType,wght_t,ContiguousContainer>::weight_container;
 
     /**
      *  \brief Generate the Euler-Maclaurin quadrature rule of a specific order (impl)
@@ -43,7 +43,7 @@ namespace IntegratorXX::deprecated {
     typename wght_t,
     template<typename...> class ContiguousContainer
   >
-  auto GenerateQuadrature< Aldrichs<PointType,wght_t,ContiguousContainer> >::
+  auto GenerateQuadrature< Ahlrichs<PointType,wght_t,ContiguousContainer> >::
     generate_impl(const size_t nPts, const wght_t alpha) {
 
     point_container   pts(nPts);

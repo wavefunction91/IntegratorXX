@@ -2,7 +2,7 @@
 #include <integratorxx/quadratures/gausslegendre.hpp>
 #include <integratorxx/quadratures/mhl.hpp>
 #include <integratorxx/quadratures/muraknowles.hpp>
-#include <integratorxx/quadratures/treutleraldrichs.hpp>
+#include <integratorxx/quadratures/treutlerahlrichs.hpp>
 #include <integratorxx/quadratures/lebedev_laikov.hpp>
 #include <cmath>
 #include <complex>
@@ -180,9 +180,9 @@ TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
 }
 
-TEST_CASE( "Aldrichs Quadratures", "[1d-quad]" ) {
+TEST_CASE( "Ahlrichs Quadratures", "[1d-quad]" ) {
 
-  IntegratorXX::TreutlerAldrichs<double,double> quad( 150 );
+  IntegratorXX::TreutlerAhlrichs<double,double> quad( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
