@@ -1,4 +1,4 @@
-#include "catch2/catch.hpp"
+#include "catch2/catch_all.hpp"
 #include <integratorxx/quadratures/gausslegendre.hpp>
 
 TEST_CASE( "Constructor", "[quad]" ) {
