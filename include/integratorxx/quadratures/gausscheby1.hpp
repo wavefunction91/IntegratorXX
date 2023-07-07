@@ -24,11 +24,11 @@ namespace IntegratorXX {
  */
 
 template <typename PointType, typename WeightType>
-    class GaussChebyshev1
-    : public Quadrature < GaussChebyshev1<PointType, WeightType> {
+class GaussChebyshev1
+    : public Quadrature<GaussChebyshev1<PointType, WeightType>> {
 
   using base_type =
-      typename Quadrature < GaussChebyshev1<PointType, WeightType>;
+      Quadrature<GaussChebyshev1<PointType, WeightType>>;
 
 public:
   using point_type = typename base_type::point_type;
@@ -73,5 +73,5 @@ struct quadrature_traits<GaussChebyshev1<PointType, WeightType>> {
 
     return std::make_tuple(points, weights);
   }
-}
+};
 } // namespace IntegratorXX

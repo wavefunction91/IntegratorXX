@@ -74,10 +74,11 @@ struct quadrature_traits<GaussChebyshev2Modified<PointType, WeightType>> {
 
       points[i - 1] = 1.0 - 2.0 * i * oonpp +
                       M_2_PI * (1.0 + 2.0 / 3.0 * sinesq) * cosine * sine;
-      weights[i - 1] = 16.0 / 3.0 / (n + 1.0) * sinesq * sinesq;
+      weights[i - 1] = 16.0 / 3.0 / (npts + 1.0) * sinesq * sinesq;
     }
 
     return std::make_tuple(points, weights);
   }
 };
+
 } // namespace IntegratorXX

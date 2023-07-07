@@ -72,6 +72,6 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
 
     return std::make_tuple(points, weights);
   }
-}
+};
 
 } // namespace IntegratorXX

@@ -4,6 +4,9 @@
 #include <integratorxx/quadratures/muraknowles.hpp>
 #include <integratorxx/quadratures/treutlerahlrichs.hpp>
 #include <integratorxx/quadratures/lebedev_laikov.hpp>
+#include <integratorxx/quadratures/gausscheby1.hpp>
+#include <integratorxx/quadratures/gausscheby2.hpp>
+#include <integratorxx/quadratures/gausscheby2_mod.hpp>
 #include <cmath>
 #include <complex>
 
