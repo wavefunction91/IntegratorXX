@@ -7,6 +7,7 @@
 #include <integratorxx/quadratures/gausscheby1.hpp>
 #include <integratorxx/quadratures/gausscheby2.hpp>
 #include <integratorxx/quadratures/gausscheby2_mod.hpp>
+#include <integratorxx/quadratures/gausscheby3.hpp>
 #include <cmath>
 #include <complex>
 
