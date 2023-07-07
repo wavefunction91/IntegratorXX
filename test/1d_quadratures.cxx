@@ -193,6 +193,10 @@ TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
     IntegratorXX::GaussChebyshev2<double, double> quad(order, -1., 1.);
     integrate(quad);
   }
+  SECTION("Second Kind (Modified)") {
+    IntegratorXX::GaussChebyshev2Modified<double, double> quad(order, -1., 1.);
+    integrate(quad);
+  }
   SECTION("Third Kind") {
     IntegratorXX::GaussChebyshev3<double, double> quad(order, -1., 1.);
     integrate(quad);
