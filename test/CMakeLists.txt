@@ -25,13 +25,13 @@ endif()
 
 
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
-target_link_libraries( quadrature_manipulation PUBLIC Catch2WithMain integratorxx )
+target_link_libraries( quadrature_manipulation PUBLIC Catch2Main Catch2 integratorxx )
 
 add_executable( 1d_quadratures 1d_quadratures.cxx )
-target_link_libraries( 1d_quadratures PUBLIC Catch2WithMain integratorxx )
+target_link_libraries( 1d_quadratures PUBLIC Catch2Main Catch2 integratorxx )
 
 add_executable( composite_quadratures composite_quadratures.cxx )
-target_link_libraries( composite_quadratures PUBLIC Catch2WithMain integratorxx )
+target_link_libraries( composite_quadratures PUBLIC Catch2Main Catch2 integratorxx )
 
 add_test( NAME QUADRATURE_MANIP      COMMAND quadrature_manipulation )
 add_test( NAME QUADRATURES_1D        COMMAND 1d_quadratures          )
