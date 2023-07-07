@@ -1,6 +1,7 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
+#include <iostream>
 
 namespace IntegratorXX {
 
@@ -64,16 +65,17 @@ struct quadrature_traits<GaussChebyshev1<PointType, WeightType>> {
     weight_container weights(npts);
 
     const weight_type pi_ov_npts = M_PI / npts;
-    const weight_type two_npts_x_pi = 2 * npts * M_PI;
+    const weight_type pi_ov_2npts = pi_ov_npts / 2;
 
     for (size_t i = 0; i < npts; ++i) {
       // The standard nodes and weights are given by
-      points[i] = std::cos((2.0 * (i + 1) - 1.) / two_npts_x_pi);
-      weights[i] = pi_ov_npts;
+      points[i] = -std::cos((2.0 * (i + 1) - 1.) * pi_ov_2npts);
+      weights[i] = pi_ov_npts; 
       
       // However, as we're integrating f(x) not \frac{f(x)}{\sqrt{1 -
       // x^2}}, we must factor the \sqrt{1-x^2} into the weight
-      weights[i] *= std::sqrt(1. - std::pow(points[i],2));
+      // sqrt(1 - cos^2(x)) = abs(sin(x))
+      weights[i] *= std::sin((2.0 * (i + 1) - 1.) * pi_ov_2npts); //std::sqrt(1. - std::pow(points[i],2));
     }
 
     return std::make_tuple(points, weights);
