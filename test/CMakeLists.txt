@@ -15,7 +15,7 @@ if( NOT Catch2_FOUND )
     add_subdirectory( ${catch2_SOURCE_DIR} ${catch2_BINARY_DIR} )
   endif()
 else()
-  message( STATUS "Found Catch2 VERSION ${Catch2_VERSION}" )
+  message( STATUS "Found Catch2 VERSION ${Catch2_VERSION} DIR ${Catch2_DIR}" )
 endif()
 
 
