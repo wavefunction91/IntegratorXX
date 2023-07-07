@@ -6,6 +6,7 @@
 
 namespace IntegratorXX {
 
+#if 0
 /**
  *  @brief Implementation of the Murray-Handy-Laming radial quadrature.
  *
@@ -140,6 +141,7 @@ struct quadrature_traits<
   }
 
 };
+#else
 
 
 
@@ -147,7 +149,7 @@ struct quadrature_traits<
 
 
 template <size_t M>
-struct MHLRadialTraits {
+struct MurrayHandyLamingRadialTraits {
 
   template <typename PointType>
   static auto radial_transform(PointType x) {
@@ -163,9 +165,12 @@ struct MHLRadialTraits {
 
 
 template <typename PointType, typename WeightType>
-using MHLAuto = RadialTransformQuadrature<
+using MurrayHandyLaming = RadialTransformQuadrature<
   UniformTrapezoid<PointType,WeightType>,
-  MHLRadialTraits<2>
+  MurrayHandyLamingRadialTraits<2>
 >;
 
+#endif
+
 }
+

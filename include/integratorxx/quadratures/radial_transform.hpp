@@ -42,11 +42,13 @@ struct quadrature_traits<RadialTransformQuadrature<BaseQuad, RadialTraits>> {
     weight_container weights( npts );
 
 
-    auto [base_x, base_w] = base_quad_traits::generate(npts+2);
+    const auto npts_base = base_quad_traits::bound_inclusive ? npts+2 : npts;
+    auto [base_x, base_w] = base_quad_traits::generate(npts_base);
 
+    const auto ipts_offset = !!base_quad_traits::bound_inclusive;
     for(size_t i = 0; i < npts; ++i) {
-      const auto xi = base_x[i+1];
-      const auto wi = base_w[i+1];
+      const auto xi = base_x[i + ipts_offset];
+      const auto wi = base_w[i + ipts_offset];
       points[i]  = R * RadialTraits::radial_transform(xi);
       weights[i] = R * wi * RadialTraits::radial_jacobian(xi);
     }

@@ -165,13 +165,10 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
-  IntegratorXX::MurrayHandyLaming<double,double> quad( 150 );
-  IntegratorXX::MHLAuto<double,double> quad2(150);
+  IntegratorXX::MurrayHandyLaming<double,double> quad(150);
 
-  //const auto& pts = quad.points();
-  //const auto& wgt = quad.weights();
-  const auto& pts = quad2.points();
-  const auto& wgt = quad2.weights();
+  const auto& pts = quad.points();
+  const auto& wgt = quad.weights();
 
   auto f = [=]( double x ){ return gaussian(x); };
 
