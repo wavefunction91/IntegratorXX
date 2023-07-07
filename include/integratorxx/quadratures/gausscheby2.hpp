@@ -68,6 +68,7 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
       const auto ti = (i + 1) * pi_ov_npts_p_1;
       // The standard nodes and weights are given by
       points[i] = std::cos(ti);
+
       // Avoid float point cancellations - form modified weight directly in following statements
       //weights[i] =
       //    pi_ov_npts_p_1 * std::pow(std::sin((i + 1) * pi_ov_npts_p_1), 2);
