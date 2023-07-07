@@ -68,14 +68,15 @@ struct quadrature_traits<GaussChebyshev1<PointType, WeightType>> {
     const weight_type pi_ov_2npts = pi_ov_npts / 2;
 
     for (size_t i = 0; i < npts; ++i) {
+      const auto ti = (2.0 * (i + 1) - 1.) * pi_ov_2npts;
       // The standard nodes and weights are given by
-      points[i] = -std::cos((2.0 * (i + 1) - 1.) * pi_ov_2npts);
+      points[i] = -std::cos(ti);
       weights[i] = pi_ov_npts; 
       
       // However, as we're integrating f(x) not \frac{f(x)}{\sqrt{1 -
       // x^2}}, we must factor the \sqrt{1-x^2} into the weight
       // sqrt(1 - cos^2(x)) = abs(sin(x))
-      weights[i] *= std::sin((2.0 * (i + 1) - 1.) * pi_ov_2npts); //std::sqrt(1. - std::pow(points[i],2));
+      weights[i] *= std::sin(ti); //std::sqrt(1. - std::pow(points[i],2));
     }
 
     return std::make_tuple(points, weights);
