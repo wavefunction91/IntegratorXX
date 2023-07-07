@@ -1,4 +1,4 @@
-#include "catch2/catch.hpp"
+#include "catch2/catch_all.hpp"
 
 #include <integratorxx/quadratures/muraknowles.hpp>
 #include <integratorxx/quadratures/lebedev_laikov.hpp>
@@ -30,7 +30,7 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       res += s.weights()[i] * std::exp(-rsq);
     }
 
-    CHECK( res == Approx( M_PI * std::sqrt(M_PI) ) );
+    CHECK( res == Catch::Approx( M_PI * std::sqrt(M_PI) ) );
   }
 
 
@@ -58,9 +58,9 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       auto po = s_origin.points()[i];
       auto pc = s_cen.points()[i];
 
-      CHECK( pc[0] == Approx( po[0] + cen[0] ) );
-      CHECK( pc[1] == Approx( po[1] + cen[1] ) );
-      CHECK( pc[2] == Approx( po[2] + cen[2] ) );
+      CHECK( pc[0] == Catch::Approx( po[0] + cen[0] ) );
+      CHECK( pc[1] == Catch::Approx( po[1] + cen[1] ) );
+      CHECK( pc[2] == Catch::Approx( po[2] + cen[2] ) );
     }
 
 
@@ -78,8 +78,8 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       auto pc_ref = sc_cpy.points()[i];
 
       for(int x = 0; x < 3; ++x) {
-        CHECK( po[x] == Approx(pc_ref[x]) );
-        CHECK( pc[x] == Approx(po_ref[x]) );
+        CHECK( po[x] == Catch::Approx(pc_ref[x]) );
+        CHECK( pc[x] == Catch::Approx(po_ref[x]) );
       }
 
     }
@@ -98,8 +98,8 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       auto pc_ref = sc_cpy.points()[i];
 
       for(int x = 0; x < 3; ++x) {
-        CHECK( po[x] == Approx(po_ref[x]) );
-        CHECK( pc[x] == Approx(pc_ref[x]) );
+        CHECK( po[x] == Catch::Approx(po_ref[x]) );
+        CHECK( pc[x] == Catch::Approx(pc_ref[x]) );
       }
     }
 
@@ -244,7 +244,7 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
         const auto _r = r.points()[i];
         const auto _rw = r.weights()[i];
         const auto _aw = q.weights()[j];
-        CHECK( ps.weights()[npts] == Approx( 4 * M_PI * _r * _r * _rw * _aw ) );
+        CHECK( ps.weights()[npts] == Catch::Approx( 4 * M_PI * _r * _r * _rw * _aw ) );
         npts++;
       }
     }

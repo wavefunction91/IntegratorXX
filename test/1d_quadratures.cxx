@@ -1,4 +1,4 @@
-#include "catch2/catch.hpp"
+#include "catch2/catch_all.hpp"
 #include <integratorxx/quadratures/gausslegendre.hpp>
 #include <integratorxx/quadratures/mhl.hpp>
 #include <integratorxx/quadratures/muraknowles.hpp>
@@ -140,7 +140,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
     for( auto i = 0; i < quad.npts(); ++i )
       res += wgt[i] * f(pts[i]);
 
-    CHECK( res == Approx(ref_gaussian_int(-1.,1.)) );
+    CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
   }
 
 
@@ -158,7 +158,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
     for( auto i = 0; i < quad.npts(); ++i )
       res += wgt[i] * f(pts[i]);
 
-    CHECK( res == Approx(ref_gaussian_int(lo,up)) );
+    CHECK( res == Catch::Approx(ref_gaussian_int(lo,up)) );
   }
   
 }
@@ -176,7 +176,7 @@ TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
   for( auto i = 0; i < quad.npts(); ++i )
     res += wgt[i] * f(pts[i]);
 
-  CHECK( res == Approx(ref_gaussian_int(0.,inf)) );
+  CHECK( res == Catch::Approx(ref_gaussian_int(0.,inf)) );
 
 }
 
@@ -195,7 +195,7 @@ TEST_CASE( "Ahlrichs Quadratures", "[1d-quad]" ) {
     res += wgt[i] * f(pts[i]);
   }
 
-  CHECK( res == Approx(ref_gaussian_int(0.,inf)) );
+  CHECK( res == Catch::Approx(ref_gaussian_int(0.,inf)) );
 
 }
 
@@ -212,7 +212,7 @@ TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
   for( auto i = 0; i < quad.npts(); ++i )
     res += wgt[i] * f(pts[i]);
 
-  CHECK( res == Approx(ref_gaussian_int(0.,inf)) );
+  CHECK( res == Catch::Approx(ref_gaussian_int(0.,inf)) );
 
 }
 
@@ -237,7 +237,7 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
       for( auto i = 0; i < quad.npts(); ++i )
         res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
   
-      CHECK( 4.*M_PI*std::real(res) == Approx(1.) );
+      CHECK( 4.*M_PI*std::real(res) == Catch::Approx(1.) );
   
     }
 

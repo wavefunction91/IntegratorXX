@@ -4,7 +4,7 @@ if( NOT Catch2_FOUND )
   FetchContent_Declare(
     catch2_download
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG        v2.13.10
+    GIT_TAG        v3.3.2
   )
   if( NOT catch2_download_POPULATED )
     FetchContent_Populate( catch2_download )
@@ -20,18 +20,18 @@ endif()
 #target_link_libraries( my_test       PUBLIC integratorxx )
 
 
-add_library( catch2_main STATIC ut_main.cxx )
-target_link_libraries( catch2_main PUBLIC Catch2::Catch2 )
+#add_library( catch2_main STATIC ut_main.cxx )
+#target_link_libraries( catch2_main PUBLIC Catch2::Catch2 )
 
 
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
-target_link_libraries( quadrature_manipulation PUBLIC catch2_main integratorxx )
+target_link_libraries( quadrature_manipulation PUBLIC Catch2WithMain integratorxx )
 
 add_executable( 1d_quadratures 1d_quadratures.cxx )
-target_link_libraries( 1d_quadratures PUBLIC catch2_main integratorxx )
+target_link_libraries( 1d_quadratures PUBLIC Catch2WithMain integratorxx )
 
 add_executable( composite_quadratures composite_quadratures.cxx )
-target_link_libraries( composite_quadratures PUBLIC catch2_main integratorxx )
+target_link_libraries( composite_quadratures PUBLIC Catch2WithMain integratorxx )
 
 add_test( NAME QUADRATURE_MANIP      COMMAND quadrature_manipulation )
 add_test( NAME QUADRATURES_1D        COMMAND 1d_quadratures          )
