@@ -16,6 +16,11 @@ namespace IntegratorXX {
  *  \f{eqnarray*}{ x_{i} = & \cos \left( \displaystyle \frac {2i-1} {2n} \pi
  * \right) \\ w_{i} = & \displaystyle \frac \pi n \f}
  *
+ *  Reference:
+ *  Abramowitz and Stegun, Handbook of Mathematical Functions with
+ *  Formulas, Graphs, and Mathematical Tables, Tenth Printing,
+ *  December 1972, p. 889
+ *
  *  To transform the rule to the form \f$ \int_{-1}^{1} f(x) {\rm d}x \f$, the
  * weights have been scaled by \f$ w_i \to w_i \sqrt{1-x_{i}^2} \f$.
  *

@@ -17,6 +17,11 @@ namespace IntegratorXX {
  * \right) \\ w_{i} = & \displaystyle \frac \pi {n+1} \sin^2 \left( \frac {i}
  * {n+1} \pi \right) \f}
  *
+ *  Reference:
+ *  Abramowitz and Stegun, Handbook of Mathematical Functions with
+ *  Formulas, Graphs, and Mathematical Tables, Tenth Printing,
+ *  December 1972, p. 889
+ *
  *  To transform the rule to the form \f$ \int_{-1}^{1} f(x) {\rm d}x \f$, the
  * weights have been scaled by \f$ w_i \to w_i \sqrt{1-x_{i}^2} \f$.
  *
