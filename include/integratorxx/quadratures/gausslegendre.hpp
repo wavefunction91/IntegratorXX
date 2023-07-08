@@ -1,10 +1,9 @@
 #pragma once
 
-#include <vector>
 #include <cassert>
-
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/util/bound_transform.hpp>
+#include <vector>
 
 namespace IntegratorXX {
 
