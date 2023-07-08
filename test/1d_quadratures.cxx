@@ -4,6 +4,10 @@
 #include <integratorxx/quadratures/muraknowles.hpp>
 #include <integratorxx/quadratures/treutlerahlrichs.hpp>
 #include <integratorxx/quadratures/lebedev_laikov.hpp>
+#include <integratorxx/quadratures/gausscheby1.hpp>
+#include <integratorxx/quadratures/gausscheby2.hpp>
+#include <integratorxx/quadratures/gausscheby2_mod.hpp>
+#include <integratorxx/quadratures/gausscheby3.hpp>
 #include <cmath>
 #include <complex>
 
@@ -137,8 +141,9 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
     auto f = [=]( double x ){ return gaussian(x); };
 
     double res = 0.;
-    for( auto i = 0; i < quad.npts(); ++i )
+    for( auto i = 0; i < quad.npts(); ++i ) {
       res += wgt[i] * f(pts[i]);
+    }
 
     CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
   }
@@ -161,6 +166,41 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
     CHECK( res == Catch::Approx(ref_gaussian_int(lo,up)) );
   }
   
+}
+
+TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
+
+  constexpr unsigned order = 200;
+  auto integrate = [&](auto& quad) {
+    const auto& pts = quad.points();
+    const auto& wgt = quad.weights();
+
+    auto f = [=]( double x ){ return gaussian(x); };
+
+    double res = 0.;
+    for( auto i = 0; i < quad.npts(); ++i ) {
+      res += wgt[i] * f(pts[i]);
+    }
+
+    CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
+  };
+
+  SECTION("First Kind") {
+    IntegratorXX::GaussChebyshev1<double, double> quad(order, -1., 1.);
+    integrate(quad);
+  }
+  SECTION("Second Kind") {
+    IntegratorXX::GaussChebyshev2<double, double> quad(order, -1., 1.);
+    integrate(quad);
+  }
+  SECTION("Second Kind (Modified)") {
+    IntegratorXX::GaussChebyshev2Modified<double, double> quad(order, -1., 1.);
+    integrate(quad);
+  }
+  SECTION("Third Kind") {
+    IntegratorXX::GaussChebyshev3<double, double> quad(order, -1., 1.);
+    integrate(quad);
+  }
 }
 
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
@@ -191,7 +231,6 @@ TEST_CASE( "Ahlrichs Quadratures", "[1d-quad]" ) {
 
   double res = 0.;
   for( auto i = 0; i < quad.npts(); ++i ) {
-    //std::cout << wgt[i] << ", " << pts[i] << std::endl;
     res += wgt[i] * f(pts[i]);
   }
 

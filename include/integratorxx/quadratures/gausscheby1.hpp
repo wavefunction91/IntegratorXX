@@ -1,6 +1,7 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
+#include <iostream>
 
 namespace IntegratorXX {
 
@@ -16,6 +17,11 @@ namespace IntegratorXX {
  *  \f{eqnarray*}{ x_{i} = & \cos \left( \displaystyle \frac {2i-1} {2n} \pi
  * \right) \\ w_{i} = & \displaystyle \frac \pi n \f}
  *
+ *  Reference:
+ *  Abramowitz and Stegun, Handbook of Mathematical Functions with
+ *  Formulas, Graphs, and Mathematical Tables, Tenth Printing,
+ *  December 1972, p. 889
+ *
  *  To transform the rule to the form \f$ \int_{-1}^{1} f(x) {\rm d}x \f$, the
  * weights have been scaled by \f$ w_i \to w_i \sqrt{1-x_{i}^2} \f$.
  *
@@ -24,11 +30,11 @@ namespace IntegratorXX {
  */
 
 template <typename PointType, typename WeightType>
-    class GaussChebyshev1
-    : public Quadrature < GaussChebyshev1<PointType, WeightType> {
+class GaussChebyshev1
+    : public Quadrature<GaussChebyshev1<PointType, WeightType>> {
 
   using base_type =
-      typename Quadrature < GaussChebyshev1<PointType, WeightType>;
+      Quadrature<GaussChebyshev1<PointType, WeightType>>;
 
 public:
   using point_type = typename base_type::point_type;
@@ -59,19 +65,24 @@ struct quadrature_traits<GaussChebyshev1<PointType, WeightType>> {
     weight_container weights(npts);
 
     const weight_type pi_ov_npts = M_PI / npts;
-    const weight_type two_npts_x_pi = 2 * npts * M_PI;
+    const weight_type pi_ov_2npts = pi_ov_npts / 2;
 
     for (size_t i = 0; i < npts; ++i) {
+      const auto ti = (2.0 * (i + 1) - 1.) * pi_ov_2npts;
       // The standard nodes and weights are given by
-      points[i] = std::cos((2.0 * (i + 1) - 1.) / two_npts_x_pi);
-      weights[i] = pi_ov_npts;
-      
+      const auto xi = std::cos(ti); 
+      auto wi = pi_ov_npts;
+
       // However, as we're integrating f(x) not \frac{f(x)}{\sqrt{1 -
       // x^2}}, we must factor the \sqrt{1-x^2} into the weight
-      weights[i] *= std::sqrt(1. - std::pow(points[i],2));
+      wi *= std::sqrt(1. - xi*xi);
+
+      // Store into memory
+      points[i]  = xi;
+      weights[i] = wi;
     }
 
     return std::make_tuple(points, weights);
   }
-}
+};
 } // namespace IntegratorXX
