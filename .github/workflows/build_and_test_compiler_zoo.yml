@@ -1,6 +1,6 @@
 name: Build and Test - Compiler Zoo
 
-on: [pull_request, workflow_dispatch] 
+on: [pull_request, workflow_dispatch, push] 
 
 env:
   GH_ACTIONS_TOOLCHAIN: .github/workflows/toolchains/gh-actions.cmake
