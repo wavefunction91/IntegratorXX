@@ -231,7 +231,6 @@ TEST_CASE( "Ahlrichs Quadratures", "[1d-quad]" ) {
 
   double res = 0.;
   for( auto i = 0; i < quad.npts(); ++i ) {
-    //std::cout << wgt[i] << ", " << pts[i] << std::endl;
     res += wgt[i] * f(pts[i]);
   }
 

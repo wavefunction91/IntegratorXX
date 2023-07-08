@@ -68,9 +68,10 @@ struct quadrature_traits<GaussChebyshev2Modified<PointType, WeightType>> {
     point_container points(npts);
     weight_container weights(npts);
     for (size_t i = 1; i <= npts; ++i) {
-      auto sine = sin(i * M_PI * oonpp);
-      auto sinesq = sine * sine;
-      auto cosine = cos(i * M_PI * oonpp);
+      const auto ti = i * M_PI * oonpp;
+      const auto sine = std::sin(ti);
+      const auto sinesq = sine * sine;
+      const auto cosine = std::cos(ti);
 
       points[i - 1] = 1.0 - 2.0 * i * oonpp +
                       M_2_PI * (1.0 + 2.0 / 3.0 * sinesq) * cosine * sine;
