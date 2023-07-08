@@ -12,7 +12,7 @@ jobs:
       run: ls -lhta ${{ github.workspace }} && git -C ${{ github.workspace }} rev-parse HEAD
     - uses: DoozyX/clang-format-lint-action@v0.16
       with:
-        source: 'include src tests'
+        source: 'include test'
         extensions: 'hpp,cxx,hpp.in,h,c'
         clangFormatVersion: 15
         inplace: True
