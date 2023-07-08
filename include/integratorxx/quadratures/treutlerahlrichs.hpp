@@ -149,4 +149,11 @@ struct TreutlerAhlrichsM4RadialTraits {
 
 };
 
+
+template <typename PointType, typename WeightType>
+using TAAuto = RadialTransformQuadrature<
+  GaussChebyshev2<PointType, WeightType>,
+  TreutlerAhlrichsM4RadialTraits 
+>;
+
 }

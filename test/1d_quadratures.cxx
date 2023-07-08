@@ -223,6 +223,7 @@ TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 TEST_CASE( "Ahlrichs Quadratures", "[1d-quad]" ) {
 
   IntegratorXX::TreutlerAhlrichs<double,double> quad( 150 );
+  IntegratorXX::TAAuto<double, double> quad2(150);
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
