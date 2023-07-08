@@ -65,14 +65,19 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
     weight_container weights(npts);
     point_container points(npts);
     for (size_t i = 0; i < npts; ++i) {
-      // The standard nodes and weights are given by
-      points[i] = std::cos((i + 1) * pi_ov_npts_p_1);
-      weights[i] =
-          pi_ov_npts_p_1 * std::pow(std::sin((i + 1) * pi_ov_npts_p_1), 2);
+      const auto ti = (i + 1) * pi_ov_npts_p_1;
+      // The standard nodes are given by
+      const auto xi = std::cos(ti);
 
+      // Avoid float point cancellations - form modified weight directly in following statements
       // However, since we want the rule with a unit weight factor, we
       // divide the weights by sqrt(1-x^2).
-      weights[i] /= std::sqrt(1.0 - std::pow(points[i], 2));
+      // PI / (n+1) * sin^2(x) / sqrt(1 - cos^2(x)) = PI / (n+1) * sqrt(1 - cos^2(x))
+      const auto wi = pi_ov_npts_p_1 * std::sqrt(1.0 - xi*xi);
+
+      // Store into memory
+      points[i]  = xi;
+      weights[i] = wi;
     }
 
     return std::make_tuple(points, weights);
