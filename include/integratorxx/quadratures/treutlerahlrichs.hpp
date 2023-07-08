@@ -4,7 +4,6 @@
 
 namespace IntegratorXX {
 
-
 /**
  *  @brief Implementation of the Treutler-Ahlrichs radial quadrature.
  *
@@ -20,16 +19,14 @@ namespace IntegratorXX {
  *  @tparam WeightType Type describing the quadrature weights
  */
 template <typename PointType, typename WeightType>
-class TreutlerAhlrichs :
-  public Quadrature<TreutlerAhlrichs<PointType,WeightType>> {
+class TreutlerAhlrichs
+    : public Quadrature<TreutlerAhlrichs<PointType, WeightType>> {
+  using base_type = Quadrature<TreutlerAhlrichs<PointType, WeightType>>;
 
-  using base_type = Quadrature<TreutlerAhlrichs<PointType,WeightType>>;
-
-public:
-
-  using point_type       = typename base_type::point_type;
-  using weight_type      = typename base_type::weight_type;
-  using point_container  = typename base_type::point_container;
+ public:
+  using point_type = typename base_type::point_type;
+  using weight_type = typename base_type::weight_type;
+  using point_container = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
 
   /**
@@ -41,17 +38,12 @@ public:
    *  @param[in] alpha  Exponent factor for the quadrature. 0.6 was the
    *                    default suggested in the reference.
    */
-  TreutlerAhlrichs(size_t npts, weight_type R = 1., weight_type alpha = 0.6):
-    base_type( npts, R, alpha ) { }
+  TreutlerAhlrichs(size_t npts, weight_type R = 1., weight_type alpha = 0.6)
+      : base_type(npts, R, alpha) {}
 
-  TreutlerAhlrichs( const TreutlerAhlrichs& )     = default;
-  TreutlerAhlrichs( TreutlerAhlrichs&& ) noexcept = default;
+  TreutlerAhlrichs(const TreutlerAhlrichs&) = default;
+  TreutlerAhlrichs(TreutlerAhlrichs&&) noexcept = default;
 };
-
-
-
-
-
 
 /**
  *  @brief Quadrature traits for the Treutler-Ahlrichs quadrature
@@ -61,15 +53,12 @@ public:
  */
 
 template <typename PointType, typename WeightType>
-struct quadrature_traits<
-  TreutlerAhlrichs<PointType,WeightType>
-> {
-
-  using point_type  = PointType;
+struct quadrature_traits<TreutlerAhlrichs<PointType, WeightType>> {
+  using point_type = PointType;
   using weight_type = WeightType;
 
-  using point_container  = std::vector< point_type >;
-  using weight_container = std::vector< weight_type >;
+  using point_container = std::vector<point_type>;
+  using weight_container = std::vector<weight_type>;
 
   /**
    *  @brief Generator for the Treutler-Ahlrichs quadrature
@@ -81,15 +70,13 @@ struct quadrature_traits<
    *
    *  @returns Tuple of quadrature points and weights
    */
-  inline static std::tuple<point_container,weight_container>
-    generate( size_t npts, weight_type R, weight_type alpha ) {
-
-
+  inline static std::tuple<point_container, weight_container> generate(
+      size_t npts, weight_type R, weight_type alpha) {
     const point_type ln_2 = std::log(2.);
     const point_type pi_ov_npts_p1 = M_PI / (npts + 1);
 
-    point_container  points( npts );
-    weight_container weights( npts );
+    point_container points(npts);
+    weight_container weights(npts);
 
     /*
      * Treutler-Ahlrichs quadrature
@@ -103,24 +90,20 @@ struct quadrature_traits<
      * DOI: https://doi.org/10.1002/jcc.10211
      *
      */
-    for( size_t i = 0; i < npts; ++i ) {
-      const auto xi = std::cos( (i+1) * pi_ov_npts_p1 );
+    for(size_t i = 0; i < npts; ++i) {
+      const auto xi = std::cos((i + 1) * pi_ov_npts_p1);
 
-      const auto pow_term  = std::pow( 1. + xi, alpha ) / ln_2;
-      const auto log_term  = std::log( (1. - xi)/2. );
-      const auto sqrt_term = std::sqrt( (1.+xi)/(1.-xi) );
+      const auto pow_term = std::pow(1. + xi, alpha) / ln_2;
+      const auto log_term = std::log((1. - xi) / 2.);
+      const auto sqrt_term = std::sqrt((1. + xi) / (1. - xi));
 
-      points[i]  = -R * pow_term * log_term;
+      points[i] = -R * pow_term * log_term;
       weights[i] = R * pi_ov_npts_p1 * pow_term *
-        ( sqrt_term - alpha * log_term / sqrt_term );
+                   (sqrt_term - alpha * log_term / sqrt_term);
     }
 
-
-
-    return std::make_tuple( points, weights );
-
+    return std::make_tuple(points, weights);
   }
-
 };
 
-}
+}  // namespace IntegratorXX

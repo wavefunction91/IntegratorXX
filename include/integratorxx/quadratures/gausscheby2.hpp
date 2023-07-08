@@ -32,10 +32,9 @@ namespace IntegratorXX {
 template <typename PointType, typename WeightType>
 class GaussChebyshev2
     : public Quadrature<GaussChebyshev2<PointType, WeightType>> {
-
   using base_type = Quadrature<GaussChebyshev2<PointType, WeightType>>;
 
-public:
+ public:
   using point_type = typename base_type::point_type;
   using weight_type = typename base_type::weight_type;
   using point_container = typename base_type::point_container;
@@ -50,21 +49,19 @@ public:
 
 template <typename PointType, typename WeightType>
 struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
-
   using point_type = PointType;
   using weight_type = WeightType;
 
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  inline static std::tuple<point_container, weight_container>
-  generate(size_t npts, point_type lo, point_type up) {
-
+  inline static std::tuple<point_container, weight_container> generate(
+      size_t npts, point_type lo, point_type up) {
     const weight_type pi_ov_npts_p_1 = M_PI / (npts + 1);
 
     weight_container weights(npts);
     point_container points(npts);
-    for (size_t i = 0; i < npts; ++i) {
+    for(size_t i = 0; i < npts; ++i) {
       // The standard nodes and weights are given by
       points[i] = std::cos((i + 1) * pi_ov_npts_p_1);
       weights[i] =
@@ -79,4 +76,4 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
   }
 };
 
-} // namespace IntegratorXX
+}  // namespace IntegratorXX

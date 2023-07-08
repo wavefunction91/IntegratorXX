@@ -13,7 +13,8 @@ namespace IntegratorXX {
  *
  *  The original nodes and weights from the rule are given by
  *
- *  \f{eqnarray*}{ x_{i} = & \cos^2 \displaystyle \frac {(2i-1) \pi} {2(2n+1)}  \\ w_{i} = & \displaystyle \frac {2 \pi} {2n+1} x_i \f}
+ *  \f{eqnarray*}{ x_{i} = & \cos^2 \displaystyle \frac {(2i-1) \pi} {2(2n+1)}
+ * \\ w_{i} = & \displaystyle \frac {2 \pi} {2n+1} x_i \f}
  *
  *  Reference:
  *  Abramowitz and Stegun, Handbook of Mathematical Functions with
@@ -30,10 +31,9 @@ namespace IntegratorXX {
 template <typename PointType, typename WeightType>
 class GaussChebyshev3
     : public Quadrature<GaussChebyshev3<PointType, WeightType>> {
-
   using base_type = Quadrature<GaussChebyshev3<PointType, WeightType>>;
 
-public:
+ public:
   using point_type = typename base_type::point_type;
   using weight_type = typename base_type::weight_type;
   using point_container = typename base_type::point_container;
@@ -48,31 +48,29 @@ public:
 
 template <typename PointType, typename WeightType>
 struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
-
   using point_type = PointType;
   using weight_type = WeightType;
 
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  inline static std::tuple<point_container, weight_container>
-  generate(size_t npts, point_type lo, point_type up) {
-
-    const weight_type pi_ov_2n_p_1 = M_PI / (2*npts + 1);
+  inline static std::tuple<point_container, weight_container> generate(
+      size_t npts, point_type lo, point_type up) {
+    const weight_type pi_ov_2n_p_1 = M_PI / (2 * npts + 1);
 
     weight_container weights(npts);
     point_container points(npts);
-    for (size_t i = 1; i <= npts; ++i) {
+    for(size_t i = 1; i <= npts; ++i) {
       // The standard nodes and weights are given by
-      points[i] = std::cos(0.5 * (2*i - 1) * pi_ov_2n_p_1);
-      weights[i] = 2.0*pi_ov_2n_p_1 * points[i];
+      points[i] = std::cos(0.5 * (2 * i - 1) * pi_ov_2n_p_1);
+      weights[i] = 2.0 * pi_ov_2n_p_1 * points[i];
 
       // However, since we want the rule with a unit weight factor, we
       // divide the weights by sqrt((1-x)/x).
-      weights[i] /= std::sqrt((1.0 - points[i])/points[i]);
+      weights[i] /= std::sqrt((1.0 - points[i]) / points[i]);
 
       // Finally, convert from [0,1] to [-1,1]
-      points[i] = 2*points[i] - 1.0;
+      points[i] = 2 * points[i] - 1.0;
       weights[i] *= 2.0;
     }
 
@@ -80,5 +78,4 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
   }
 };
 
-
-} // namespace IntegratorXX
+}  // namespace IntegratorXX
