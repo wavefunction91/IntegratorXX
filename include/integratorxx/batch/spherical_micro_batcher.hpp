@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
@@ -7,7 +8,6 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 namespace IntegratorXX {
 
