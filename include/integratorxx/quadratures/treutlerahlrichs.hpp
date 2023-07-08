@@ -126,28 +126,27 @@ struct quadrature_traits<
 
 
 
-struct TreutlerAhlrichsRadialTraits {
+struct TreutlerAhlrichsM4RadialTraits {
 
   inline static constexpr double alpha = 0.6;
+  inline static constexpr double a     = 1.0;
   inline static constexpr double ln_2  = 0.693147180559945309417232;
 
   template <typename PointType>
   static auto radial_transform(PointType x) {
-    const auto pow_term = std::pow(1.0 + x, alpha);
-    const auto log_term = std::log(0.5 * (1.0 - x));
-    return  pow_term * log_term / ln_2; 
+    const auto pow_term = std::pow(a + x, alpha);
+    const auto log_term = std::log((a + 1.0) / (1.0 - x));
+    return pow_term * log_term / ln_2; 
   };
 
 
   template <typename PointType>
   static auto radial_jacobian(PointType x) {
-    const auto pow_term = std::pow(1.0 + x, alpha);
-    const auto log_term = std::log(0.5 * (1.0 - x));
-    return pow_term / ln_2 * (-alpha * log_term / (1.0 + x) + 1.0 / (1.0 - x));
+    const auto pow_term = std::pow(a + x, alpha);
+    const auto log_term = std::log((a + 1.0) / (1.0 - x));
+    return pow_term / ln_2 * ( alpha * log_term / (a+x) + (1./(1. - x)) );
   }
 
 };
-
-
 
 }
