@@ -6,6 +6,7 @@
 namespace IntegratorXX {
 
 
+#if 0
 /**
  *  @brief Implementation of the Treutler-Ahlrichs radial quadrature.
  *
@@ -123,8 +124,7 @@ struct quadrature_traits<
 };
 
 
-
-
+#else
 
 struct TreutlerAhlrichsM4RadialTraits {
 
@@ -151,9 +151,11 @@ struct TreutlerAhlrichsM4RadialTraits {
 
 
 template <typename PointType, typename WeightType>
-using TAAuto = RadialTransformQuadrature<
+using TreutlerAhlrichs = RadialTransformQuadrature<
   GaussChebyshev2<PointType, WeightType>,
   TreutlerAhlrichsM4RadialTraits 
 >;
+
+#endif
 
 }
