@@ -24,7 +24,7 @@ struct MurrayHandyLamingRadialTraits {
    *  @brief Transformation rule for the MHL radial quadrature
    *  
    *  @param[in] x Point in (0,1)
-   *  @return    r = (x / (1-x))^M, r \in (0,inf)
+   *  @return    r = (x / (1-x))^M
    */
   template <typename PointType>
   static auto radial_transform(PointType x) {
@@ -35,7 +35,7 @@ struct MurrayHandyLamingRadialTraits {
    *  @brief Jacobian of the MHL radial transformation
    *
    *  @param[in] x Point in (0,1)
-   *  @returns   dr = M * x^(M-1) / (1-x)^(M+1)
+   *  @returns   dr/dx (see `radial_transform`)
    */
   template <typename PointType>
   static auto radial_jacobian(PointType x) {
