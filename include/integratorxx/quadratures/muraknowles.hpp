@@ -6,6 +6,7 @@
 
 namespace IntegratorXX {
 
+#if 0
 /**
  *  @brief Implementation of the Mura-Knowles radial quadrature.
  *
@@ -133,6 +134,7 @@ struct quadrature_traits<
 
 };
 
+#else
 
 struct MuraKnowlesRadialTraits {
 
@@ -150,9 +152,11 @@ struct MuraKnowlesRadialTraits {
 }; 
 
 template <typename PointType, typename WeightType>
-using MKAuto = RadialTransformQuadrature<
+using MuraKnowles = RadialTransformQuadrature<
   UniformTrapezoid<PointType,WeightType>,
   MuraKnowlesRadialTraits
 >;
+
+#endif
 
 }
