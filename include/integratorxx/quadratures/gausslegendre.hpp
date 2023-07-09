@@ -79,7 +79,7 @@ struct quadrature_traits<
     weight_container weights( npts );
 
     // Absolute precision for the nodes
-    const double eps=3.0e-11;
+    const auto eps = std::numeric_limits<double>::epsilon();
 
     // Since the rules are symmetric around the origin, we only need
     // to compute one half of the points
@@ -96,16 +96,28 @@ struct quadrature_traits<
         point_type p_n, dp_n;
 
         // Solve the root to eps absolute precision
-        while(std::abs(z-z_old) > eps) {
+        bool converged = false;
+        const int maxit = 100;
+        for(int it = 0; it < maxit; ++it) {
           // Evaluate the Legendre polynomial at z and its derivative
-          auto pn_eval = eval_Pn(z,npts);
-          p_n = pn_eval.first;
-          dp_n = pn_eval.second;
+          std::tie(p_n, dp_n) = eval_Pn(z,npts);
 
           // Newton update for root
           z_old = z;
           z  = z_old - p_n / dp_n;
+
+          // Convergence check
+          if(std::abs(z-z_old) <= eps) {
+            converged = true;
+            break;
+          }
         } // end while
+
+        if(not converged) {
+          throw std::runtime_error(
+            "Gauss-Legendre Netwon Iterations Failed to Converge"
+          );
+        }
 
         // Quadrature node is z
         point_type  pt = z;
