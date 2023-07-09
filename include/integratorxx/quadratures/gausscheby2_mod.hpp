@@ -43,8 +43,7 @@ class GaussChebyshev2Modified
   using point_container = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
 
-  GaussChebyshev2Modified(size_t npts, point_type lo, point_type up)
-      : base_type(npts, lo, up) {}
+  GaussChebyshev2Modified(size_t npts) : base_type(npts) {}
 
   GaussChebyshev2Modified(const GaussChebyshev2Modified &) = default;
   GaussChebyshev2Modified(GaussChebyshev2Modified &&) noexcept = default;
@@ -58,8 +57,7 @@ struct quadrature_traits<GaussChebyshev2Modified<PointType, WeightType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  inline static std::tuple<point_container, weight_container> generate(
-      size_t npts, point_type lo, point_type up) {
+  inline static std::tuple<point_container, weight_container> generate(size_t npts) {
     const weight_type oonpp = 1.0 / (npts + 1);
 
     point_container points(npts);

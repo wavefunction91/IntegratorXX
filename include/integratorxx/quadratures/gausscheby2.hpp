@@ -42,8 +42,7 @@ class GaussChebyshev2
   using point_container = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
 
-  GaussChebyshev2(size_t npts, point_type lo, point_type up)
-      : base_type(npts, lo, up) {}
+  GaussChebyshev2(size_t npts) : base_type(npts) {}
 
   GaussChebyshev2(const GaussChebyshev2 &) = default;
   GaussChebyshev2(GaussChebyshev2 &&) noexcept = default;
@@ -59,8 +58,7 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
  
   inline static constexpr bool bound_inclusive = false;
 
-  inline static std::tuple<point_container, weight_container> generate(
-      size_t npts, point_type lo, point_type up) {
+  inline static std::tuple<point_container, weight_container> generate(size_t npts) {
     const weight_type pi_ov_npts_p_1 = M_PI / (npts + 1);
 
     weight_container weights(npts);
@@ -85,11 +83,6 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
     }
 
     return std::make_tuple(points, weights);
-  }
-
-  inline static std::tuple<point_container, weight_container>
-  generate(size_t npts) {
-    return generate(npts, -1.0, 1.0);
   }
 
 };

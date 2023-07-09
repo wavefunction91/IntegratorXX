@@ -180,19 +180,19 @@ TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
   };
 
   SECTION("First Kind") {
-    IntegratorXX::GaussChebyshev1<double, double> quad(order, -1., 1.);
+    IntegratorXX::GaussChebyshev1<double, double> quad(order);
     integrate(quad);
   }
   SECTION("Second Kind") {
-    IntegratorXX::GaussChebyshev2<double, double> quad(order, -1., 1.);
+    IntegratorXX::GaussChebyshev2<double, double> quad(order);
     integrate(quad);
   }
   SECTION("Second Kind (Modified)") {
-    IntegratorXX::GaussChebyshev2Modified<double, double> quad(order, -1., 1.);
+    IntegratorXX::GaussChebyshev2Modified<double, double> quad(order);
     integrate(quad);
   }
   SECTION("Third Kind") {
-    IntegratorXX::GaussChebyshev3<double, double> quad(order, -1., 1.);
+    IntegratorXX::GaussChebyshev3<double, double> quad(order);
     integrate(quad);
   }
 }
