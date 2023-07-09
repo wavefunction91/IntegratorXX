@@ -2,21 +2,10 @@
 
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/quadratures/lebedev_laikov/lebedev_laikov_grids.hpp>
+#include <integratorxx/quadratures/copy_grid.hpp>
 
 namespace IntegratorXX {
 
-namespace detail {
-  template <class StaticGrid, typename PointContainer, typename WeightsContainer>
-  void copy_grid( PointContainer& points, WeightsContainer& weights ){
-
-    const auto& static_points  = StaticGrid::points;
-    const auto& static_weights = StaticGrid::weights;
-
-    std::copy( static_points.begin(), static_points.end(), points.begin() );
-    std::copy( static_weights.begin(), static_weights.end(), weights.begin() );
-
-  }
-}
 
 template <typename RealType>
 class LebedevLaikov :
@@ -117,6 +106,10 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
       detail::copy_grid<lebedev_laikov_4802<RealType>>( points, weights );
     else if( npts == 5810 ) 
       detail::copy_grid<lebedev_laikov_5810<RealType>>( points, weights );
+
+    // Pretabulated weights are missing 4 pi
+    for(auto i=0; i < npts; i++)
+      weights[i] *= 4.0*M_PI;
         
     return std::make_tuple( points, weights );
 

@@ -7,11 +7,11 @@ TEST_CASE( "Constructor", "[quad]" ) {
   using base_type = IntegratorXX::Quadrature<quad_type>;
 
   SECTION("Basic") {
-    quad_type q( 10, -1, 1 );  
+    quad_type q( 10 );
   }
 
   SECTION("Copy To Base") {
-    quad_type q( 10, -1, 1 );  
+    quad_type q( 10 );
     base_type b(q);
 
     CHECK( q.points() == b.points() );
@@ -19,7 +19,7 @@ TEST_CASE( "Constructor", "[quad]" ) {
   }
 
   SECTION("Move to Base") {
-    quad_type q( 10, -1, 1 );  
+    quad_type q( 10 );
     std::vector<double> pts = q.points();
     std::vector<double> wgt = q.weights();
 

@@ -8,6 +8,7 @@
 #include <integratorxx/quadratures/gausscheby2.hpp>
 #include <integratorxx/quadratures/gausscheby2_mod.hpp>
 #include <integratorxx/quadratures/gausscheby3.hpp>
+#include <integratorxx/quadratures/ahrens_beylkin.hpp>
 #include <cmath>
 #include <complex>
 
@@ -130,42 +131,26 @@ constexpr T real_spherical_harmonics( int64_t l, int64_t m, Args&&... args ) {
 
 TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
-  constexpr unsigned order = 10;
+  for(unsigned order=10;order<14;order++) {
+    std::ostringstream oss;
+    oss << "order " << order;
+    SECTION( oss.str()) {
 
-  SECTION( "untransformed bounds" ) {
-    IntegratorXX::GaussLegendre<double,double> quad( order, -1, 1 );
+      IntegratorXX::GaussLegendre<double,double> quad( order );
 
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
+      const auto& pts = quad.points();
+      const auto& wgt = quad.weights();
 
-    auto f = [=]( double x ){ return gaussian(x); };
+      auto f = [=]( double x ){ return gaussian(x); };
 
-    double res = 0.;
-    for( auto i = 0; i < quad.npts(); ++i ) {
-      res += wgt[i] * f(pts[i]);
+      double res = 0.;
+      for( auto i = 0; i < quad.npts(); ++i ) {
+        res += wgt[i] * f(pts[i]);
+      }
+
+      CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
     }
-
-    CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
   }
-
-
-  SECTION( "transformed bounds" ) {
-    const double lo = 0.;
-    const double up = 4.;
-    IntegratorXX::GaussLegendre<double,double> quad( 100, lo, up );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    auto f = [=]( double x ){ return gaussian(x); };
-
-    double res = 0.;
-    for( auto i = 0; i < quad.npts(); ++i )
-      res += wgt[i] * f(pts[i]);
-
-    CHECK( res == Catch::Approx(ref_gaussian_int(lo,up)) );
-  }
-  
 }
 
 TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
@@ -277,7 +262,7 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
       for( auto i = 0; i < quad.npts(); ++i )
         res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
   
-      CHECK( 4.*M_PI*std::real(res) == Catch::Approx(1.) );
+      CHECK( std::real(res) == Catch::Approx(1.) );
   
     }
 
@@ -287,4 +272,36 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
   test_fn(770);
   test_fn(974);
 
+}
+
+TEST_CASE( "Ahrens-Beylkin", "[1d-quad]" ) {
+
+
+  auto test_fn = [&]( size_t nPts ) {
+
+    IntegratorXX::AhrensBeylkin<double> quad( nPts );
+
+    const auto& pts = quad.points();
+    const auto& wgt = quad.weights();
+
+    for( auto l = 1; l < 10; ++l )
+    for( auto m = 0; m <= l; ++m ) {
+
+      auto f = [=]( decltype(pts[0]) x ){
+        return spherical_harmonics(l,m,x[0],x[1],x[2]);
+      };
+
+      std::complex<double> res = 0.;
+      for( auto i = 0; i < quad.npts(); ++i )
+        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
+
+      CHECK( std::real(res) == Catch::Approx(1.) );
+
+    }
+
+  };
+
+  test_fn(312);
+  test_fn(792);
+  test_fn(972);
 }
