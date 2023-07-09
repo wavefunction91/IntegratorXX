@@ -28,7 +28,7 @@ assoc_legendre( const IntT l, const IntT m, const T x ) {
     T fact = 1.;
     for( IntT i = 0; i < m; ++i ) {
       pmm *= fact*somx2;
-      fact += 2.; 
+      fact += 2.;
     }
 
   }
@@ -99,7 +99,7 @@ constexpr std::complex<T> spherical_harmonics( int64_t l, int64_t m, T theta, T 
     prefactor *= std::pow(-1,std::abs(m)) * T(factorial(l-m))/T(factorial(l+m));
 
 
-  return prefactor * assoc_legendre( l, std::abs(m), std::cos(theta) ) * 
+  return prefactor * assoc_legendre( l, std::abs(m), std::cos(theta) ) *
          std::complex<T>( std::cos(m*phi), std::sin(m*phi) );
 
 }
@@ -119,9 +119,9 @@ constexpr T real_spherical_harmonics( int64_t l, int64_t m, Args&&... args ) {
 
   const T phase = std::sqrt(2.) * ((m % 2) ? 1. : -1.);
 
-  if( m == 0 ) 
+  if( m == 0 )
     return std::real(spherical_harmonics( l, m, std::forward<Args>(args)... ));
-  else if( m < 0 ) 
+  else if( m < 0 )
     return phase * std::imag(spherical_harmonics( l, std::abs(m), std::forward<Args>(args)... ));
   else
     return phase * std::real(spherical_harmonics( l, m, std::forward<Args>(args)... ));
@@ -159,6 +159,15 @@ TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
   auto integrate = [&](auto& quad) {
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();
+
+    // Check that nodes are in increasing value
+    for(auto i = 1; i < quad.npts(); ++i) {
+      if(pts[i] <= pts[i - 1]) {
+        std::ostringstream oss;
+        oss << "Quadrature points are not in increasing order: " << pts[i-1] << " " << pts[i] << "!\n";
+	throw std::runtime_error(oss.str());
+      }
+    }
 
     auto f = [=]( double x ){ return gaussian(x); };
 
@@ -245,25 +254,24 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
 
 
   auto test_fn = [&]( size_t nPts ) {
-  
+
     IntegratorXX::LebedevLaikov<double> quad( nPts );
-  
+
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();
-  
-    for( auto l = 1; l < 10; ++l ) 
+
+    for( auto l = 1; l < 10; ++l )
     for( auto m = 0; m <= l; ++m ) {
-  
-      auto f = [=]( decltype(pts[0]) x ){ 
-        return spherical_harmonics(l,m,x[0],x[1],x[2]); 
+
+      auto f = [=]( decltype(pts[0]) x ){
+        return spherical_harmonics(l,m,x[0],x[1],x[2]);
       };
-  
+
       std::complex<double> res = 0.;
       for( auto i = 0; i < quad.npts(); ++i )
         res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
   
       CHECK( std::real(res) == Catch::Approx(1.) );
-  
     }
 
   };
