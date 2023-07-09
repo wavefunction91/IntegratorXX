@@ -35,10 +35,9 @@ namespace IntegratorXX {
 template <typename PointType, typename WeightType>
 class GaussChebyshev2Modified
     : public Quadrature<GaussChebyshev2Modified<PointType, WeightType>> {
-
   using base_type = Quadrature<GaussChebyshev2Modified<PointType, WeightType>>;
 
-public:
+ public:
   using point_type = typename base_type::point_type;
   using weight_type = typename base_type::weight_type;
   using point_container = typename base_type::point_container;
@@ -53,33 +52,38 @@ public:
 
 template <typename PointType, typename WeightType>
 struct quadrature_traits<GaussChebyshev2Modified<PointType, WeightType>> {
-
   using point_type = PointType;
   using weight_type = WeightType;
 
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  inline static std::tuple<point_container, weight_container>
-  generate(size_t npts, point_type lo, point_type up) {
-
+  inline static std::tuple<point_container, weight_container> generate(
+      size_t npts, point_type lo, point_type up) {
     const weight_type oonpp = 1.0 / (npts + 1);
 
     point_container points(npts);
     weight_container weights(npts);
-    for (size_t i = 1; i <= npts; ++i) {
+    for(size_t idx = 0; idx < npts; ++idx) {
+      // Transform index here for two reasons: the mathematical
+      // equations are for 1 <= i <= n, and the nodes are generated in
+      // decreasing order. This generates them in the right order
+      size_t i = npts - idx;
+
       const auto ti = i * M_PI * oonpp;
       const auto sine = std::sin(ti);
       const auto sinesq = sine * sine;
       const auto cosine = std::cos(ti);
 
-      points[i - 1] = 1.0 - 2.0 * i * oonpp +
-                      M_2_PI * (1.0 + 2.0 / 3.0 * sinesq) * cosine * sine;
-      weights[i - 1] = 16.0 / 3.0 / (npts + 1.0) * sinesq * sinesq;
+      // Eq 32 in Perez-Jorda et al, 1994, doi:10.1063/1.467061
+      points[idx] = 1.0 - 2.0 * i * oonpp +
+                    M_2_PI * (1.0 + 2.0 / 3.0 * sinesq) * cosine * sine;
+      // Eq 33 in Perez-Jorda et al, 1994, doi:10.1063/1.467061
+      weights[idx] = 16.0 / 3.0 / (npts + 1.0) * sinesq * sinesq;
     }
 
     return std::make_tuple(points, weights);
   }
 };
 
-} // namespace IntegratorXX
+}  // namespace IntegratorXX

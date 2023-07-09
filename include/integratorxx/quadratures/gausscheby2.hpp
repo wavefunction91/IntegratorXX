@@ -23,7 +23,9 @@ namespace IntegratorXX {
  *  December 1972, p. 889
  *
  *  To transform the rule to the form \f$ \int_{-1}^{1} f(x) {\rm d}x \f$, the
- * weights have been scaled by \f$ w_i \to w_i \sqrt{1-x_{i}^2} \f$.
+ * weights have been scaled by \f$ w_i \to w_i / \sqrt{1-x_{i}^2} \f$. The
+ * result is then simplified using \f$ \sqrt{1-x_i^2} = \sin \left(
+ * \displaystyle \frac {i} {n+1} \pi \right) \f$.
  *
  *  @tparam PointType  Type describing the quadrature points
  *  @tparam WeightType Type describing the quadrature weights
@@ -32,10 +34,9 @@ namespace IntegratorXX {
 template <typename PointType, typename WeightType>
 class GaussChebyshev2
     : public Quadrature<GaussChebyshev2<PointType, WeightType>> {
-
   using base_type = Quadrature<GaussChebyshev2<PointType, WeightType>>;
 
-public:
+ public:
   using point_type = typename base_type::point_type;
   using weight_type = typename base_type::weight_type;
   using point_container = typename base_type::point_container;
@@ -50,38 +51,39 @@ public:
 
 template <typename PointType, typename WeightType>
 struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
-
   using point_type = PointType;
   using weight_type = WeightType;
 
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  inline static std::tuple<point_container, weight_container>
-  generate(size_t npts, point_type lo, point_type up) {
-
+  inline static std::tuple<point_container, weight_container> generate(
+      size_t npts, point_type lo, point_type up) {
     const weight_type pi_ov_npts_p_1 = M_PI / (npts + 1);
 
     weight_container weights(npts);
     point_container points(npts);
-    for (size_t i = 0; i < npts; ++i) {
-      const auto ti = (i + 1) * pi_ov_npts_p_1;
+    for(size_t idx = 0; idx < npts; ++idx) {
+      // Transform index here for two reasons: the mathematical
+      // equations are for 1 <= i <= n, and the nodes are generated in
+      // decreasing order. This generates them in the right order
+      size_t i = npts - idx;
+
       // The standard nodes are given by
+      const auto ti = i * pi_ov_npts_p_1;
       const auto xi = std::cos(ti);
 
-      // Avoid float point cancellations - form modified weight directly in following statements
-      // However, since we want the rule with a unit weight factor, we
-      // divide the weights by sqrt(1-x^2).
-      // PI / (n+1) * sin^2(x) / sqrt(1 - cos^2(x)) = PI / (n+1) * sqrt(1 - cos^2(x))
-      const auto wi = pi_ov_npts_p_1 * std::sqrt(1.0 - xi*xi);
+      // The quadrature weight, transformed to unit weight factor in
+      // [-1,1] is given by (see comments above for explanation)
+      const auto wi = pi_ov_npts_p_1 * std::sqrt(1.0 - xi * xi);
 
       // Store into memory
-      points[i]  = xi;
-      weights[i] = wi;
+      points[idx] = xi;
+      weights[idx] = wi;
     }
 
     return std::make_tuple(points, weights);
   }
 };
 
-} // namespace IntegratorXX
+}  // namespace IntegratorXX
