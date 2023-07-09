@@ -18,17 +18,23 @@ namespace IntegratorXX {
  *            Typically taken to be 2.
  */
 template <size_t M>
-struct MurrayHandyLamingRadialTraits {
+class MurrayHandyLamingRadialTraits {
+
+  double R_; ///< Radial scaling factor
+
+public:
+
+  MurrayHandyLamingRadialTraits(double R = 1.0) : R_(R) {}
 
   /**
    *  @brief Transformation rule for the MHL radial quadrature
    *  
    *  @param[in] x Point in (0,1)
-   *  @return    r = (x / (1-x))^M
+   *  @return    r = R * (x / (1-x))^M
    */
   template <typename PointType>
-  static auto radial_transform(PointType x) {
-    return std::pow( x / (1.0 - x), M );
+  inline auto radial_transform(PointType x) const noexcept {
+    return R_ * std::pow( x / (1.0 - x), M );
   }
 
   /**
@@ -38,8 +44,8 @@ struct MurrayHandyLamingRadialTraits {
    *  @returns   dr/dx (see `radial_transform`)
    */
   template <typename PointType>
-  static auto radial_jacobian(PointType x) {
-    return M * std::pow(x, M-1) / std::pow(1.0 - x, M+1);
+  inline auto radial_jacobian(PointType x) const noexcept {
+    return R_ * M * std::pow(x, M-1) / std::pow(1.0 - x, M+1);
   }
 
 };

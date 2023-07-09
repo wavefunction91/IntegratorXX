@@ -17,8 +17,8 @@ public:
   using point_container  = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
 
-  RadialTransformQuadrature(size_t npts, weight_type R = 1.0) :
-    base_type( npts, R ) { }
+  RadialTransformQuadrature(size_t npts, const RadialTraits& traits = RadialTraits()) :
+    base_type( npts, traits ) { }
 
   RadialTransformQuadrature( const RadialTransformQuadrature& )     = default;
   RadialTransformQuadrature( RadialTransformQuadrature&& ) noexcept = default;
@@ -34,7 +34,7 @@ struct quadrature_traits<RadialTransformQuadrature<BaseQuad, RadialTraits>> {
   using weight_container = typename BaseQuad::weight_container;
 
   inline static std::tuple<point_container,weight_container>
-    generate( size_t npts, weight_type R ) {
+    generate( size_t npts, const RadialTraits& traits ) {
 
     using base_quad_traits = quadrature_traits<BaseQuad>;
 
@@ -49,8 +49,8 @@ struct quadrature_traits<RadialTransformQuadrature<BaseQuad, RadialTraits>> {
     for(size_t i = 0; i < npts; ++i) {
       const auto xi = base_x[i + ipts_offset];
       const auto wi = base_w[i + ipts_offset];
-      points[i]  = R * RadialTraits::radial_transform(xi);
-      weights[i] = R * wi * RadialTraits::radial_jacobian(xi);
+      points[i]  = traits.radial_transform(xi);
+      weights[i] = wi * traits.radial_jacobian(xi);
     }
 
     return std::make_tuple(points, weights);

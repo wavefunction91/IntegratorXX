@@ -14,11 +14,18 @@ namespace IntegratorXX {
  *  J. Chem. Phys. 102, 346 (1995)
  *  DOI: https://doi.org/10.1063/1.469408
  */
-struct TreutlerAhlrichsM4RadialTraits {
+class TreutlerAhlrichsM4RadialTraits {
 
-  inline static constexpr double alpha = 0.6;
+  double R_;
+  double alpha_;
+
+public:
+
   inline static constexpr double a     = 1.0;
   inline static constexpr double ln_2  = 0.693147180559945309417232;
+
+  TreutlerAhlrichsM4RadialTraits(double R = 1.0, double alpha = 0.6) :
+    R_(R), alpha_(alpha) { }
 
   /**
    *  @brief Transformation rule for the TA M4 radial quadrature
@@ -29,10 +36,10 @@ struct TreutlerAhlrichsM4RadialTraits {
    *  @return    r = (a+x)^alpha * log((a+1)/(1-x)) / ln(2) 
    */
   template <typename PointType>
-  static auto radial_transform(PointType x) {
-    const auto pow_term = std::pow(a + x, alpha);
+  inline auto radial_transform(PointType x) const noexcept {
+    const auto pow_term = std::pow(a + x, alpha_);
     const auto log_term = std::log((a + 1.0) / (1.0 - x));
-    return pow_term * log_term / ln_2; 
+    return R_ * pow_term * log_term / ln_2;
   };
 
 
@@ -43,10 +50,10 @@ struct TreutlerAhlrichsM4RadialTraits {
    *  @returns   dr/dx (see `radial_transform`)
    */
   template <typename PointType>
-  static auto radial_jacobian(PointType x) {
-    const auto pow_term = std::pow(a + x, alpha);
+  inline auto radial_jacobian(PointType x) const noexcept {
+    const auto pow_term = std::pow(a + x, alpha_);
     const auto log_term = std::log((a + 1.0) / (1.0 - x));
-    return pow_term / ln_2 * ( alpha * log_term / (a+x) + (1./(1. - x)) );
+    return R_ * pow_term / ln_2 * ( alpha_ * log_term / (a+x) + (1./(1.-x)) );
   }
 
 };

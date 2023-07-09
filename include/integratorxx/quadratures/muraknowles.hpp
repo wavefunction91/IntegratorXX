@@ -136,17 +136,23 @@ struct quadrature_traits<
 
 #else
 
-struct MuraKnowlesRadialTraits {
+class MuraKnowlesRadialTraits {
+
+  double R_; ///< Radial scaling factor
+
+public:
+
+  MuraKnowlesRadialTraits(double R = 1.0) : R_(R) { }
 
   template <typename PointType>
-  static auto radial_transform(PointType x) {
-    return -std::log(1.0 - x*x*x);
+  inline auto radial_transform(PointType x) const noexcept {
+    return -R_ * std::log(1.0 - x*x*x);
   }
 
   template <typename PointType>
-  static auto radial_jacobian(PointType x) {
+  inline auto radial_jacobian(PointType x) const noexcept {
     const auto x2 = x*x;
-    return 3.0 * x2 / (1.0 - x2 * x);
+    return R_ * 3.0 * x2 / (1.0 - x2 * x);
   }
 
 }; 
