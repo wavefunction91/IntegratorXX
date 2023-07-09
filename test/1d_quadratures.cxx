@@ -241,6 +241,7 @@ TEST_CASE( "Treutler-Ahlrichs Quadratures", "[1d-quad]" ) {
 TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
 
   IntegratorXX::MuraKnowles<double,double> quad( 150 );
+  IntegratorXX::MKAuto<double,double> quad2( 150 );
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -248,8 +249,9 @@ TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
   auto f = [=]( double x ){ return gaussian(x); };
 
   double res = 0.;
-  for( auto i = 0; i < quad.npts(); ++i )
+  for( auto i = 0; i < quad.npts(); ++i ) {
     res += wgt[i] * f(pts[i]);
+  
 
   CHECK( res == Catch::Approx(ref_gaussian_int(0.,inf)) );
 

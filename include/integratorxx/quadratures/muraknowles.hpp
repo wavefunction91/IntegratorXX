@@ -2,6 +2,7 @@
 
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/quadratures/uniform.hpp>
+#include <integratorxx/quadratures/radial_transform.hpp>
 
 namespace IntegratorXX {
 
@@ -131,5 +132,27 @@ struct quadrature_traits<
   }
 
 };
+
+
+struct MuraKnowlesRadialTraits {
+
+  template <typename PointType>
+  static auto radial_transform(PointType x) {
+    return -std::log(1.0 - x*x*x);
+  }
+
+  template <typename PointType>
+  static auto radial_jacobian(PointType x) {
+    const auto x2 = x*x;
+    return 3.0 * x2 / (1.0 - x2 * x);
+  }
+
+}; 
+
+template <typename PointType, typename WeightType>
+using MKAuto = RadialTransformQuadrature<
+  UniformTrapezoid<PointType,WeightType>,
+  MuraKnowlesRadialTraits
+>;
 
 }
