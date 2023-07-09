@@ -131,42 +131,26 @@ constexpr T real_spherical_harmonics( int64_t l, int64_t m, Args&&... args ) {
 
 TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
-  constexpr unsigned order = 10;
+  for(unsigned order=10;order<14;order++) {
+    std::ostringstream oss;
+    oss << "order " << order;
+    SECTION( oss.str()) {
 
-  SECTION( "untransformed bounds" ) {
-    IntegratorXX::GaussLegendre<double,double> quad( order, -1, 1 );
+      IntegratorXX::GaussLegendre<double,double> quad( order );
 
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
+      const auto& pts = quad.points();
+      const auto& wgt = quad.weights();
 
-    auto f = [=]( double x ){ return gaussian(x); };
+      auto f = [=]( double x ){ return gaussian(x); };
 
-    double res = 0.;
-    for( auto i = 0; i < quad.npts(); ++i ) {
-      res += wgt[i] * f(pts[i]);
+      double res = 0.;
+      for( auto i = 0; i < quad.npts(); ++i ) {
+        res += wgt[i] * f(pts[i]);
+      }
+
+      CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
     }
-
-    CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
   }
-
-
-  SECTION( "transformed bounds" ) {
-    const double lo = 0.;
-    const double up = 4.;
-    IntegratorXX::GaussLegendre<double,double> quad( 100, lo, up );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    auto f = [=]( double x ){ return gaussian(x); };
-
-    double res = 0.;
-    for( auto i = 0; i < quad.npts(); ++i )
-      res += wgt[i] * f(pts[i]);
-
-    CHECK( res == Catch::Approx(ref_gaussian_int(lo,up)) );
-  }
-  
 }
 
 TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {

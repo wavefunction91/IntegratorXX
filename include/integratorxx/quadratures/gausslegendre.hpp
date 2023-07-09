@@ -7,7 +7,7 @@ namespace IntegratorXX {
 
 
 template <typename PointType, typename WeightType>
-class GaussLegendre : 
+class GaussLegendre :
   public Quadrature<GaussLegendre<PointType,WeightType>> {
 
   using base_type = Quadrature<GaussLegendre<PointType,WeightType>>;
@@ -18,18 +18,48 @@ public:
   using weight_type      = typename base_type::weight_type;
   using point_container  = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
-  
-  GaussLegendre(size_t npts, point_type lo, point_type up):
-    base_type( npts, lo, up ) { }
+
+  GaussLegendre(size_t npts):
+    base_type( npts ) { }
 
   GaussLegendre( const GaussLegendre& ) = default;
   GaussLegendre( GaussLegendre&& ) noexcept = default;
 };
 
+  /**
+   *  Evaluates the Legendre polynomial at z with the recurrence
+   *  relation \f$(n+1) P_{n+1}(x) = (2n+1) x P_{n}(x) - n P_{n-1}(x)
+   *  \f$, and its derivative with the relation \f$ \frac {x^2-1} {n}
+   *  \frac {\rm d} {{\rm d}x} P_{n}(x) = x P_{n}(x) - P_{n-1}(x) \f$.
+   *
+   *  Inputs:
+   *  x - x coordinate
+   *  n - order of polynomial
+   *
+   *  Outputs: pair (p_n, dp_n)
+   *  p_n - value of the Legendre polynomial, P_{n}(x)
+   *  dp_n - value of the derivative of the Legendre polynomial, dP_{n}/dx
+   */
+  template <typename PointType> inline std::pair<PointType,PointType> eval_Pn(PointType x, size_t n) {
+    // Evaluate P_{n}(x) by iteration starting from P_0(x) = 1
+    PointType p_n = 1.0;
+    // Values of P_{n-1}(x) and P_{n-2}(x) used in the recursions
+    PointType p_n_m1(0.0), p_n_m2(0.0);
 
+    // Recurrence can be rewritten as
+    // P_{n}(x) = [(2n-1) x P_{n-1}(x) - (n-1) P_{n-2}(x)] / n
+    for( size_t m = 1; m <= n; ++m ){
+      p_n_m2 = p_n_m1;
+      p_n_m1 = p_n;
+      p_n = ((2.0 * m - 1.0) * x * p_n_m1 - (m-1.0)*p_n_m2)/m;
+    }
 
+    // Compute the derivative
+    // dP_{n}(x) = (x P_{n}(x) - P_{n-1}(x)) * n/(x^2-1)
+    PointType dp_n = (x * p_n - p_n_m1) * (n / (x * x - 1.0));
 
-
+    return std::make_pair( p_n, dp_n );
+  }
 
 
 template <typename PointType, typename WeightType>
@@ -44,63 +74,53 @@ struct quadrature_traits<
   using weight_container = std::vector< weight_type >;
 
   inline static std::tuple<point_container,weight_container>
-    generate( size_t npts, point_type lo, point_type up ) {
-
-    assert( npts % 2 == 0 );
-    assert( lo != -std::numeric_limits<double>::infinity() );
-    assert( up != std::numeric_limits<double>::infinity() );
-
+  generate( size_t npts ) {
     point_container  points( npts );
     weight_container weights( npts );
 
+    // Absolute precision for the nodes
+    const double eps=3.0e-11;
+
+    // Since the rules are symmetric around the origin, we only need
+    // to compute one half of the points
     const size_t mid = (npts + 1) / 2;
-    const double eps = 3.e-11; // Convergence tolerance
+    for( size_t idx = 0; idx < mid; ++idx ) {
+        // Index
+        const point_type i = idx+1;
 
-    for( size_t i = 1; i <= mid; ++i ) {
+        // Standard initial guess for location of i:th root in [-1, 1]
+        point_type z = std::cos( M_PI * (i - 0.25) / (npts + 0.5));
+        // Old value of root
+        point_type z_old = -2.0;
+        // Values of P_n(x) and dP_n/dx
+        point_type p_n, dp_n;
 
-      const point_type ip = i;
+        // Solve the root to eps absolute precision
+        while(std::abs(z-z_old) > eps) {
+          // Evaluate the Legendre polynomial at z and its derivative
+          auto pn_eval = eval_Pn(z,npts);
+          p_n = pn_eval.first;
+          dp_n = pn_eval.second;
 
-      point_type z = std::cos( M_PI * (ip - 0.25) / (npts + 0.5));
-      point_type pp(0), z1(0);
+          // Newton update for root
+          z_old = z;
+          z  = z_old - p_n / dp_n;
+        } // end while
 
-      // Iteratively determine the i-th root 
-      while(std::abs(z-z1) > eps) {
-        point_type p1(1.), p2(0.);
-  
-        // Loop over the recurrence relation to evaluate the
-        // Legendre polynomial at position z
-        for( size_t j = 1; j <= npts; ++j ){
-          const point_type jp = j;
+        // Quadrature node is z
+        point_type  pt = z;
+        // Quadrature weight is 2 / [ (1-x^2) dPn(x)^2]
+        weight_type wgt = 2. / ((1. - z*z) * dp_n*dp_n);
 
-          point_type p3 = p2;
-          p2 = p1; 
-          p1 = ( (2. * jp - 1.) * z * p2 - (jp - 1.) * p3) / jp;
-        } // end j for
-  
-        // p1 is now the desired Legrendre polynomial. We next compute 
-        // pp, its derivative, by a standard relation involving also p2,
-        // the polynomial of one lower order
-        pp = npts * (z * p1 - p2) / (z * z - 1.);
-        z1 = z;
-        z  = z1 - p1 / pp;
-      } // end while
-  
-      point_type  pt = z;
-      weight_type wgt = 2. / (1. - z*z) / pp / pp;
+        // Store the symmetric points
+        points[idx] = -pt;
+        weights[idx] = wgt;
 
-      // Transform points and populate arrays
-      std::tie(pt,wgt) = transform_minus_one_to_one(lo,up,pt,wgt);
-      points[i-1] = pt;
-      weights[i-1] = wgt;
-
-      // Reflect the points
-      points[npts-i]  = (lo + up) - pt;
-      weights[npts-i] = wgt;
-
-    }; // Loop over points
+        points[npts-1-idx]  = pt;
+        weights[npts-1-idx] = wgt;
+    } // Loop over points
 
     return std::make_tuple( points, weights );
-
   }
 
 };
