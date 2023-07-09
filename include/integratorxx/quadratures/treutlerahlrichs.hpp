@@ -13,9 +13,6 @@ namespace IntegratorXX {
  *  Reference:
  *  J. Chem. Phys. 102, 346 (1995)
  *  DOI: https://doi.org/10.1063/1.469408
- *
- *  @tparam M Integer to modulate the MHL transformation. 
- *            Typically taken to be 2.
  */
 struct TreutlerAhlrichsM4RadialTraits {
 
