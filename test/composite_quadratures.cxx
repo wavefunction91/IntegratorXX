@@ -244,7 +244,7 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
         const auto _r = r.points()[i];
         const auto _rw = r.weights()[i];
         const auto _aw = q.weights()[j];
-        CHECK( ps.weights()[npts] == Catch::Approx( 4 * M_PI * _r * _r * _rw * _aw ) );
+        CHECK( ps.weights()[npts] == Catch::Approx( _r * _r * _rw * _aw ) );
         npts++;
       }
     }

@@ -289,7 +289,7 @@ struct quadrature_traits<
       for( size_t i = 0; i < npr; ++i ) {
 
         const auto ij = i + j * npr;
-        sub_weights[ij] *= 4 * M_PI * rp[i] * rp[i];
+        sub_weights[ij] *= rp[i] * rp[i];
 
       }
 
