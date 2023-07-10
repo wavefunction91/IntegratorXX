@@ -1,5 +1,6 @@
 #include "catch2/catch_all.hpp"
 #include <integratorxx/quadratures/gausslegendre.hpp>
+#include <integratorxx/quadratures/gausslobatto.hpp>
 #include <integratorxx/quadratures/mhl.hpp>
 #include <integratorxx/quadratures/muraknowles.hpp>
 #include <integratorxx/quadratures/treutlerahlrichs.hpp>
@@ -137,6 +138,30 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
     SECTION( oss.str()) {
 
       IntegratorXX::GaussLegendre<double,double> quad( order );
+
+      const auto& pts = quad.points();
+      const auto& wgt = quad.weights();
+
+      auto f = [=]( double x ){ return gaussian(x); };
+
+      double res = 0.;
+      for( auto i = 0; i < quad.npts(); ++i ) {
+        res += wgt[i] * f(pts[i]);
+      }
+
+      CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
+    }
+  }
+}
+
+TEST_CASE( "Gauss-Lobatto Quadratures", "[1d-quad]" ) {
+
+  for(unsigned order=10;order<14;order++) {
+    std::ostringstream oss;
+    oss << "order " << order;
+    SECTION( oss.str()) {
+
+      IntegratorXX::GaussLobatto<double,double> quad( order );
 
       const auto& pts = quad.points();
       const auto& wgt = quad.weights();
