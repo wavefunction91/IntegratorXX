@@ -104,7 +104,7 @@ struct quadrature_traits<
 
           // Newton update for root
           z_old = z;
-          z  = z_old - p_n / dp_n;
+          z  -= p_n / dp_n;
 
           // Convergence check
           if(std::abs(z-z_old) <= eps) {
