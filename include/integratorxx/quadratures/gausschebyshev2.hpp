@@ -63,7 +63,9 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
 
     weight_container weights(npts);
     point_container points(npts);
-    for(size_t idx = 0; idx < npts; ++idx) {
+
+    // Generate the first half explicitly and reflect
+    for(size_t idx = 0; idx < npts/2; ++idx) {
       // Transform index here for two reasons: the mathematical
       // equations are for 1 <= i <= n, and the nodes are generated in
       // decreasing order. This generates them in the right order
@@ -80,6 +82,16 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
       // Store into memory
       points[idx] = xi;
       weights[idx] = wi;
+
+      // Reflect to second half
+      points[i-1]  = -xi;
+      weights[i-1] = wi; 
+    }
+
+    // Edge case for odd points
+    if(npts % 2) {
+      points[npts/2]  = 0.0;
+      weights[npts/2] = pi_ov_npts_p_1;
     }
 
     return std::make_tuple(points, weights);
