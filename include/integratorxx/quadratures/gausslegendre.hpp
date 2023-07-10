@@ -40,7 +40,7 @@ public:
    *  p_n - value of the Legendre polynomial, P_{n}(x)
    *  dp_n - value of the derivative of the Legendre polynomial, dP_{n}/dx
    */
-  template <typename PointType> inline std::pair<PointType,PointType> eval_Pn(PointType x, size_t n) {
+  template <typename PointType> inline std::tuple<PointType,PointType,PointType> eval_Pn(PointType x, size_t n) {
     // Evaluate P_{n}(x) by iteration starting from P_0(x) = 1
     PointType p_n = 1.0;
     // Values of P_{n-1}(x) and P_{n-2}(x) used in the recursions
@@ -58,7 +58,7 @@ public:
     // dP_{n}(x) = (x P_{n}(x) - P_{n-1}(x)) * n/(x^2-1)
     PointType dp_n = (x * p_n - p_n_m1) * (n / (x * x - 1.0));
 
-    return std::make_pair( p_n, dp_n );
+    return std::make_tuple( p_n, dp_n, p_n_m1 );
   }
 
 
@@ -100,7 +100,7 @@ struct quadrature_traits<
         const int maxit = 100;
         for(int it = 0; it < maxit; ++it) {
           // Evaluate the Legendre polynomial at z and its derivative
-          std::tie(p_n, dp_n) = eval_Pn(z,npts);
+          std::tie(p_n, dp_n, std::ignore) = eval_Pn(z,npts);
 
           // Newton update for root
           z_old = z;
