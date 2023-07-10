@@ -25,6 +25,12 @@ target_link_libraries( quadrature_manipulation PUBLIC Catch2::Catch2WithMain int
 add_executable( 1d_quadratures 1d_quadratures.cxx )
 target_link_libraries( 1d_quadratures PUBLIC Catch2::Catch2WithMain integratorxx )
 
+add_executable( gausslegendre gausslegendre.cxx )
+target_link_libraries( gausslegendre PUBLIC Catch2::Catch2WithMain integratorxx )
+
+#add_executable( gausslobatto gausslobatto.cxx )
+#target_link_libraries( gausslobatto PUBLIC Catch2::Catch2WithMain integratorxx )
+
 add_executable( composite_quadratures composite_quadratures.cxx )
 target_link_libraries( composite_quadratures PUBLIC Catch2::Catch2WithMain integratorxx )
 
