@@ -4,10 +4,10 @@
 #include <integratorxx/quadratures/muraknowles.hpp>
 #include <integratorxx/quadratures/treutlerahlrichs.hpp>
 #include <integratorxx/quadratures/lebedev_laikov.hpp>
-#include <integratorxx/quadratures/gausscheby1.hpp>
-#include <integratorxx/quadratures/gausscheby2.hpp>
-#include <integratorxx/quadratures/gausscheby2_mod.hpp>
-#include <integratorxx/quadratures/gausscheby3.hpp>
+#include <integratorxx/quadratures/gausschebyshev1.hpp>
+#include <integratorxx/quadratures/gausschebyshev2.hpp>
+#include <integratorxx/quadratures/gausschebyshev2modified.hpp>
+#include <integratorxx/quadratures/gausschebyshev3.hpp>
 #include <integratorxx/quadratures/ahrens_beylkin.hpp>
 #include <cmath>
 #include <complex>
