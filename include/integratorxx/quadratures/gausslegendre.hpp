@@ -115,7 +115,7 @@ struct quadrature_traits<
 
         if(not converged) {
           throw std::runtime_error(
-            "Gauss-Legendre Netwon Iterations Failed to Converge"
+            "Gauss-Legendre Newton Iterations Failed to Converge"
           );
         }
 
