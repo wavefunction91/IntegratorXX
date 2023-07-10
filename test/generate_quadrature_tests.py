@@ -43,10 +43,10 @@ for rule in generators:
 
 #include "catch2/catch_all.hpp"
 #include <integratorxx/quadratures/{rule.lower()}.hpp>
-#include <cfloat>
+#include <numeric>
 
-const double x_tolerance = 10*DBL_EPSILON;
-const double w_tolerance = 10*DBL_EPSILON;
+const double x_tolerance = 10*std::numeric_limits<double>::epsilon();
+const double w_tolerance = 10*std::numeric_limits<double>::epsilon();
 ''')
     for order in range(2,nmax):
         print(f'Generating test for {rule} with {order} points')
