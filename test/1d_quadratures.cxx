@@ -180,19 +180,12 @@ TEST_CASE( "Gauss-Lobatto Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
 
-  constexpr unsigned order = 200;
   auto integrate = [&](auto& quad) {
     const auto& pts = quad.points();
     const auto& wgt = quad.weights();
 
     // Check that nodes are in increasing value
-    for(auto i = 1; i < quad.npts(); ++i) {
-      if(pts[i] <= pts[i - 1]) {
-        std::ostringstream oss;
-        oss << "Quadrature points are not in increasing order: " << pts[i-1] << " " << pts[i] << "!\n";
-	throw std::runtime_error(oss.str());
-      }
-    }
+    CHECK(std::is_sorted(pts.begin(), pts.end()));
 
     auto f = [=]( double x ){ return gaussian(x); };
 
@@ -205,19 +198,25 @@ TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
   };
 
   SECTION("First Kind") {
-    IntegratorXX::GaussChebyshev1<double, double> quad(order);
-    integrate(quad);
+    IntegratorXX::GaussChebyshev1<double, double> quad_even(200);
+    integrate(quad_even);
+    IntegratorXX::GaussChebyshev1<double, double> quad_odd(201);
+    integrate(quad_odd);
   }
   SECTION("Second Kind") {
-    IntegratorXX::GaussChebyshev2<double, double> quad(order);
-    integrate(quad);
+    IntegratorXX::GaussChebyshev2<double, double> quad_even(200);
+    integrate(quad_even);
+    IntegratorXX::GaussChebyshev2<double, double> quad_odd(201);
+    integrate(quad_odd);
   }
   SECTION("Second Kind (Modified)") {
-    IntegratorXX::GaussChebyshev2Modified<double, double> quad(order);
-    integrate(quad);
+    IntegratorXX::GaussChebyshev2Modified<double, double> quad_even(200);
+    integrate(quad_even);
+    IntegratorXX::GaussChebyshev2Modified<double, double> quad_odd(201);
+    integrate(quad_odd);
   }
   SECTION("Third Kind") {
-    IntegratorXX::GaussChebyshev3<double, double> quad(order);
+    IntegratorXX::GaussChebyshev3<double, double> quad(200);
     integrate(quad);
   }
 }
