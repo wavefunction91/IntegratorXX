@@ -1,7 +1,7 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
-#include <integratorxx/quadratures/gausscheby2.hpp>
+#include <integratorxx/quadratures/gausschebyshev2.hpp>
 #include <integratorxx/quadratures/radial_transform.hpp>
 
 namespace IntegratorXX {
