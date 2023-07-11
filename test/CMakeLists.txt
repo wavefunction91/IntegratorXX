@@ -30,6 +30,8 @@ target_link_libraries( gausslegendre PUBLIC Catch2::Catch2WithMain integratorxx 
 
 add_executable( gausslobatto gausslobatto.cxx )
 target_link_libraries( gausslobatto PUBLIC Catch2::Catch2WithMain integratorxx )
+add_executable( muraknowles muraknowles.cxx )
+target_link_libraries( muraknowles PUBLIC Catch2::Catch2WithMain integratorxx )
 
 add_executable( composite_quadratures composite_quadratures.cxx )
 target_link_libraries( composite_quadratures PUBLIC Catch2::Catch2WithMain integratorxx )
