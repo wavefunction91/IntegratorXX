@@ -14,23 +14,33 @@ import os
 # Generate tests with 20 digit precision
 ndigits = 20
 
-def add_to_orders(orders, increment, n_points):
-    '''Helper function to generate new orders for the checks'''
+def add_to_tests(tests, increment, n_points):
+    '''Helper function to generate new tests for the checks'''
     assert increment % 2 == 1
-    begin = orders[-1] if len(orders)>0 else 2
+    begin = tests[-1]+increment if len(tests)>0 else 2
     end = begin + n_points*increment;
-    orders += list(range(begin, end, increment))
+    tests += list(range(begin, end, increment))
 
-orders = []
-n_fixed = 40
-add_to_orders(orders, 1, n_fixed)
-add_to_orders(orders, 3, n_fixed)
-add_to_orders(orders, 5, n_fixed)
-add_to_orders(orders, 7, n_fixed)
-add_to_orders(orders, 9, n_fixed)
+# Extensive test cases for implicit quadrature rules that require root
+# finding etc
+extensive_tests = []
+for spacing in range(1,10,2):
+    # Do 40 consecutive tests, then 40 tests with increment 3,
+    # another 40 with increment 5, then 40 with increment 7 and
+    # finally 40 with increment 9, totalling checks for 200 rules
+    add_to_tests(extensive_tests, spacing, 40)
 
-print(f'Considering the orders {orders}')
-print(f'This is a total of {len(orders)} rules with a total of {sum(orders)} data points')
+print(f'Extensive tests considering the orders {extensive_tests}')
+print(f'This is a total of {len(extensive_tests)} rules with a total of {sum(extensive_tests)} data points\n')
+    
+# More limited testing suffices for rules that have algebraic
+# expressions for the nodes and weights
+limited_tests = []
+for spacing in range(1,10,2):
+    add_to_tests(limited_tests, spacing, 5)
+
+print(f'Limited tests considering the orders {limited_tests}')
+print(f'This is a total of {len(limited_tests)} rules with a total of {sum(limited_tests)} data points\n')
 
 def write_test(out, points, integrator):
     '''Writes out source code for the test case'''
@@ -65,23 +75,31 @@ def gausscheby1(order, n_digits):
 
     x, w = gauss_chebyshev_t(order, n_digits)
     for ix, xval in enumerate(x):
-        w[ix] *= sqrt(S.One + xval)
+        w[ix] *= sqrt(S.One - xval*xval)
+    # Ensure nodes are in increasing order
+    if x[-1] < x[0]:
+        x = x[::-1]
+        w = w[::-1]
     return x, w
-    
+
 def gausscheby2(order, n_digits):
     '''Returns a Gauss-Chebyshev rule of the second kind defined similarly to IntegratorXX'''
 
     x, w = gauss_chebyshev_u(order, n_digits)
     for ix, xval in enumerate(x):
-        w[ix] /= sqrt(S.One + xval)
+        w[ix] /= sqrt(S.One - xval*xval)
+    # Ensure nodes are in increasing order
+    if x[-1] < x[0]:
+        x = x[::-1]
+        w = w[::-1]
     return x, w
-    
-generators = {'GaussLegendre' : gauss_legendre, 'GaussLobatto' : gauss_lobatto, 'GaussChebyshev1': gausscheby1, 'GaussChebyshev2': gausscheby2}
+
+generators = {'GaussLegendre' : (gauss_legendre, extensive_tests), 'GaussLobatto' : (gauss_lobatto, extensive_tests), 'GaussChebyshev1': (gausscheby1, limited_tests), 'GaussChebyshev2': (gausscheby2, limited_tests)}
 
 for rule in generators:
     fname = f'{rule.lower()}.cxx'
     if os.path.exists(fname):
-        print(f'{fname} already exists, skipping')
+        print(f'{fname} already exists, skipping\n')
         continue
 
     out=open(fname,'w')
@@ -101,8 +119,11 @@ const double x_tolerance = 10*std::numeric_limits<double>::epsilon();
 const double w_tolerance = 10*std::numeric_limits<double>::epsilon();
 
 ''')
-    for order in orders:
+
+    generate, test_orders = generators[rule]
+    for order in test_orders:
         print(f'Generating test for {rule} with {order} points')
-        x, w = generators[rule](order, ndigits)
+        x, w = generate(order, ndigits)
         write_test(out, list(zip(x,w)), rule)
     out.close()
+    print('')
