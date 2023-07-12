@@ -2,9 +2,11 @@
 
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/quadratures/uniform.hpp>
+#include <integratorxx/quadratures/radial_transform.hpp>
 
 namespace IntegratorXX {
 
+#if 0
 /**
  *  @brief Implementation of the Mura-Knowles radial quadrature.
  *
@@ -131,5 +133,36 @@ struct quadrature_traits<
   }
 
 };
+
+#else
+
+class MuraKnowlesRadialTraits {
+
+  double R_; ///< Radial scaling factor
+
+public:
+
+  MuraKnowlesRadialTraits(double R = 1.0) : R_(R) { }
+
+  template <typename PointType>
+  inline auto radial_transform(PointType x) const noexcept {
+    return -R_ * std::log(1.0 - x*x*x);
+  }
+
+  template <typename PointType>
+  inline auto radial_jacobian(PointType x) const noexcept {
+    const auto x2 = x*x;
+    return R_ * 3.0 * x2 / (1.0 - x2 * x);
+  }
+
+}; 
+
+template <typename PointType, typename WeightType>
+using MuraKnowles = RadialTransformQuadrature<
+  UniformTrapezoid<PointType,WeightType>,
+  MuraKnowlesRadialTraits
+>;
+
+#endif
 
 }

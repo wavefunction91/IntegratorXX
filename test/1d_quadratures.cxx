@@ -198,32 +198,32 @@ TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
   };
 
   SECTION("First Kind") {
-    IntegratorXX::GaussChebyshev1<double, double> quad_even(200, -1., 1.);
+    IntegratorXX::GaussChebyshev1<double, double> quad_even(200);
     integrate(quad_even);
-    IntegratorXX::GaussChebyshev1<double, double> quad_odd(201, -1., 1.);
+    IntegratorXX::GaussChebyshev1<double, double> quad_odd(201);
     integrate(quad_odd);
   }
   SECTION("Second Kind") {
-    IntegratorXX::GaussChebyshev2<double, double> quad_even(200, -1., 1.);
+    IntegratorXX::GaussChebyshev2<double, double> quad_even(200);
     integrate(quad_even);
-    IntegratorXX::GaussChebyshev2<double, double> quad_odd(201, -1., 1.);
+    IntegratorXX::GaussChebyshev2<double, double> quad_odd(201);
     integrate(quad_odd);
   }
   SECTION("Second Kind (Modified)") {
-    IntegratorXX::GaussChebyshev2Modified<double, double> quad_even(200, -1., 1.);
+    IntegratorXX::GaussChebyshev2Modified<double, double> quad_even(200);
     integrate(quad_even);
-    IntegratorXX::GaussChebyshev2Modified<double, double> quad_odd(201, -1., 1.);
+    IntegratorXX::GaussChebyshev2Modified<double, double> quad_odd(201);
     integrate(quad_odd);
   }
   SECTION("Third Kind") {
-    IntegratorXX::GaussChebyshev3<double, double> quad(200, -1., 1.);
+    IntegratorXX::GaussChebyshev3<double, double> quad(200);
     integrate(quad);
   }
 }
 
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
-  IntegratorXX::MurrayHandyLaming<double,double> quad( 150 );
+  IntegratorXX::MurrayHandyLaming<double,double> quad(150);
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -238,9 +238,9 @@ TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
 }
 
-TEST_CASE( "Ahlrichs Quadratures", "[1d-quad]" ) {
+TEST_CASE( "Treutler-Ahlrichs Quadratures", "[1d-quad]" ) {
 
-  IntegratorXX::TreutlerAhlrichs<double,double> quad( 150 );
+  IntegratorXX::TreutlerAhlrichs<double,double> quad(150);
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -258,7 +258,7 @@ TEST_CASE( "Ahlrichs Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
 
-  IntegratorXX::MuraKnowles<double,double> quad( 150 );
+  IntegratorXX::MuraKnowles<double,double> quad(150);
 
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
@@ -266,8 +266,9 @@ TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
   auto f = [=]( double x ){ return gaussian(x); };
 
   double res = 0.;
-  for( auto i = 0; i < quad.npts(); ++i )
+  for( auto i = 0; i < quad.npts(); ++i ) 
     res += wgt[i] * f(pts[i]);
+  
 
   CHECK( res == Catch::Approx(ref_gaussian_int(0.,inf)) );
 

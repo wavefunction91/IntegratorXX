@@ -39,8 +39,7 @@ class GaussChebyshev3
   using point_container = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
 
-  GaussChebyshev3(size_t npts, point_type lo, point_type up)
-      : base_type(npts, lo, up) {}
+  GaussChebyshev3(size_t npts) : base_type(npts) {}
 
   GaussChebyshev3(const GaussChebyshev3 &) = default;
   GaussChebyshev3(GaussChebyshev3 &&) noexcept = default;
@@ -54,8 +53,7 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  inline static std::tuple<point_container, weight_container> generate(
-      size_t npts, point_type lo, point_type up) {
+  inline static std::tuple<point_container, weight_container> generate(size_t npts) {
     const weight_type pi_ov_2n_p_1 = M_PI / (2 * npts + 1);
 
     weight_container weights(npts);
@@ -77,6 +75,7 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
       wi *= std::sqrt((1.0 - xi) / xi);
 
       // Finally, convert from [0,1] to [-1,1]
+      // TODO: This should be done externally
       points[idx] = 2 * xi - 1.0;
       weights[idx] = 2.0 * wi;
     }
