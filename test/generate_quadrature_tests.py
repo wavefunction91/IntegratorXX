@@ -5,15 +5,32 @@ IntegratorXX using SymPy to evaluate reference values in arbitrary
 precision.
 '''
 
-from sympy.integrals.quadrature import gauss_legendre, gauss_lobatto
+from sympy.integrals.quadrature import gauss_legendre, gauss_lobatto, gauss_chebyshev_t, gauss_chebyshev_u
 from sympy.core import S
+from sympy import sqrt
 import numpy
 import os
 
 # Generate tests with 20 digit precision
 ndigits = 20
-# Maximum order
-nmax = 101
+
+def add_to_orders(orders, increment, n_points):
+    '''Helper function to generate new orders for the checks'''
+    assert increment % 2 == 1
+    begin = orders[-1] if len(orders)>0 else 2
+    end = begin + n_points*increment;
+    orders += list(range(begin, end, increment))
+
+orders = []
+n_fixed = 40
+add_to_orders(orders, 1, n_fixed)
+add_to_orders(orders, 3, n_fixed)
+add_to_orders(orders, 5, n_fixed)
+add_to_orders(orders, 7, n_fixed)
+add_to_orders(orders, 9, n_fixed)
+
+print(f'Considering the orders {orders}')
+print(f'This is a total of {len(orders)} rules with a total of {sum(orders)} data points')
 
 def write_test(out, points, integrator):
     '''Writes out source code for the test case'''
@@ -43,7 +60,23 @@ def write_test(out, points, integrator):
     ''')
     out.write('}\n\n')
 
-generators = {'GaussLegendre' : gauss_legendre, 'GaussLobatto' : gauss_lobatto}
+def gausscheby1(order, n_digits):
+    '''Returns a Gauss-Chebyshev rule of the first kind defined similarly to IntegratorXX'''
+
+    x, w = gauss_chebyshev_t(order, n_digits)
+    for ix, xval in enumerate(x):
+        w[ix] *= sqrt(S.One + xval)
+    return x, w
+    
+def gausscheby2(order, n_digits):
+    '''Returns a Gauss-Chebyshev rule of the second kind defined similarly to IntegratorXX'''
+
+    x, w = gauss_chebyshev_u(order, n_digits)
+    for ix, xval in enumerate(x):
+        w[ix] /= sqrt(S.One + xval)
+    return x, w
+    
+generators = {'GaussLegendre' : gauss_legendre, 'GaussLobatto' : gauss_lobatto, 'GaussChebyshev1': gausscheby1, 'GaussChebyshev2': gausscheby2}
 
 for rule in generators:
     fname = f'{rule.lower()}.cxx'
@@ -68,7 +101,7 @@ const double x_tolerance = 10*std::numeric_limits<double>::epsilon();
 const double w_tolerance = 10*std::numeric_limits<double>::epsilon();
 
 ''')
-    for order in range(2,nmax):
+    for order in orders:
         print(f'Generating test for {rule} with {order} points')
         x, w = generators[rule](order, ndigits)
         write_test(out, list(zip(x,w)), rule)
