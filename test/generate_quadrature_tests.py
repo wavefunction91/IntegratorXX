@@ -10,6 +10,9 @@ from sympy.core import S
 from sympy import sqrt
 import numpy
 import os
+from io import StringIO
+import multiprocessing as mp
+import time
 
 # Generate tests with 20 digit precision
 ndigits = 20
@@ -60,7 +63,7 @@ def write_test(out, points, integrator):
         out.write(f'\n}};\n');
 
     # Now compute the rule
-    out.write(f'IntegratorXX::{integrator}<double,double> quad({len(x)});\n')
+    out.write(f'IntegratorXX::{integrator}<double,double> quad({len(points)});\n')
     out.write(f'const auto & pts = quad.points();\n')
     out.write(f'const auto & wgt = quad.weights();\n')
     out.write(f'''for(auto i = 0ul; i < {len(points)}; i++) {{
@@ -96,6 +99,21 @@ def gausscheby2(order, n_digits):
 
 generators = {'GaussLegendre' : (gauss_legendre, extensive_tests), 'GaussLobatto' : (gauss_lobatto, extensive_tests), 'GaussChebyshev1': (gausscheby1, limited_tests), 'GaussChebyshev2': (gausscheby2, limited_tests)}
 
+
+def generate_task(generate, rule, order):
+    print(f'Generating test for {rule} with {order} points')
+    tic = time.process_time()
+    x, w = generate(order, ndigits)
+    local_out = StringIO()
+    write_test(local_out, list(zip(x,w)), rule)
+    toc = time.process_time()
+    print(f'Generating test for {rule} with {order} points ... ({toc-tic})')
+    return (order, local_out.getvalue())
+
+
+# Task Pool
+pool = mp.Pool(processes=16)
+
 for rule in generators:
     fname = f'{rule.lower()}.cxx'
     if os.path.exists(fname):
@@ -121,9 +139,13 @@ const double w_tolerance = 10*std::numeric_limits<double>::epsilon();
 ''')
 
     generate, test_orders = generators[rule]
-    for order in test_orders:
-        print(f'Generating test for {rule} with {order} points')
-        x, w = generate(order, ndigits)
-        write_test(out, list(zip(x,w)), rule)
+    #for order in test_orders:
+    #    print(f'Generating test for {rule} with {order} points')
+    #    x, w = generate(order, ndigits)
+    #    write_test(out, list(zip(x,w)), rule)
+    local_results = [pool.apply_async(generate_task, args=(generate, rule, order,)) for order in test_orders] 
+    for res in local_results:
+        order, gen = res.get()
+        out.write(gen)
     out.close()
     print('')
