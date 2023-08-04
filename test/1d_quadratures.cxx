@@ -13,52 +13,10 @@
 #include <cmath>
 #include <complex>
 #include <iostream>
+#include <random>
 
 #include "quad_matcher.hpp"
 #include "test_functions.hpp"
-
-#if 0
-// NR
-template <typename T, typename IntT>
-std::enable_if_t< std::is_arithmetic_v<T>, T>
-assoc_legendre( const IntT l, const IntT m, const T x ) {
-
-  if( m < 0 or m > l or std::abs(x) > 1. )
-    throw std::runtime_error("Bad args to assoc_legendre");
-
-  T pmm = 1.;
-  if( m > 0 ) {
-
-    const T somx2 = std::sqrt( (1. - x)*(1. + x) );
-    T fact = 1.;
-    for( IntT i = 0; i < m; ++i ) {
-      pmm *= fact*somx2;
-      fact += 2.;
-    }
-
-  }
-
-  if( l == m ) return pmm;
-  else {
-    T pmmp1 = x * (2*m + 1) * pmm;
-
-    if( l == (m+1) ) return pmmp1;
-    else {
-
-      T pll;
-      for( IntT ll = m+1; ll < l; ++ll ) {
-        pll = (x*(2*ll+1)*pmmp1-(ll+m)*pmm)/(ll-m+1);
-        pmm = pmmp1;
-        pmmp1 = pll;
-      }
-
-      return pll;
-    }
-  }
-
-}
-#endif
-
 
 using namespace IntegratorXX;
 
@@ -104,64 +62,18 @@ auto chebyshev_T(int n, T x) {
 }
 
 
-constexpr size_t factorial(size_t n) {
-  return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
-}
-
-
-#if 0
-template <typename T>
-constexpr std::complex<T> spherical_harmonics( int64_t l, int64_t m, T theta, T phi ) {
-
-
-  auto prefactor = std::sqrt( (2.*l + 1) / (4.*M_PI) * T(factorial(l-m))/T(factorial(l+m)) );
-  if( m < 0 )
-    prefactor *= std::pow(-1,std::abs(m)) * T(factorial(l-m))/T(factorial(l+m));
-
-
-  return prefactor * assoc_legendre( l, std::abs(m), std::cos(theta) ) *
-         std::complex<T>( std::cos(m*phi), std::sin(m*phi) );
-
-}
-#endif
-
-template <typename T>
-constexpr std::complex<T> spherical_harmonics( int64_t l, int64_t m, T x, T y, T z ) {
-
-  const auto r     = std::sqrt( x*x + y*y + z*z );
-  const auto theta = std::acos( z / r );
-  const auto phi   = std::atan2( y, x );
-
-  //return spherical_harmonics( l, m, theta, phi  );
-  return SphericalHarmonic::evaluate(l, m, theta, phi);
-
-}
-
-
-template <typename T, typename... Args>
-constexpr T real_spherical_harmonics( int64_t l, int64_t m, Args&&... args ) {
-
-  const T phase = std::sqrt(2.) * ((m % 2) ? 1. : -1.);
-
-  if( m == 0 )
-    return std::real(spherical_harmonics( l, m, std::forward<Args>(args)... ));
-  else if( m < 0 )
-    return phase * std::imag(spherical_harmonics( l, std::abs(m), std::forward<Args>(args)... ));
-  else
-    return phase * std::real(spherical_harmonics( l, m, std::forward<Args>(args)... ));
-
-}
 
 
 
-
-
-const double x_tolerance = 10 * std::numeric_limits<double>::epsilon();
-const double w_tolerance = 10 * std::numeric_limits<double>::epsilon();
 
 TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
+  std::default_random_engine gen;
+  std::uniform_real_distribution<> dist(-1.,1.);
+  auto rand_gen = [&]{ return dist(gen); };
+
   for(unsigned order=10;order<14;order++) {
+#if 0
     std::ostringstream oss;
     oss << "order " << order;
     SECTION( oss.str()) {
@@ -182,6 +94,26 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
       const auto msg = "Gauss-Legendre N = " + std::to_string(quad.npts());
       REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, 1e-10));
     }
+#else
+
+    SECTION( "Order " + std::to_string(order) ) {
+
+      IntegratorXX::GaussLegendre<double,double> quad( order );
+      for(int p = 2; p < 2*order+1; ++p) {
+        std::vector<double> c(p); std::generate(c.begin(), c.end(), rand_gen);
+        std::vector<double> cp(p+1, 0.0); 
+        for(int i = 0; i < p; ++i) {
+          cp[i] = c[i] / (p-i);
+        }
+        const auto ref = 
+          Polynomial::evaluate(cp, 1.0) - Polynomial::evaluate(cp, -1.0);
+        const auto msg = "Gauss-Legendre Order = " + std::to_string(order) + " PolyOrder = " + std::to_string(p-1);
+        test_quadrature<Polynomial>(msg, quad, ref, 1e-10, c);
+      }
+
+    }
+
+#endif
   }
 }
 
@@ -350,19 +282,8 @@ TEST_CASE( "Ahrens-Beylkin", "[1d-quad]" ) {
 
     for( auto l = 1; l < 10; ++l )
     for( auto m = 0; m <= l; ++m ) {
-
-      auto f = [=]( decltype(pts[0]) x ){
-        return spherical_harmonics(l,m,x[0],x[1],x[2]);
-      };
-
-      std::complex<double> res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i )
-        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
-
       const auto msg = "Ahrens-Beylkin N = " + std::to_string(quad.npts());
-      REQUIRE_THAT( std::real(res), IntegratorXX::Matchers::WithinAbs(msg, 1.0, 1e-10) );
-      REQUIRE_THAT( std::imag(res), IntegratorXX::Matchers::WithinAbs(msg, 0.0, 1e-10) );
-
+      test_quadrature<MagnitudeSquaredSphericalHarmonic>(msg, quad, 1.0, 1e-10, l, m); 
     }
 
   };

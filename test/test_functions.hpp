@@ -52,6 +52,21 @@ struct MagnitudeSquaredSphericalHarmonic {
 };
 
 
+
+struct Polynomial {
+
+  static double evaluate( std::vector<double> c, double x ) {
+    const auto N = c.size();
+    double res = c[0];
+    for(int i = 1; i < N; ++i) {
+      res = x * res + c[i];
+    }
+    return res;
+  }
+
+};
+
+
 template <typename TestFunction, typename QuadType, typename... PreArgs, 
   typename ResType = std::invoke_result_t<PreArgs..., typename QuadType::point_type>
 >
