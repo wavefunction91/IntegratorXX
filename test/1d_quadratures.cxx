@@ -11,6 +11,7 @@
 #include <integratorxx/quadratures/gausschebyshev3.hpp>
 #include <integratorxx/quadratures/ahrens_beylkin.hpp>
 #include <integratorxx/quadratures/womersley.hpp>
+#include <integratorxx/quadratures/delley.hpp>
 #include <cmath>
 #include <complex>
 
@@ -341,7 +342,6 @@ TEST_CASE( "Ahrens-Beylkin", "[1d-quad]" ) {
 
 TEST_CASE( "Womersley", "[1d-quad]" ) {
 
-
   auto test_fn = [&]( size_t nPts ) {
 
     IntegratorXX::Womersley<double> quad( nPts );
@@ -369,4 +369,36 @@ TEST_CASE( "Womersley", "[1d-quad]" ) {
   test_fn(314);
   test_fn(801);
   test_fn(969);
+}
+
+TEST_CASE( "Delley", "[1d-quad]" ) {
+
+
+  auto test_fn = [&]( size_t nPts ) {
+
+    IntegratorXX::Delley<double> quad( nPts );
+
+    const auto& pts = quad.points();
+    const auto& wgt = quad.weights();
+
+    for( auto l = 1; l < 10; ++l )
+    for( auto m = 0; m <= l; ++m ) {
+
+      auto f = [=]( decltype(pts[0]) x ){
+        return spherical_harmonics(l,m,x[0],x[1],x[2]);
+      };
+
+      std::complex<double> res = 0.;
+      for( auto i = 0; i < quad.npts(); ++i )
+        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
+  
+      CHECK( std::real(res) == Catch::Approx(1.) );
+    }
+
+  };
+
+  test_fn(302);
+  test_fn(770);
+  test_fn(974);
+
 }
