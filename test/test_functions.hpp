@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <random>
 #include "quad_matcher.hpp"
 
 
@@ -107,4 +108,41 @@ void test_quadrature(std::string msg, const QuadType& quad, const ResType& ref, 
   //standard_matcher(mes, res, ref, e);
   //printf("diff = %.6e\n", std::abs(ref - res));
   REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, e));
+}
+
+
+template <typename QuadType, typename TestFunction>
+void test_random_polynomial(std::string qname, int min_order, int max_order,
+  std::function<int(int)> max_poly_order_functor,
+  std::function<double(const std::vector<double>&)> ref_functor,
+  double e) {
+
+  std::default_random_engine gen;
+  std::uniform_real_distribution<> dist(-1.,1.);
+  auto rand_gen = [&]{ return dist(gen); };
+
+  for(int order = min_order; order < max_order; order++) {
+
+    QuadType quad(order);
+    REQUIRE(std::is_sorted(quad.points().begin(), quad.points().end()));
+
+    const auto p_max = max_poly_order_functor(order);
+    REQUIRE(p_max > 2);
+    for(int p = 2; p < p_max; ++p) {
+      // Generate a random polynomial
+      std::vector<double> c(p); 
+      std::generate(c.begin(), c.end(), rand_gen);
+
+      // Evaluate reference value
+      const auto ref = ref_functor(c);
+
+      // Test Quadrature Value
+      const std::string msg = qname + 
+        " Order = " + std::to_string(order) +
+        " PolyOrder = " + std::to_string(p-1);
+      test_quadrature<TestFunction>(msg, quad, ref, e, c);
+    }
+
+  }
+
 }
