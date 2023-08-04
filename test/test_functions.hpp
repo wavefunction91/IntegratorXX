@@ -99,14 +99,12 @@ struct ChebyshevT3WeightFunction {
 };
 
 
-template <typename TestFunction, typename QuadType, typename... PreArgs, 
-  typename ResType = std::invoke_result_t<PreArgs..., typename QuadType::point_type>
->
-void test_quadrature(std::string msg, const QuadType& quad, const ResType& ref, double e, PreArgs&&... args) {
+template <typename TestFunction, typename QuadType, typename... PreArgs>
+void test_quadrature(std::string msg, const QuadType& quad, double ref, double e, PreArgs&&... args) {
   const auto& pts = quad.points();
   const auto& wgt = quad.weights();
 
-  ResType res = 0.0;
+  double res = 0.0;
   for(auto i = 0; i < quad.npts(); ++i) {
     res += wgt[i] * TestFunction::evaluate(args..., pts[i]);
   }
