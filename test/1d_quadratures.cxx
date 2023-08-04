@@ -251,17 +251,8 @@ TEST_CASE( "Womersley", "[1d-quad]" ) {
 
     for( auto l = 1; l < 10; ++l )
     for( auto m = 0; m <= l; ++m ) {
-
-      auto f = [=]( decltype(pts[0]) x ){
-        return spherical_harmonics(l,m,x[0],x[1],x[2]);
-      };
-
-      std::complex<double> res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i )
-        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
-
-      CHECK( std::real(res) == Catch::Approx(1.) );
-
+      const auto msg = "Womersley N = " + std::to_string(quad.npts());
+      test_quadrature<MagnitudeSquaredSphericalHarmonic>(msg, quad, 1.0, 1e-10, l, m); 
     }
 
   };
