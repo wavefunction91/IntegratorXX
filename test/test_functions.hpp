@@ -66,6 +66,31 @@ struct Polynomial {
 
 };
 
+template <typename WeightFunctor>
+struct WeightedPolynomial {
+
+  static double evaluate( std::vector<double> c, double x ) {
+    return Polynomial::evaluate(c,x) * WeightFunctor::evaluate(x);
+  }
+
+};
+
+struct ChebyshevT1WeightFunction {
+  static double evaluate(double x){ 
+    return 1./std::sqrt(1.0 - x*x);
+  }
+};
+struct ChebyshevT2WeightFunction {
+  static double evaluate(double x){ 
+    return std::sqrt(1.0 - x*x);
+  }
+};
+struct ChebyshevT3WeightFunction {
+  static double evaluate(double x){ 
+    return std::sqrt(x/(1.0 - x));
+  }
+};
+
 
 template <typename TestFunction, typename QuadType, typename... PreArgs, 
   typename ResType = std::invoke_result_t<PreArgs..., typename QuadType::point_type>
@@ -80,5 +105,6 @@ void test_quadrature(std::string msg, const QuadType& quad, const ResType& ref, 
   }
   
   //standard_matcher(mes, res, ref, e);
+  //printf("diff = %.6e\n", std::abs(ref - res));
   REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, e));
 }

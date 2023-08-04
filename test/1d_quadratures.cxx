@@ -21,6 +21,7 @@
 using namespace IntegratorXX;
 
 inline constexpr double inf = std::numeric_limits<double>::infinity();
+inline constexpr double eps = std::numeric_limits<double>::epsilon();
 
 template <typename T = double>
 constexpr T gaussian( T alpha, T c, T x ) {
@@ -49,13 +50,6 @@ constexpr T ref_gaussian_int( T a, T b ) {
 }
 
 
-#if 0
-template <typename T = double>
-T ref_bessel_int( int n, T a, T b ) {
-  return std::pow(2.0,-n) * (std::pow(-1.0,n) +1) * boost::math::hypergeometric_pFq( {(n+1.0)/2.0}, {(n+3.0)/2.0, n+1.0}, -0.25) / std::tgamma(n+2);
-};
-#endif 
-
 template <typename T>
 auto chebyshev_T(int n, T x) {
   return std::cos( n * std::acos(x) );
@@ -73,76 +67,132 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
   auto rand_gen = [&]{ return dist(gen); };
 
   for(unsigned order=10;order<14;order++) {
-#if 0
-    std::ostringstream oss;
-    oss << "order " << order;
-    SECTION( oss.str()) {
-
-      IntegratorXX::GaussLegendre<double,double> quad( order );
-
-      const auto& pts = quad.points();
-      const auto& wgt = quad.weights();
-
-      auto f = [=]( double x ){ return gaussian(x); };
-
-      double res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i ) {
-        res += wgt[i] * f(pts[i]);
+    IntegratorXX::GaussLegendre<double,double> quad( order );
+    for(int p = 2; p < 2*order+1; ++p) {
+      std::vector<double> c(p); std::generate(c.begin(), c.end(), rand_gen);
+      std::vector<double> cp(p+1, 0.0); 
+      for(int i = 0; i < p; ++i) {
+        cp[i] = c[i] / (p-i);
       }
-
-      const auto ref = ref_gaussian_int(-1.,1.);
-      const auto msg = "Gauss-Legendre N = " + std::to_string(quad.npts());
-      REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, 1e-10));
+      const auto ref = 
+        Polynomial::evaluate(cp, 1.0) - Polynomial::evaluate(cp, -1.0);
+      const auto msg = "Gauss-Legendre Order = " + std::to_string(order) + " PolyOrder = " + std::to_string(p-1);
+      test_quadrature<Polynomial>(msg, quad, ref, 1e-12, c);
     }
-#else
-
-    SECTION( "Order " + std::to_string(order) ) {
-
-      IntegratorXX::GaussLegendre<double,double> quad( order );
-      for(int p = 2; p < 2*order+1; ++p) {
-        std::vector<double> c(p); std::generate(c.begin(), c.end(), rand_gen);
-        std::vector<double> cp(p+1, 0.0); 
-        for(int i = 0; i < p; ++i) {
-          cp[i] = c[i] / (p-i);
-        }
-        const auto ref = 
-          Polynomial::evaluate(cp, 1.0) - Polynomial::evaluate(cp, -1.0);
-        const auto msg = "Gauss-Legendre Order = " + std::to_string(order) + " PolyOrder = " + std::to_string(p-1);
-        test_quadrature<Polynomial>(msg, quad, ref, 1e-10, c);
-      }
-
-    }
-
-#endif
   }
+
 }
 
 TEST_CASE( "Gauss-Lobatto Quadratures", "[1d-quad]" ) {
 
+  std::default_random_engine gen;
+  std::uniform_real_distribution<> dist(-1.,1.);
+  auto rand_gen = [&]{ return dist(gen); };
+
   for(unsigned order=10;order<14;order++) {
-    std::ostringstream oss;
-    oss << "order " << order;
-    SECTION( oss.str()) {
+    IntegratorXX::GaussLobatto<double,double> quad( order );
+    auto f = quad.points().front();
+    auto e = quad.points().back();
+    REQUIRE_THAT(f, Catch::Matchers::WithinAbs(-1.0, eps));
+    REQUIRE_THAT(e, Catch::Matchers::WithinAbs(1.0, eps));
 
-      IntegratorXX::GaussLobatto<double,double> quad( order );
-
-      const auto& pts = quad.points();
-      const auto& wgt = quad.weights();
-
-      auto f = [=]( double x ){ return gaussian(x); };
-
-      double res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i ) {
-        res += wgt[i] * f(pts[i]);
+    for(int p = 2; p < 2*order-1; ++p) {
+      std::vector<double> c(p); std::generate(c.begin(), c.end(), rand_gen);
+      std::vector<double> cp(p+1, 0.0); 
+      for(int i = 0; i < p; ++i) {
+        cp[i] = c[i] / (p-i);
       }
-
-      const auto ref = ref_gaussian_int(-1.,1.);
-      const auto msg = "Gauss-Lobatto N = " + std::to_string(quad.npts());
-      REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, 1e-10));
+      const auto ref = 
+        Polynomial::evaluate(cp, 1.0) - Polynomial::evaluate(cp, -1.0);
+      const auto msg = "Gauss-Lobatto Order = " + std::to_string(order) + " PolyOrder = " + std::to_string(p-1);
+      test_quadrature<Polynomial>(msg, quad, ref, 1e-12, c);
     }
   }
 }
 
+TEST_CASE( "Gauss-Chebyshev T1 Quadratures", "[1d-quad]" ) {
+
+  std::default_random_engine gen;
+  std::uniform_real_distribution<> dist(-1.,1.);
+  auto rand_gen = [&]{ return dist(gen); };
+
+  for(unsigned order=10; order<11; order++) {
+    IntegratorXX::GaussChebyshev1<double,double> quad( order );
+    REQUIRE(std::is_sorted(quad.points().begin(), quad.points().end()));
+    for(int p = 2; p < 2*order+1; ++p) {
+      std::vector<double> c(p); std::generate(c.begin(), c.end(), rand_gen);
+
+      double ref = 0.0;
+      for(int i = 0; i < p; ++i) {
+        int k = p - i - 1;
+        if(k > 0)
+          ref += c[i] * (std::sqrt(M_PI) / k) * std::tgamma((k+1)/2.0) / std::tgamma(k/2.0) * (std::pow(-1,k)+1);
+        else
+          ref += c[i] * M_PI;
+      }
+
+      const auto msg = "Gauss-Chebyshev T1 Order = " + std::to_string(order) + " PolyOrder = " + std::to_string(p-1);
+      test_quadrature<WeightedPolynomial<ChebyshevT1WeightFunction>>(msg, quad, ref, 1e-12, c);
+    }
+  }
+
+}
+
+TEST_CASE( "Gauss-Chebyshev T2 Quadratures", "[1d-quad]" ) {
+
+  std::default_random_engine gen;
+  std::uniform_real_distribution<> dist(-1.,1.);
+  auto rand_gen = [&]{ return dist(gen); };
+
+  for(unsigned order=10; order<100; order++) {
+    IntegratorXX::GaussChebyshev2<double,double> quad( order );
+    REQUIRE(std::is_sorted(quad.points().begin(), quad.points().end()));
+    if(order%2) REQUIRE(quad.points()[order/2] == 0.0); // FP equality b/c data should be explicitly set
+    for(int p = 2; p < 2*order+1; ++p) {
+      std::vector<double> c(p); std::generate(c.begin(), c.end(), rand_gen);
+
+      double ref = 0.0;
+      for(int i = 0; i < p; ++i) {
+        int k = p - i - 1;
+        if(k > 0)
+          ref += c[i] * (std::sqrt(M_PI) / 4.0) * std::tgamma((k+1)/2.0) / std::tgamma(k/2.0 + 2) * (std::pow(-1,k)+1);
+        else
+          ref += c[i] * M_PI/2.0;
+      }
+
+      const auto msg = "Gauss-Chebyshev T2 Order = " + std::to_string(order) + " PolyOrder = " + std::to_string(p-1);
+      test_quadrature<WeightedPolynomial<ChebyshevT2WeightFunction>>(msg, quad, ref, 1e-12, c);
+    }
+  }
+
+}
+
+TEST_CASE( "Gauss-Chebyshev T3 Quadratures", "[1d-quad]" ) {
+
+  std::default_random_engine gen;
+  std::uniform_real_distribution<> dist(-1.,1.);
+  auto rand_gen = [&]{ return dist(gen); };
+
+  for(unsigned order=10; order<50; order++) { // Code breaks down for large orders here
+    IntegratorXX::GaussChebyshev3<double,double> quad( order );
+    REQUIRE(std::is_sorted(quad.points().begin(), quad.points().end()));
+    for(int p = 2; p < 2*order-1; ++p) {
+      std::vector<double> c(p); std::generate(c.begin(), c.end(), rand_gen);
+
+      double ref = 0.0;
+      for(int i = 0; i < p; ++i) {
+        int k = p - i - 1;
+        ref += c[i] * std::sqrt(M_PI) * std::tgamma(k+3.0/2.0) / std::tgamma(k + 2); 
+      }
+
+      const auto msg = "Gauss-Chebyshev T3 Order = " + std::to_string(order) + " PolyOrder = " + std::to_string(p-1);
+      test_quadrature<WeightedPolynomial<ChebyshevT3WeightFunction>>(msg, quad, ref, 1e-12, c);
+    }
+  } 
+
+}
+
+#if 0
 TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
 
   auto integrate = [&](auto& quad) {
@@ -190,6 +240,7 @@ TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
     integrate(quad);
   }
 }
+#endif
 
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
 
