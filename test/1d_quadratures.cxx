@@ -178,62 +178,21 @@ TEST_CASE( "Gauss-Chebyshev T3 Quadratures", "[1d-quad]" ) {
 
 
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
-
   IntegratorXX::MurrayHandyLaming<double,double> quad(150);
-
-  const auto& pts = quad.points();
-  const auto& wgt = quad.weights();
-
-  auto f = [=]( double x ){ return x*x*gaussian(x); };
-
-  double res = 0.;
-  for( auto i = 0; i < quad.npts(); ++i )
-    res += wgt[i] * f(pts[i]);
-
-  const auto ref = std::sqrt(M_PI)/4;
   const auto msg = "Euler-Maclaurin N = " + std::to_string(quad.npts());
-  REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, 1e-10));
-
+  test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
 }
 
 TEST_CASE( "Treutler-Ahlrichs Quadratures", "[1d-quad]" ) {
-
   IntegratorXX::TreutlerAhlrichs<double,double> quad(150);
-
-  const auto& pts = quad.points();
-  const auto& wgt = quad.weights();
-
-  auto f = [=]( double x ){ return x*x*gaussian(x); };
-
-  double res = 0.;
-  for( auto i = 0; i < quad.npts(); ++i ) {
-    res += wgt[i] * f(pts[i]);
-  }
-
-  const auto ref = std::sqrt(M_PI)/4;
   const auto msg = "Treutler-Ahlrichs N = " + std::to_string(quad.npts());
-  REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, 1e-10));
-
+  test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
 }
 
 TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
-
   IntegratorXX::MuraKnowles<double,double> quad(350);
-
-  const auto& pts = quad.points();
-  const auto& wgt = quad.weights();
-
-  auto f = [=]( double x ){ return x*x*gaussian(x); };
-
-  double res = 0.;
-  for( auto i = 0; i < quad.npts(); ++i ) 
-    res += wgt[i] * f(pts[i]);
-  
-
-  const auto ref = std::sqrt(M_PI)/4;
   const auto msg = "Mura-Knowles N = " + std::to_string(quad.npts());
-  REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, 1e-10));
-
+  test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
 }
 
 TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {

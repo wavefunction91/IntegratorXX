@@ -52,6 +52,12 @@ struct MagnitudeSquaredSphericalHarmonic {
   }
 };
 
+struct RadialGaussian {
+  static double evaluate(double r) {
+    return r*r * std::exp(-r*r);
+  }
+};
+
 
 
 struct Polynomial {
