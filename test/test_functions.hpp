@@ -56,6 +56,13 @@ struct RadialGaussian {
   static double evaluate(double r) {
     return r*r * std::exp(-r*r);
   }
+  static double evaluate(double x, double y, double z) {
+    const auto r = std::hypot(x,y,z);
+    return evaluate(r);
+  }
+  static double evaluate(std::array<double,3> x) {
+    return evaluate(x[0], x[1], x[2]);
+  }
 };
 
 

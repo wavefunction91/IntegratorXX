@@ -9,6 +9,9 @@
 //#include <integratorxx/deprecated/batch.hpp>
 //#include <integratorxx/deprecated/quadrature.hpp>
 
+#include "test_functions.hpp"
+inline constexpr double eps = std::numeric_limits<double>::epsilon();
+
 TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
   size_t nrad = 150;
@@ -23,14 +26,8 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
 
     REQUIRE( npts == nrad * nang );
 
-    double res = 0;
-    for( auto i = 0; i < npts; ++i ) {
-      const auto p = s.points()[i];
-      const auto rsq = p[0]*p[0] + p[1]*p[1] + p[2]*p[2];
-      res += s.weights()[i] * std::exp(-rsq);
-    }
-
-    CHECK( res == Catch::Approx( M_PI * std::sqrt(M_PI) ) );
+    const std::string msg = "MK(150) x LL(770) Spherical";
+    test_quadrature<RadialGaussian>(msg, s, std::pow(M_PI,1.5), 1e-10);
   }
 
 
@@ -58,9 +55,9 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       auto po = s_origin.points()[i];
       auto pc = s_cen.points()[i];
 
-      CHECK( pc[0] == Catch::Approx( po[0] + cen[0] ) );
-      CHECK( pc[1] == Catch::Approx( po[1] + cen[1] ) );
-      CHECK( pc[2] == Catch::Approx( po[2] + cen[2] ) );
+      CHECK_THAT( pc[0], Catch::Matchers::WithinAbs( po[0] + cen[0], eps ) );
+      CHECK_THAT( pc[1], Catch::Matchers::WithinAbs( po[1] + cen[1], eps ) );
+      CHECK_THAT( pc[2], Catch::Matchers::WithinAbs( po[2] + cen[2], eps ) );
     }
 
 
@@ -78,8 +75,8 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       auto pc_ref = sc_cpy.points()[i];
 
       for(int x = 0; x < 3; ++x) {
-        CHECK( po[x] == Catch::Approx(pc_ref[x]) );
-        CHECK( pc[x] == Catch::Approx(po_ref[x]) );
+        CHECK_THAT( po[x], Catch::Matchers::WithinAbs(pc_ref[x], eps) );
+        CHECK_THAT( pc[x], Catch::Matchers::WithinAbs(po_ref[x], eps) );
       }
 
     }
@@ -98,8 +95,8 @@ TEST_CASE( "Spherical Quadratures", "[sph-quad]" ) {
       auto pc_ref = sc_cpy.points()[i];
 
       for(int x = 0; x < 3; ++x) {
-        CHECK( po[x] == Catch::Approx(po_ref[x]) );
-        CHECK( pc[x] == Catch::Approx(pc_ref[x]) );
+        CHECK_THAT( po[x], Catch::Matchers::WithinAbs(pc_ref[x], eps) );
+        CHECK_THAT( pc[x], Catch::Matchers::WithinAbs(po_ref[x], eps) );
       }
     }
 
@@ -244,7 +241,7 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
         const auto _r = r.points()[i];
         const auto _rw = r.weights()[i];
         const auto _aw = q.weights()[j];
-        CHECK( ps.weights()[npts] == Catch::Approx( _r * _r * _rw * _aw ) );
+        CHECK_THAT( ps.weights()[npts], Catch::Matchers::WithinAbs( _r * _r * _rw * _aw, eps ) );
         npts++;
       }
     }
