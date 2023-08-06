@@ -201,14 +201,9 @@ TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
 
 
   auto test_fn = [&]( size_t nPts ) {
-
     IntegratorXX::LebedevLaikov<double> quad( nPts );
-    for( auto l = 1; l < 10; ++l )
-    for( auto m = 0; m <= l; ++m ) {
-      const auto msg = "Lebedev-Laikov N = " + std::to_string(quad.npts());
-      test_quadrature<MagnitudeSquaredSphericalHarmonic>(msg, quad, 1.0, 1e-10, l, m); 
-    }
-
+    const auto msg = "Lebedev-Laikov N = " + std::to_string(quad.npts());
+    test_angular_quadrature(msg, quad, 10, 1e-10);
   };
 
   test_fn(302);
@@ -223,15 +218,8 @@ TEST_CASE( "Ahrens-Beylkin", "[1d-quad]" ) {
   auto test_fn = [&]( size_t nPts ) {
 
     IntegratorXX::AhrensBeylkin<double> quad( nPts );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    for( auto l = 1; l < 10; ++l )
-    for( auto m = 0; m <= l; ++m ) {
-      const auto msg = "Ahrens-Beylkin N = " + std::to_string(quad.npts());
-      test_quadrature<MagnitudeSquaredSphericalHarmonic>(msg, quad, 1.0, 1e-10, l, m); 
-    }
+    const auto msg = "Ahrens-Beylkin N = " + std::to_string(quad.npts());
+    test_angular_quadrature(msg, quad, 10, 1e-10);
 
   };
 
@@ -245,15 +233,8 @@ TEST_CASE( "Womersley", "[1d-quad]" ) {
   auto test_fn = [&]( size_t nPts ) {
 
     IntegratorXX::Womersley<double> quad( nPts );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    for( auto l = 1; l < 10; ++l )
-    for( auto m = 0; m <= l; ++m ) {
-      const auto msg = "Womersley N = " + std::to_string(quad.npts());
-      test_quadrature<MagnitudeSquaredSphericalHarmonic>(msg, quad, 1.0, 1e-10, l, m); 
-    }
+    const auto msg = "Womersley N = " + std::to_string(quad.npts());
+    test_angular_quadrature(msg, quad, 10, 1e-10);
 
   };
 
@@ -268,11 +249,8 @@ TEST_CASE( "Delley", "[1d-quad]" ) {
   auto test_fn = [&]( size_t nPts ) {
 
     IntegratorXX::Delley<double> quad( nPts );
-    for( auto l = 1; l < 10; ++l )
-    for( auto m = 0; m <= l; ++m ) {
-      const auto msg = "Delley N = " + std::to_string(quad.npts());
-      test_quadrature<MagnitudeSquaredSphericalHarmonic>(msg, quad, 1.0, 1e-10, l, m); 
-    }
+    const auto msg = "Delley N = " + std::to_string(quad.npts());
+    test_angular_quadrature(msg, quad, 10, 1e-10);
 
   };
 

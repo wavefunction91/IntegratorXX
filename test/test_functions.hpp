@@ -121,6 +121,17 @@ void test_quadrature(std::string msg, const QuadType& quad, double ref, double e
   REQUIRE_THAT(res, IntegratorXX::Matchers::WithinAbs(msg, ref, e));
 }
 
+template <typename QuadType>
+void test_angular_quadrature(std::string msg, const QuadType& quad, int maxL, double e) {
+
+  for( auto l = 1; l < maxL; ++l )
+  for( auto m = 0; m <= l; ++m ) {
+    auto loc_msg = msg + "(L,M) = (" + std::to_string(l) + "," + std::to_string(m) + ")";
+    test_quadrature<MagnitudeSquaredSphericalHarmonic>(loc_msg, quad, 1.0, e, l, m); 
+  }
+
+}
+
 
 template <typename QuadType, typename TestFunction>
 void test_random_polynomial(std::string qname, int min_order, int max_order,
