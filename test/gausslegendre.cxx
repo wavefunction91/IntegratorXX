@@ -8,6 +8,7 @@
 #include <integratorxx/quadratures/gausslegendre.hpp>
 #include <numeric>
 #include <vector>
+#include "quad_matcher.hpp"
 // clang-format on
 
 const double x_tolerance = 10*std::numeric_limits<double>::epsilon();
@@ -24,8 +25,9 @@ IntegratorXX::GaussLegendre<double,double> quad(2);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 2; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 2 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -40,8 +42,9 @@ IntegratorXX::GaussLegendre<double,double> quad(3);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 3; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 3 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -58,8 +61,9 @@ IntegratorXX::GaussLegendre<double,double> quad(4);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 4; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 4 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -76,8 +80,9 @@ IntegratorXX::GaussLegendre<double,double> quad(5);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 5; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 5 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -94,8 +99,9 @@ IntegratorXX::GaussLegendre<double,double> quad(6);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 6; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 6 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -114,8 +120,9 @@ IntegratorXX::GaussLegendre<double,double> quad(7);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 7; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 7 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -134,8 +141,9 @@ IntegratorXX::GaussLegendre<double,double> quad(8);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 8; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 8 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -154,8 +162,9 @@ IntegratorXX::GaussLegendre<double,double> quad(9);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 9; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 9 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -176,8 +185,9 @@ IntegratorXX::GaussLegendre<double,double> quad(10);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 10; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 10 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -198,8 +208,9 @@ IntegratorXX::GaussLegendre<double,double> quad(11);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 11; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 11 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -220,8 +231,9 @@ IntegratorXX::GaussLegendre<double,double> quad(12);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 12; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 12 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -244,8 +256,9 @@ IntegratorXX::GaussLegendre<double,double> quad(13);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 13; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 13 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -268,8 +281,9 @@ IntegratorXX::GaussLegendre<double,double> quad(14);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 14; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 14 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -292,8 +306,9 @@ IntegratorXX::GaussLegendre<double,double> quad(15);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 15; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 15 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -318,8 +333,9 @@ IntegratorXX::GaussLegendre<double,double> quad(16);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 16; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 16 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -344,8 +360,9 @@ IntegratorXX::GaussLegendre<double,double> quad(17);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 17; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 17 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -370,8 +387,9 @@ IntegratorXX::GaussLegendre<double,double> quad(18);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 18; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 18 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -398,8 +416,9 @@ IntegratorXX::GaussLegendre<double,double> quad(19);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 19; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 19 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -426,8 +445,9 @@ IntegratorXX::GaussLegendre<double,double> quad(20);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 20; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 20 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -454,8 +474,9 @@ IntegratorXX::GaussLegendre<double,double> quad(21);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 21; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 21 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -484,8 +505,9 @@ IntegratorXX::GaussLegendre<double,double> quad(22);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 22; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 22 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -514,8 +536,9 @@ IntegratorXX::GaussLegendre<double,double> quad(23);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 23; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 23 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -544,8 +567,9 @@ IntegratorXX::GaussLegendre<double,double> quad(24);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 24; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 24 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -576,8 +600,9 @@ IntegratorXX::GaussLegendre<double,double> quad(25);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 25; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 25 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -608,8 +633,9 @@ IntegratorXX::GaussLegendre<double,double> quad(26);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 26; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 26 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -640,8 +666,9 @@ IntegratorXX::GaussLegendre<double,double> quad(27);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 27; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 27 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -674,8 +701,9 @@ IntegratorXX::GaussLegendre<double,double> quad(28);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 28; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 28 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -708,8 +736,9 @@ IntegratorXX::GaussLegendre<double,double> quad(29);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 29; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 29 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -742,8 +771,9 @@ IntegratorXX::GaussLegendre<double,double> quad(30);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 30; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 30 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -778,8 +808,9 @@ IntegratorXX::GaussLegendre<double,double> quad(31);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 31; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 31 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -814,8 +845,9 @@ IntegratorXX::GaussLegendre<double,double> quad(32);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 32; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 32 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -850,8 +882,9 @@ IntegratorXX::GaussLegendre<double,double> quad(33);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 33; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 33 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -888,8 +921,9 @@ IntegratorXX::GaussLegendre<double,double> quad(34);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 34; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 34 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -926,8 +960,9 @@ IntegratorXX::GaussLegendre<double,double> quad(35);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 35; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 35 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -964,8 +999,9 @@ IntegratorXX::GaussLegendre<double,double> quad(36);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 36; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 36 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1004,8 +1040,9 @@ IntegratorXX::GaussLegendre<double,double> quad(37);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 37; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 37 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1044,8 +1081,9 @@ IntegratorXX::GaussLegendre<double,double> quad(38);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 38; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 38 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1084,8 +1122,9 @@ IntegratorXX::GaussLegendre<double,double> quad(39);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 39; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 39 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1126,8 +1165,9 @@ IntegratorXX::GaussLegendre<double,double> quad(40);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 40; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 40 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1168,8 +1208,9 @@ IntegratorXX::GaussLegendre<double,double> quad(41);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 41; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 41 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1212,8 +1253,9 @@ IntegratorXX::GaussLegendre<double,double> quad(44);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 44; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 44 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1258,8 +1300,9 @@ IntegratorXX::GaussLegendre<double,double> quad(47);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 47; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 47 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1306,8 +1349,9 @@ IntegratorXX::GaussLegendre<double,double> quad(50);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 50; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 50 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1356,8 +1400,9 @@ IntegratorXX::GaussLegendre<double,double> quad(53);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 53; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 53 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1408,8 +1453,9 @@ IntegratorXX::GaussLegendre<double,double> quad(56);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 56; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 56 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1462,8 +1508,9 @@ IntegratorXX::GaussLegendre<double,double> quad(59);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 59; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 59 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1518,8 +1565,9 @@ IntegratorXX::GaussLegendre<double,double> quad(62);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 62; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 62 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1576,8 +1624,9 @@ IntegratorXX::GaussLegendre<double,double> quad(65);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 65; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 65 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1636,8 +1685,9 @@ IntegratorXX::GaussLegendre<double,double> quad(68);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 68; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 68 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1698,8 +1748,9 @@ IntegratorXX::GaussLegendre<double,double> quad(71);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 71; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 71 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1762,8 +1813,9 @@ IntegratorXX::GaussLegendre<double,double> quad(74);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 74; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 74 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1828,8 +1880,9 @@ IntegratorXX::GaussLegendre<double,double> quad(77);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 77; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 77 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1896,8 +1949,9 @@ IntegratorXX::GaussLegendre<double,double> quad(80);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 80; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 80 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1966,8 +2020,9 @@ IntegratorXX::GaussLegendre<double,double> quad(83);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 83; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 83 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2038,8 +2093,9 @@ IntegratorXX::GaussLegendre<double,double> quad(86);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 86; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 86 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2112,8 +2168,9 @@ IntegratorXX::GaussLegendre<double,double> quad(89);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 89; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 89 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2188,8 +2245,9 @@ IntegratorXX::GaussLegendre<double,double> quad(92);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 92; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 92 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2266,8 +2324,9 @@ IntegratorXX::GaussLegendre<double,double> quad(95);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 95; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 95 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2346,8 +2405,9 @@ IntegratorXX::GaussLegendre<double,double> quad(98);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 98; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 98 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2428,8 +2488,9 @@ IntegratorXX::GaussLegendre<double,double> quad(101);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 101; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 101 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2512,8 +2573,9 @@ IntegratorXX::GaussLegendre<double,double> quad(104);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 104; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 104 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2598,8 +2660,9 @@ IntegratorXX::GaussLegendre<double,double> quad(107);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 107; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 107 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2686,8 +2749,9 @@ IntegratorXX::GaussLegendre<double,double> quad(110);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 110; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 110 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2776,8 +2840,9 @@ IntegratorXX::GaussLegendre<double,double> quad(113);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 113; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 113 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2868,8 +2933,9 @@ IntegratorXX::GaussLegendre<double,double> quad(116);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 116; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 116 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -2962,8 +3028,9 @@ IntegratorXX::GaussLegendre<double,double> quad(119);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 119; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 119 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3058,8 +3125,9 @@ IntegratorXX::GaussLegendre<double,double> quad(122);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 122; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 122 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3156,8 +3224,9 @@ IntegratorXX::GaussLegendre<double,double> quad(125);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 125; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 125 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3256,8 +3325,9 @@ IntegratorXX::GaussLegendre<double,double> quad(128);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 128; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 128 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3358,8 +3428,9 @@ IntegratorXX::GaussLegendre<double,double> quad(131);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 131; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 131 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3462,8 +3533,9 @@ IntegratorXX::GaussLegendre<double,double> quad(134);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 134; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 134 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3568,8 +3640,9 @@ IntegratorXX::GaussLegendre<double,double> quad(137);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 137; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 137 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3676,8 +3749,9 @@ IntegratorXX::GaussLegendre<double,double> quad(140);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 140; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 140 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3786,8 +3860,9 @@ IntegratorXX::GaussLegendre<double,double> quad(143);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 143; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 143 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -3898,8 +3973,9 @@ IntegratorXX::GaussLegendre<double,double> quad(146);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 146; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 146 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -4012,8 +4088,9 @@ IntegratorXX::GaussLegendre<double,double> quad(149);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 149; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 149 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -4128,8 +4205,9 @@ IntegratorXX::GaussLegendre<double,double> quad(152);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 152; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 152 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -4246,8 +4324,9 @@ IntegratorXX::GaussLegendre<double,double> quad(155);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 155; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 155 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -4366,8 +4445,9 @@ IntegratorXX::GaussLegendre<double,double> quad(158);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 158; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 158 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -4488,8 +4568,9 @@ IntegratorXX::GaussLegendre<double,double> quad(161);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 161; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 161 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -4614,8 +4695,9 @@ IntegratorXX::GaussLegendre<double,double> quad(166);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 166; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 166 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -4742,8 +4824,9 @@ IntegratorXX::GaussLegendre<double,double> quad(171);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 171; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 171 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -4874,8 +4957,9 @@ IntegratorXX::GaussLegendre<double,double> quad(176);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 176; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 176 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -5010,8 +5094,9 @@ IntegratorXX::GaussLegendre<double,double> quad(181);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 181; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 181 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -5148,8 +5233,9 @@ IntegratorXX::GaussLegendre<double,double> quad(186);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 186; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 186 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -5290,8 +5376,9 @@ IntegratorXX::GaussLegendre<double,double> quad(191);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 191; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 191 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -5436,8 +5523,9 @@ IntegratorXX::GaussLegendre<double,double> quad(196);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 196; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 196 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -5584,8 +5672,9 @@ IntegratorXX::GaussLegendre<double,double> quad(201);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 201; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 201 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -5736,8 +5825,9 @@ IntegratorXX::GaussLegendre<double,double> quad(206);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 206; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 206 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -5892,8 +5982,9 @@ IntegratorXX::GaussLegendre<double,double> quad(211);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 211; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 211 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -6050,8 +6141,9 @@ IntegratorXX::GaussLegendre<double,double> quad(216);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 216; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 216 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -6212,8 +6304,9 @@ IntegratorXX::GaussLegendre<double,double> quad(221);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 221; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 221 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -6378,8 +6471,9 @@ IntegratorXX::GaussLegendre<double,double> quad(226);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 226; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 226 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -6546,8 +6640,9 @@ IntegratorXX::GaussLegendre<double,double> quad(231);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 231; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 231 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -6718,8 +6813,9 @@ IntegratorXX::GaussLegendre<double,double> quad(236);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 236; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 236 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -6894,8 +6990,9 @@ IntegratorXX::GaussLegendre<double,double> quad(241);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 241; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 241 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -7072,8 +7169,9 @@ IntegratorXX::GaussLegendre<double,double> quad(246);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 246; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 246 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -7254,8 +7352,9 @@ IntegratorXX::GaussLegendre<double,double> quad(251);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 251; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 251 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -7440,8 +7539,9 @@ IntegratorXX::GaussLegendre<double,double> quad(256);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 256; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 256 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -7628,8 +7728,9 @@ IntegratorXX::GaussLegendre<double,double> quad(261);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 261; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 261 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -7820,8 +7921,9 @@ IntegratorXX::GaussLegendre<double,double> quad(266);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 266; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 266 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -8016,8 +8118,9 @@ IntegratorXX::GaussLegendre<double,double> quad(271);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 271; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 271 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -8214,8 +8317,9 @@ IntegratorXX::GaussLegendre<double,double> quad(276);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 276; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 276 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -8416,8 +8520,9 @@ IntegratorXX::GaussLegendre<double,double> quad(281);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 281; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 281 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -8622,8 +8727,9 @@ IntegratorXX::GaussLegendre<double,double> quad(286);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 286; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 286 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -8830,8 +8936,9 @@ IntegratorXX::GaussLegendre<double,double> quad(291);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 291; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 291 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -9042,8 +9149,9 @@ IntegratorXX::GaussLegendre<double,double> quad(296);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 296; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 296 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -9258,8 +9366,9 @@ IntegratorXX::GaussLegendre<double,double> quad(301);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 301; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 301 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -9476,8 +9585,9 @@ IntegratorXX::GaussLegendre<double,double> quad(306);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 306; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 306 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -9698,8 +9808,9 @@ IntegratorXX::GaussLegendre<double,double> quad(311);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 311; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 311 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -9924,8 +10035,9 @@ IntegratorXX::GaussLegendre<double,double> quad(316);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 316; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 316 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -10152,8 +10264,9 @@ IntegratorXX::GaussLegendre<double,double> quad(321);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 321; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 321 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -10384,8 +10497,9 @@ IntegratorXX::GaussLegendre<double,double> quad(326);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 326; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 326 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -10620,8 +10734,9 @@ IntegratorXX::GaussLegendre<double,double> quad(331);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 331; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 331 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -10858,8 +10973,9 @@ IntegratorXX::GaussLegendre<double,double> quad(336);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 336; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 336 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -11100,8 +11216,9 @@ IntegratorXX::GaussLegendre<double,double> quad(341);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 341; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 341 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -11346,8 +11463,9 @@ IntegratorXX::GaussLegendre<double,double> quad(346);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 346; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 346 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -11594,8 +11712,9 @@ IntegratorXX::GaussLegendre<double,double> quad(351);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 351; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 351 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -11846,8 +11965,9 @@ IntegratorXX::GaussLegendre<double,double> quad(356);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 356; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 356 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -12102,8 +12222,9 @@ IntegratorXX::GaussLegendre<double,double> quad(361);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 361; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 361 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -12362,8 +12483,9 @@ IntegratorXX::GaussLegendre<double,double> quad(368);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 368; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 368 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -12626,8 +12748,9 @@ IntegratorXX::GaussLegendre<double,double> quad(375);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 375; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 375 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -12896,8 +13019,9 @@ IntegratorXX::GaussLegendre<double,double> quad(382);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 382; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 382 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -13170,8 +13294,9 @@ IntegratorXX::GaussLegendre<double,double> quad(389);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 389; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 389 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -13448,8 +13573,9 @@ IntegratorXX::GaussLegendre<double,double> quad(396);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 396; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 396 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -13732,8 +13858,9 @@ IntegratorXX::GaussLegendre<double,double> quad(403);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 403; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 403 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -14020,8 +14147,9 @@ IntegratorXX::GaussLegendre<double,double> quad(410);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 410; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 410 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -14312,8 +14440,9 @@ IntegratorXX::GaussLegendre<double,double> quad(417);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 417; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 417 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -14610,8 +14739,9 @@ IntegratorXX::GaussLegendre<double,double> quad(424);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 424; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 424 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -14912,8 +15042,9 @@ IntegratorXX::GaussLegendre<double,double> quad(431);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 431; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 431 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -15218,8 +15349,9 @@ IntegratorXX::GaussLegendre<double,double> quad(438);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 438; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 438 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -15530,8 +15662,9 @@ IntegratorXX::GaussLegendre<double,double> quad(445);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 445; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 445 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -15846,8 +15979,9 @@ IntegratorXX::GaussLegendre<double,double> quad(452);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 452; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 452 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -16166,8 +16300,9 @@ IntegratorXX::GaussLegendre<double,double> quad(459);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 459; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 459 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -16492,8 +16627,9 @@ IntegratorXX::GaussLegendre<double,double> quad(466);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 466; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 466 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -16822,8 +16958,9 @@ IntegratorXX::GaussLegendre<double,double> quad(473);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 473; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 473 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -17156,8 +17293,9 @@ IntegratorXX::GaussLegendre<double,double> quad(480);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 480; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 480 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -17496,8 +17634,9 @@ IntegratorXX::GaussLegendre<double,double> quad(487);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 487; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 487 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -17840,8 +17979,9 @@ IntegratorXX::GaussLegendre<double,double> quad(494);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 494; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 494 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -18188,8 +18328,9 @@ IntegratorXX::GaussLegendre<double,double> quad(501);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 501; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 501 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -18542,8 +18683,9 @@ IntegratorXX::GaussLegendre<double,double> quad(508);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 508; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 508 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -18900,8 +19042,9 @@ IntegratorXX::GaussLegendre<double,double> quad(515);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 515; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 515 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -19262,8 +19405,9 @@ IntegratorXX::GaussLegendre<double,double> quad(522);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 522; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 522 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -19630,8 +19774,9 @@ IntegratorXX::GaussLegendre<double,double> quad(529);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 529; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 529 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -20002,8 +20147,9 @@ IntegratorXX::GaussLegendre<double,double> quad(536);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 536; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 536 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -20378,8 +20524,9 @@ IntegratorXX::GaussLegendre<double,double> quad(543);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 543; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 543 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -20760,8 +20907,9 @@ IntegratorXX::GaussLegendre<double,double> quad(550);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 550; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 550 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -21146,8 +21294,9 @@ IntegratorXX::GaussLegendre<double,double> quad(557);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 557; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 557 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -21536,8 +21685,9 @@ IntegratorXX::GaussLegendre<double,double> quad(564);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 564; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 564 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -21932,8 +22082,9 @@ IntegratorXX::GaussLegendre<double,double> quad(571);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 571; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 571 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -22332,8 +22483,9 @@ IntegratorXX::GaussLegendre<double,double> quad(578);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 578; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 578 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -22736,8 +22888,9 @@ IntegratorXX::GaussLegendre<double,double> quad(585);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 585; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 585 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -23146,8 +23299,9 @@ IntegratorXX::GaussLegendre<double,double> quad(592);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 592; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 592 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -23560,8 +23714,9 @@ IntegratorXX::GaussLegendre<double,double> quad(599);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 599; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 599 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -23978,8 +24133,9 @@ IntegratorXX::GaussLegendre<double,double> quad(606);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 606; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 606 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -24402,8 +24558,9 @@ IntegratorXX::GaussLegendre<double,double> quad(613);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 613; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 613 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -24830,8 +24987,9 @@ IntegratorXX::GaussLegendre<double,double> quad(620);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 620; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 620 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -25262,8 +25420,9 @@ IntegratorXX::GaussLegendre<double,double> quad(627);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 627; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 627 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -25700,8 +25859,9 @@ IntegratorXX::GaussLegendre<double,double> quad(634);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 634; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 634 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -26142,8 +26302,9 @@ IntegratorXX::GaussLegendre<double,double> quad(641);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 641; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 641 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -26590,8 +26751,9 @@ IntegratorXX::GaussLegendre<double,double> quad(650);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 650; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 650 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -27044,8 +27206,9 @@ IntegratorXX::GaussLegendre<double,double> quad(659);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 659; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 659 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -27504,8 +27667,9 @@ IntegratorXX::GaussLegendre<double,double> quad(668);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 668; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 668 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -27970,8 +28134,9 @@ IntegratorXX::GaussLegendre<double,double> quad(677);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 677; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 677 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -28442,8 +28607,9 @@ IntegratorXX::GaussLegendre<double,double> quad(686);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 686; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 686 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -28920,8 +29086,9 @@ IntegratorXX::GaussLegendre<double,double> quad(695);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 695; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 695 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -29404,8 +29571,9 @@ IntegratorXX::GaussLegendre<double,double> quad(704);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 704; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 704 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -29894,8 +30062,9 @@ IntegratorXX::GaussLegendre<double,double> quad(713);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 713; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 713 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -30390,8 +30559,9 @@ IntegratorXX::GaussLegendre<double,double> quad(722);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 722; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 722 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -30892,8 +31062,9 @@ IntegratorXX::GaussLegendre<double,double> quad(731);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 731; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 731 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -31400,8 +31571,9 @@ IntegratorXX::GaussLegendre<double,double> quad(740);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 740; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 740 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -31914,8 +32086,9 @@ IntegratorXX::GaussLegendre<double,double> quad(749);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 749; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 749 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -32434,8 +32607,9 @@ IntegratorXX::GaussLegendre<double,double> quad(758);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 758; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 758 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -32960,8 +33134,9 @@ IntegratorXX::GaussLegendre<double,double> quad(767);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 767; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 767 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -33492,8 +33667,9 @@ IntegratorXX::GaussLegendre<double,double> quad(776);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 776; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 776 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -34030,8 +34206,9 @@ IntegratorXX::GaussLegendre<double,double> quad(785);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 785; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 785 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -34574,8 +34751,9 @@ IntegratorXX::GaussLegendre<double,double> quad(794);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 794; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 794 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -35124,8 +35302,9 @@ IntegratorXX::GaussLegendre<double,double> quad(803);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 803; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 803 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -35680,8 +35859,9 @@ IntegratorXX::GaussLegendre<double,double> quad(812);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 812; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 812 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -36242,8 +36422,9 @@ IntegratorXX::GaussLegendre<double,double> quad(821);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 821; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 821 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -36810,8 +36991,9 @@ IntegratorXX::GaussLegendre<double,double> quad(830);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 830; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 830 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -37384,8 +37566,9 @@ IntegratorXX::GaussLegendre<double,double> quad(839);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 839; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 839 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -37964,8 +38147,9 @@ IntegratorXX::GaussLegendre<double,double> quad(848);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 848; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 848 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -38550,8 +38734,9 @@ IntegratorXX::GaussLegendre<double,double> quad(857);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 857; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 857 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -39142,8 +39327,9 @@ IntegratorXX::GaussLegendre<double,double> quad(866);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 866; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 866 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -39740,8 +39926,9 @@ IntegratorXX::GaussLegendre<double,double> quad(875);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 875; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 875 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -40344,8 +40531,9 @@ IntegratorXX::GaussLegendre<double,double> quad(884);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 884; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 884 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -40954,8 +41142,9 @@ IntegratorXX::GaussLegendre<double,double> quad(893);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 893; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 893 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -41570,8 +41759,9 @@ IntegratorXX::GaussLegendre<double,double> quad(902);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 902; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 902 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -42192,8 +42382,9 @@ IntegratorXX::GaussLegendre<double,double> quad(911);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 911; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 911 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
@@ -42820,8 +43011,9 @@ IntegratorXX::GaussLegendre<double,double> quad(920);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 920; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussLegendre N = 920 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)",ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)",ref_wgt[i],w_tolerance));
     }
     }
 
