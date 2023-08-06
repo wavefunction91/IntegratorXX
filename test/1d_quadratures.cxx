@@ -268,22 +268,10 @@ TEST_CASE( "Delley", "[1d-quad]" ) {
   auto test_fn = [&]( size_t nPts ) {
 
     IntegratorXX::Delley<double> quad( nPts );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
     for( auto l = 1; l < 10; ++l )
     for( auto m = 0; m <= l; ++m ) {
-
-      auto f = [=]( decltype(pts[0]) x ){
-        return spherical_harmonics(l,m,x[0],x[1],x[2]);
-      };
-
-      std::complex<double> res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i )
-        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
-  
-      CHECK( std::real(res) == Catch::Approx(1.) );
+      const auto msg = "Delley N = " + std::to_string(quad.npts());
+      test_quadrature<MagnitudeSquaredSphericalHarmonic>(msg, quad, 1.0, 1e-10, l, m); 
     }
 
   };
