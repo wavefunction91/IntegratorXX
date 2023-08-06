@@ -67,8 +67,9 @@ def write_test(out, points, integrator):
     out.write(f'const auto & pts = quad.points();\n')
     out.write(f'const auto & wgt = quad.weights();\n')
     out.write(f'''for(auto i = 0ul; i < {len(points)}; i++) {{
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "{integrator} N = {len(points)} IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }}
     ''')
     out.write('}\n\n')
@@ -112,7 +113,7 @@ def generate_task(generate, rule, order):
 
 
 # Task Pool
-pool = mp.Pool(processes=16)
+pool = mp.Pool(processes=8)
 
 for rule in generators:
     fname = f'{rule.lower()}.cxx'
@@ -131,6 +132,7 @@ for rule in generators:
 #include <integratorxx/quadratures/{rule.lower()}.hpp>
 #include <numeric>
 #include <vector>
+#include "quad_matcher.hpp"
 // clang-format on
 
 const double x_tolerance = 10*std::numeric_limits<double>::epsilon();

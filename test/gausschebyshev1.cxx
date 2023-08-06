@@ -8,6 +8,7 @@
 #include <integratorxx/quadratures/gausschebyshev1.hpp>
 #include <numeric>
 #include <vector>
+#include "quad_matcher.hpp"
 // clang-format on
 
 const double x_tolerance = 10*std::numeric_limits<double>::epsilon();
@@ -24,8 +25,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(2);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 2; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 2 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -40,8 +42,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(3);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 3; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 3 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -58,8 +61,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(4);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 4; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 4 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -76,8 +80,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(5);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 5; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 5 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -94,8 +99,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(6);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 6; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 6 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -114,8 +120,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(9);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 9; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 9 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -136,8 +143,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(12);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 12; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 12 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -160,8 +168,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(15);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 15; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 15 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -186,8 +195,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(18);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 18; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 18 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -214,8 +224,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(21);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 21; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 21 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -246,8 +257,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(26);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 26; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 26 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -282,8 +294,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(31);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 31; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 31 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -320,8 +333,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(36);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 36; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 36 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -362,8 +376,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(41);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 41; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 41 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -408,8 +423,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(46);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 46; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 46 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -458,8 +474,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(53);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 53; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 53 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -512,8 +529,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(60);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 60; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 60 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -572,8 +590,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(67);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 67; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 67 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -636,8 +655,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(74);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 74; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 74 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -704,8 +724,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(81);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 81; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 81 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -778,8 +799,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(90);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 90; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 90 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -858,8 +880,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(99);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 99; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 99 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -944,8 +967,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(108);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 108; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 108 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1036,8 +1060,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(117);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 117; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 117 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 
@@ -1134,8 +1159,9 @@ IntegratorXX::GaussChebyshev1<double,double> quad(126);
 const auto & pts = quad.points();
 const auto & wgt = quad.weights();
 for(auto i = 0ul; i < 126; i++) {
-    REQUIRE_THAT(pts[i], Catch::Matchers::WithinAbs(ref_pts[i],x_tolerance));
-    REQUIRE_THAT(wgt[i], Catch::Matchers::WithinAbs(ref_wgt[i],w_tolerance));
+    const std::string msg = "GaussChebyshev1 N = 126 IPT = " + std::to_string(i);
+    REQUIRE_THAT(pts[i], IntegratorXX::Matchers::WithinAbs(msg + " (POINTS)", ref_pts[i],x_tolerance));
+    REQUIRE_THAT(wgt[i], IntegratorXX::Matchers::WithinAbs(msg + " (WEIGHTS)", ref_wgt[i],w_tolerance));
     }
     }
 

@@ -36,10 +36,10 @@ add_executable( muraknowles muraknowles.cxx )
 target_link_libraries( muraknowles PUBLIC integratorxx_common_ut )
 
 add_executable( gausschebyshev1 gausschebyshev1.cxx )
-target_link_libraries( gausschebyshev1 PUBLIC Catch2::Catch2WithMain integratorxx )
+target_link_libraries( gausschebyshev1 PUBLIC integratorxx_common_ut )
 
 add_executable( gausschebyshev2 gausschebyshev2.cxx )
-target_link_libraries( gausschebyshev2 PUBLIC Catch2::Catch2WithMain integratorxx )
+target_link_libraries( gausschebyshev2 PUBLIC integratorxx_common_ut )
 
 add_executable( composite_quadratures composite_quadratures.cxx )
 target_link_libraries( composite_quadratures PUBLIC integratorxx_common_ut )
