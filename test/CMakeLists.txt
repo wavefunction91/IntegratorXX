@@ -18,10 +18,8 @@ else()
   message( STATUS "Found Catch2 VERSION ${Catch2_VERSION} DIR ${Catch2_DIR}" )
 endif()
 
-find_package( Boost REQUIRED )
-
 add_library(integratorxx_common_ut quad_matcher.cxx)
-target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain integratorxx Boost::boost )
+target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain integratorxx )
 
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
 target_link_libraries( quadrature_manipulation PUBLIC integratorxx_common_ut )

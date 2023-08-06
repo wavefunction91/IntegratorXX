@@ -74,10 +74,7 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
       // divide the weights by sqrt(x/(1-x)).
       wi *= std::sqrt((1.0 - xi) / xi);
 
-      //// Finally, convert from [0,1] to [-1,1]
-      //// TODO: This should be done externally
-      //points[idx] = 2 * xi - 1.0;
-      //weights[idx] = 2.0 * wi;
+      // Copy to storage
       points[idx]  = xi;
       weights[idx] = wi;
     }
