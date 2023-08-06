@@ -14,52 +14,16 @@
 #include <integratorxx/quadratures/delley.hpp>
 #include <cmath>
 #include <complex>
+#include <iostream>
+#include <random>
 
-
-// NR
-template <typename T, typename IntT>
-std::enable_if_t< std::is_arithmetic_v<T>, T>
-assoc_legendre( const IntT l, const IntT m, const T x ) {
-
-  if( m < 0 or m > l or std::abs(x) > 1. )
-    throw std::runtime_error("Bad args to assoc_legendre");
-
-  T pmm = 1.;
-  if( m > 0 ) {
-
-    const T somx2 = std::sqrt( (1. - x)*(1. + x) );
-    T fact = 1.;
-    for( IntT i = 0; i < m; ++i ) {
-      pmm *= fact*somx2;
-      fact += 2.;
-    }
-
-  }
-
-  if( l == m ) return pmm;
-  else {
-    T pmmp1 = x * (2*m + 1) * pmm;
-
-    if( l == (m+1) ) return pmmp1;
-    else {
-
-      T pll;
-      for( IntT ll = m+1; ll < l; ++ll ) {
-        pll = (x*(2*ll+1)*pmmp1-(ll+m)*pmm)/(ll-m+1);
-        pmm = pmmp1;
-        pmmp1 = pll;
-      }
-
-      return pll;
-    }
-  }
-
-}
-
+#include "quad_matcher.hpp"
+#include "test_functions.hpp"
 
 using namespace IntegratorXX;
 
 inline constexpr double inf = std::numeric_limits<double>::infinity();
+inline constexpr double eps = std::numeric_limits<double>::epsilon();
 
 template <typename T = double>
 constexpr T gaussian( T alpha, T c, T x ) {
@@ -88,218 +52,158 @@ constexpr T ref_gaussian_int( T a, T b ) {
 }
 
 
-constexpr size_t factorial(size_t n) {
-  return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
-}
-
-
 template <typename T>
-constexpr std::complex<T> spherical_harmonics( int64_t l, int64_t m, T theta, T phi ) {
-
-
-  auto prefactor = std::sqrt( (2.*l + 1) / (4.*M_PI) * T(factorial(l-m))/T(factorial(l+m)) );
-  if( m < 0 )
-    prefactor *= std::pow(-1,std::abs(m)) * T(factorial(l-m))/T(factorial(l+m));
-
-
-  return prefactor * assoc_legendre( l, std::abs(m), std::cos(theta) ) *
-         std::complex<T>( std::cos(m*phi), std::sin(m*phi) );
-
-}
-
-template <typename T>
-constexpr std::complex<T> spherical_harmonics( int64_t l, int64_t m, T x, T y, T z ) {
-
-  const auto r = std::sqrt( x*x + y*y + z*z );
-
-  return spherical_harmonics( l, m, std::acos( z / r ), std::atan2( y, x ) );
-
+auto chebyshev_T(int n, T x) {
+  return std::cos( n * std::acos(x) );
 }
 
 
-template <typename T, typename... Args>
-constexpr T real_spherical_harmonics( int64_t l, int64_t m, Args&&... args ) {
 
-  const T phase = std::sqrt(2.) * ((m % 2) ? 1. : -1.);
 
-  if( m == 0 )
-    return std::real(spherical_harmonics( l, m, std::forward<Args>(args)... ));
-  else if( m < 0 )
-    return phase * std::imag(spherical_harmonics( l, std::abs(m), std::forward<Args>(args)... ));
-  else
-    return phase * std::real(spherical_harmonics( l, m, std::forward<Args>(args)... ));
-
-}
 
 
 TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
-  for(unsigned order=10;order<14;order++) {
-    std::ostringstream oss;
-    oss << "order " << order;
-    SECTION( oss.str()) {
-
-      IntegratorXX::GaussLegendre<double,double> quad( order );
-
-      const auto& pts = quad.points();
-      const auto& wgt = quad.weights();
-
-      auto f = [=]( double x ){ return gaussian(x); };
-
-      double res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i ) {
-        res += wgt[i] * f(pts[i]);
-      }
-
-      CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
+  // Reference integral for polynomial evaluated over [-1,1]
+  auto ref_value = [](const std::vector<double>& c) {
+    const auto p = c.size();
+    std::vector<double> cp(p+1, 0.0); 
+    for(int i = 0; i < p; ++i) {
+      cp[i] = c[i] / (p-i);
     }
-  }
+    return Polynomial::evaluate(cp, 1.0) - Polynomial::evaluate(cp, -1.0);
+  };
+
+  // Test Quadrature for Correctness
+  using quad_type = IntegratorXX::GaussLegendre<double,double>;
+  test_random_polynomial<quad_type, Polynomial>("Gauss-Legendre", 10, 14, 
+    [](int o){ return 2*o+1; }, // Max order 2N-1
+    ref_value, 1e-12 );
+
 }
 
 TEST_CASE( "Gauss-Lobatto Quadratures", "[1d-quad]" ) {
 
-  for(unsigned order=10;order<14;order++) {
-    std::ostringstream oss;
-    oss << "order " << order;
-    SECTION( oss.str()) {
-
-      IntegratorXX::GaussLobatto<double,double> quad( order );
-
-      const auto& pts = quad.points();
-      const auto& wgt = quad.weights();
-
-      auto f = [=]( double x ){ return gaussian(x); };
-
-      double res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i ) {
-        res += wgt[i] * f(pts[i]);
-      }
-
-      CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
+  // Reference integral for polynomial evaluated over [-1,1]
+  auto ref_value = [](const std::vector<double>& c) {
+    const auto p = c.size();
+    std::vector<double> cp(p+1, 0.0); 
+    for(int i = 0; i < p; ++i) {
+      cp[i] = c[i] / (p-i);
     }
-  }
-}
-
-TEST_CASE( "Gauss-Chebyshev Quadratures", "[1d-quad]") {
-
-  auto integrate = [&](auto& quad) {
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    // Check that nodes are in increasing value
-    CHECK(std::is_sorted(pts.begin(), pts.end()));
-
-    auto f = [=]( double x ){ return gaussian(x); };
-
-    double res = 0.;
-    for( auto i = 0; i < quad.npts(); ++i ) {
-      res += wgt[i] * f(pts[i]);
-    }
-
-    CHECK( res == Catch::Approx(ref_gaussian_int(-1.,1.)) );
+    return Polynomial::evaluate(cp, 1.0) - Polynomial::evaluate(cp, -1.0);
   };
 
-  SECTION("First Kind") {
-    IntegratorXX::GaussChebyshev1<double, double> quad_even(200);
-    integrate(quad_even);
-    IntegratorXX::GaussChebyshev1<double, double> quad_odd(201);
-    integrate(quad_odd);
-  }
-  SECTION("Second Kind") {
-    IntegratorXX::GaussChebyshev2<double, double> quad_even(200);
-    integrate(quad_even);
-    IntegratorXX::GaussChebyshev2<double, double> quad_odd(201);
-    integrate(quad_odd);
-  }
-  SECTION("Second Kind (Modified)") {
-    IntegratorXX::GaussChebyshev2Modified<double, double> quad_even(200);
-    integrate(quad_even);
-    IntegratorXX::GaussChebyshev2Modified<double, double> quad_odd(201);
-    integrate(quad_odd);
-  }
-  SECTION("Third Kind") {
-    IntegratorXX::GaussChebyshev3<double, double> quad(200);
-    integrate(quad);
-  }
+  // Test Quadrature for Correctness
+  using quad_type = IntegratorXX::GaussLobatto<double,double>;
+  test_random_polynomial<quad_type, Polynomial>("Gauss-Lobatto", 10, 14, 
+    [](int o){ return 2*o-1; }, // Max order 2N-3
+    ref_value, 1e-12 );
+
+
 }
 
+TEST_CASE( "Gauss-Chebyshev T1 Quadratures", "[1d-quad]" ) {
+
+  // Reference integral for polynomial * T1 evaluated over [-1,1]
+  auto ref_value = [](const std::vector<double>& c) {
+    const auto p = c.size();
+    double ref = 0.0;
+    for(int i = 0; i < p; ++i) {
+      int k = p - i - 1;
+      if(k > 0)
+        ref += c[i] * (std::sqrt(M_PI) / k) * (std::pow(-1,k)+1) * 
+               std::tgamma((k+1)/2.0) / std::tgamma(k/2.0);
+      else
+        ref += c[i] * M_PI;
+    }
+    return ref;
+  };
+
+  // Test Quadrature for Correctness
+  using quad_type = IntegratorXX::GaussChebyshev1<double,double>;
+  using func_type = WeightedPolynomial<ChebyshevT1WeightFunction>;
+  test_random_polynomial<quad_type, func_type>("Gauss-Chebyshev (T1)", 10, 100, 
+    [](int o){ return 2*o+1; }, // Max order 2N-1
+    ref_value, 1e-12 );
+
+}
+
+TEST_CASE( "Gauss-Chebyshev T2 Quadratures", "[1d-quad]" ) {
+
+  // Reference integral for polynomial * T2 evaluated over [-1,1]
+  auto ref_value = [](const std::vector<double>& c) {
+    const auto p = c.size();
+    double ref = 0.0;
+    for(int i = 0; i < p; ++i) {
+      int k = p - i - 1;
+      if(k > 0)
+        ref += c[i] * (std::sqrt(M_PI) / 4.0) * (std::pow(-1,k)+1) * 
+               std::tgamma((k+1)/2.0) / std::tgamma(k/2.0 + 2);
+      else
+        ref += c[i] * M_PI/2.0;
+    }
+    return ref;
+  };
+
+  // Test Quadrature for Correctness
+  using quad_type = IntegratorXX::GaussChebyshev2<double,double>;
+  using func_type = WeightedPolynomial<ChebyshevT2WeightFunction>;
+  test_random_polynomial<quad_type, func_type>("Gauss-Chebyshev (T2)", 10, 100, 
+    [](int o){ return 2*o+1; }, // Max order 2N-1
+    ref_value, 1e-12 );
+
+}
+
+TEST_CASE( "Gauss-Chebyshev T3 Quadratures", "[1d-quad]" ) {
+
+  // Reference integral for polynomial * T3 evaluated over [0,1]
+  auto ref_value = [](const std::vector<double>& c) {
+    const auto p = c.size();
+    double ref = 0.0;
+      for(int i = 0; i < p; ++i) {
+        int k = p - i - 1;
+        ref += c[i] * std::sqrt(M_PI) * std::tgamma(k+1.5) / std::tgamma(k+2); 
+      }
+    return ref;
+  };
+
+  // Test Quadrature for Correctness
+  // TODO: Code breaks down for large orders here
+  using quad_type = IntegratorXX::GaussChebyshev3<double,double>;
+  using func_type = WeightedPolynomial<ChebyshevT3WeightFunction>;
+  test_random_polynomial<quad_type, func_type>("Gauss-Chebyshev (T2)", 10, 50, 
+    [](int o){ return 2*o+1; }, // Max order 2N-1
+    ref_value, 1e-12 );
+
+}
+
+
 TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
-
   IntegratorXX::MurrayHandyLaming<double,double> quad(150);
-
-  const auto& pts = quad.points();
-  const auto& wgt = quad.weights();
-
-  auto f = [=]( double x ){ return gaussian(x); };
-
-  double res = 0.;
-  for( auto i = 0; i < quad.npts(); ++i )
-    res += wgt[i] * f(pts[i]);
-
-  CHECK( res == Catch::Approx(ref_gaussian_int(0.,inf)) );
-
+  const auto msg = "Euler-Maclaurin N = " + std::to_string(quad.npts());
+  test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
 }
 
 TEST_CASE( "Treutler-Ahlrichs Quadratures", "[1d-quad]" ) {
-
   IntegratorXX::TreutlerAhlrichs<double,double> quad(150);
-
-  const auto& pts = quad.points();
-  const auto& wgt = quad.weights();
-
-  auto f = [=]( double x ){ return gaussian(x); };
-
-  double res = 0.;
-  for( auto i = 0; i < quad.npts(); ++i ) {
-    res += wgt[i] * f(pts[i]);
-  }
-
-  CHECK( res == Catch::Approx(ref_gaussian_int(0.,inf)) );
-
+  const auto msg = "Treutler-Ahlrichs N = " + std::to_string(quad.npts());
+  test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
 }
 
 TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
-
-  IntegratorXX::MuraKnowles<double,double> quad(150);
-
-  const auto& pts = quad.points();
-  const auto& wgt = quad.weights();
-
-  auto f = [=]( double x ){ return gaussian(x); };
-
-  double res = 0.;
-  for( auto i = 0; i < quad.npts(); ++i ) 
-    res += wgt[i] * f(pts[i]);
-  
-
-  CHECK( res == Catch::Approx(ref_gaussian_int(0.,inf)) );
-
+  IntegratorXX::MuraKnowles<double,double> quad(350);
+  const auto msg = "Mura-Knowles N = " + std::to_string(quad.npts());
+  test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
 }
 
 TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
 
 
   auto test_fn = [&]( size_t nPts ) {
-
     IntegratorXX::LebedevLaikov<double> quad( nPts );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    for( auto l = 1; l < 10; ++l )
-    for( auto m = 0; m <= l; ++m ) {
-
-      auto f = [=]( decltype(pts[0]) x ){
-        return spherical_harmonics(l,m,x[0],x[1],x[2]);
-      };
-
-      std::complex<double> res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i )
-        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
-  
-      CHECK( std::real(res) == Catch::Approx(1.) );
-    }
-
+    const auto msg = "Lebedev-Laikov N = " + std::to_string(quad.npts());
+    test_angular_quadrature(msg, quad, 10, 1e-10);
   };
 
   test_fn(302);
@@ -314,24 +218,8 @@ TEST_CASE( "Ahrens-Beylkin", "[1d-quad]" ) {
   auto test_fn = [&]( size_t nPts ) {
 
     IntegratorXX::AhrensBeylkin<double> quad( nPts );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    for( auto l = 1; l < 10; ++l )
-    for( auto m = 0; m <= l; ++m ) {
-
-      auto f = [=]( decltype(pts[0]) x ){
-        return spherical_harmonics(l,m,x[0],x[1],x[2]);
-      };
-
-      std::complex<double> res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i )
-        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
-
-      CHECK( std::real(res) == Catch::Approx(1.) );
-
-    }
+    const auto msg = "Ahrens-Beylkin N = " + std::to_string(quad.npts());
+    test_angular_quadrature(msg, quad, 10, 1e-10);
 
   };
 
@@ -345,24 +233,8 @@ TEST_CASE( "Womersley", "[1d-quad]" ) {
   auto test_fn = [&]( size_t nPts ) {
 
     IntegratorXX::Womersley<double> quad( nPts );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    for( auto l = 1; l < 10; ++l )
-    for( auto m = 0; m <= l; ++m ) {
-
-      auto f = [=]( decltype(pts[0]) x ){
-        return spherical_harmonics(l,m,x[0],x[1],x[2]);
-      };
-
-      std::complex<double> res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i )
-        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
-
-      CHECK( std::real(res) == Catch::Approx(1.) );
-
-    }
+    const auto msg = "Womersley N = " + std::to_string(quad.npts());
+    test_angular_quadrature(msg, quad, 10, 1e-10);
 
   };
 
@@ -377,23 +249,8 @@ TEST_CASE( "Delley", "[1d-quad]" ) {
   auto test_fn = [&]( size_t nPts ) {
 
     IntegratorXX::Delley<double> quad( nPts );
-
-    const auto& pts = quad.points();
-    const auto& wgt = quad.weights();
-
-    for( auto l = 1; l < 10; ++l )
-    for( auto m = 0; m <= l; ++m ) {
-
-      auto f = [=]( decltype(pts[0]) x ){
-        return spherical_harmonics(l,m,x[0],x[1],x[2]);
-      };
-
-      std::complex<double> res = 0.;
-      for( auto i = 0; i < quad.npts(); ++i )
-        res += wgt[i] * f(pts[i])* std::conj(f(pts[i]));
-  
-      CHECK( std::real(res) == Catch::Approx(1.) );
-    }
+    const auto msg = "Delley N = " + std::to_string(quad.npts());
+    test_angular_quadrature(msg, quad, 10, 1e-10);
 
   };
 

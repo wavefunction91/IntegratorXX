@@ -18,23 +18,25 @@ else()
   message( STATUS "Found Catch2 VERSION ${Catch2_VERSION} DIR ${Catch2_DIR}" )
 endif()
 
+add_library(integratorxx_common_ut quad_matcher.cxx)
+target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain integratorxx )
 
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
-target_link_libraries( quadrature_manipulation PUBLIC Catch2::Catch2WithMain integratorxx )
+target_link_libraries( quadrature_manipulation PUBLIC integratorxx_common_ut )
 
 add_executable( 1d_quadratures 1d_quadratures.cxx )
-target_link_libraries( 1d_quadratures PUBLIC Catch2::Catch2WithMain integratorxx )
+target_link_libraries( 1d_quadratures PUBLIC integratorxx_common_ut )
 
 add_executable( gausslegendre gausslegendre.cxx )
-target_link_libraries( gausslegendre PUBLIC Catch2::Catch2WithMain integratorxx )
+target_link_libraries( gausslegendre PUBLIC integratorxx_common_ut )
 
 add_executable( gausslobatto gausslobatto.cxx )
-target_link_libraries( gausslobatto PUBLIC Catch2::Catch2WithMain integratorxx )
+target_link_libraries( gausslobatto PUBLIC integratorxx_common_ut )
 add_executable( muraknowles muraknowles.cxx )
-target_link_libraries( muraknowles PUBLIC Catch2::Catch2WithMain integratorxx )
+target_link_libraries( muraknowles PUBLIC integratorxx_common_ut )
 
 add_executable( composite_quadratures composite_quadratures.cxx )
-target_link_libraries( composite_quadratures PUBLIC Catch2::Catch2WithMain integratorxx )
+target_link_libraries( composite_quadratures PUBLIC integratorxx_common_ut )
 
 add_test( NAME QUADRATURE_MANIP      COMMAND quadrature_manipulation )
 add_test( NAME QUADRATURES_1D        COMMAND 1d_quadratures          )
