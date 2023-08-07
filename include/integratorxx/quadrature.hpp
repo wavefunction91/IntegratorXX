@@ -3,6 +3,7 @@
 #include <tuple>
 #include <cstdint>
 #include <cstddef>
+#include <cassert>
 #include <integratorxx/type_traits.hpp>
 
 namespace IntegratorXX {
@@ -31,10 +32,16 @@ protected:
   point_container  points_;
   weight_container weights_;
 
+  void sanity_check() {
+#ifndef INTEGRATORXX_DISABLE_SANITY_CHECK
+    assert(points_.size() == weights_.size());
+#endif
+  }
+
   QuadratureBase( const point_container& p, const weight_container& w ):
-    points_(p), weights_(w) { }
+    points_(p), weights_(w) { sanity_check(); }
   QuadratureBase( point_container&& p, weight_container&& w ):
-    points_(std::move(p)), weights_(std::move(w)) { }
+    points_(std::move(p)), weights_(std::move(w)) { sanity_check(); }
 
 public:
 
