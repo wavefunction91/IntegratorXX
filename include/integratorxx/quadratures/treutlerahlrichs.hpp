@@ -49,7 +49,7 @@ public:
     const auto pow_term = std::pow(a + x, alpha_);
     const auto log_term = std::log((a + 1.0) / (1.0 - x));
     return R_ * pow_term * log_term / ln_2;
-  };
+  }
 
 
   /**
