@@ -1,8 +1,8 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
-#include <integratorxx/quadratures/copy_grid.hpp>
-#include <integratorxx/quadratures/delley/delley_grids.hpp>
+#include <integratorxx/util/copy_grid.hpp>
+#include <integratorxx/quadratures/s2/delley/delley_grids.hpp>
 
 namespace IntegratorXX {
 

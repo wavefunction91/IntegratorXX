@@ -1,17 +1,8 @@
 #include "catch2/catch_all.hpp"
-#include <integratorxx/quadratures/gausslegendre.hpp>
-#include <integratorxx/quadratures/gausslobatto.hpp>
-#include <integratorxx/quadratures/mhl.hpp>
-#include <integratorxx/quadratures/muraknowles.hpp>
-#include <integratorxx/quadratures/treutlerahlrichs.hpp>
-#include <integratorxx/quadratures/lebedev_laikov.hpp>
-#include <integratorxx/quadratures/gausschebyshev1.hpp>
-#include <integratorxx/quadratures/gausschebyshev2.hpp>
-#include <integratorxx/quadratures/gausschebyshev2modified.hpp>
-#include <integratorxx/quadratures/gausschebyshev3.hpp>
-#include <integratorxx/quadratures/ahrens_beylkin.hpp>
-#include <integratorxx/quadratures/womersley.hpp>
-#include <integratorxx/quadratures/delley.hpp>
+#include <integratorxx/quadratures/primitive.hpp>
+#include <integratorxx/quadratures/radial.hpp>
+#include <integratorxx/quadratures/s2.hpp>
+
 #include <cmath>
 #include <complex>
 #include <iostream>

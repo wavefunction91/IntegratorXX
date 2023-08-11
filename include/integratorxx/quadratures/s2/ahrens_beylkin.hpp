@@ -1,8 +1,8 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
-#include <integratorxx/quadratures/ahrens_beylkin/ahrens_beylkin_grids.hpp>
-#include <integratorxx/quadratures/copy_grid.hpp>
+#include <integratorxx/quadratures/s2/ahrens_beylkin/ahrens_beylkin_grids.hpp>
+#include <integratorxx/util/copy_grid.hpp>
 
 namespace IntegratorXX {
 

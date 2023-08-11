@@ -1,7 +1,7 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
-#include <integratorxx/quadratures/gausslegendre.hpp>
+#include <integratorxx/util/legendre.hpp>
 
 namespace IntegratorXX {
 

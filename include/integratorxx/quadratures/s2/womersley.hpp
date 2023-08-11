@@ -1,9 +1,9 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
-#include <integratorxx/quadratures/copy_grid.hpp>
-#include <integratorxx/quadratures/create_array.hpp>
-#include <integratorxx/quadratures/womersley/womersley_grids.hpp>
+#include <integratorxx/util/copy_grid.hpp>
+#include <integratorxx/util/create_array.hpp>
+#include <integratorxx/quadratures/s2/womersley/womersley_grids.hpp>
 
 namespace IntegratorXX {
 

@@ -1,8 +1,7 @@
 #include "catch2/catch_all.hpp"
 
-#include <integratorxx/quadratures/muraknowles.hpp>
-#include <integratorxx/quadratures/mhl.hpp>
-#include <integratorxx/quadratures/lebedev_laikov.hpp>
+#include <integratorxx/quadratures/radial.hpp>
+#include <integratorxx/quadratures/s2.hpp>
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 #include <integratorxx/batch/spherical_micro_batcher.hpp>

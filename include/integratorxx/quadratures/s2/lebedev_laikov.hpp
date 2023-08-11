@@ -1,8 +1,8 @@
 #pragma once
 
 #include <integratorxx/quadrature.hpp>
-#include <integratorxx/quadratures/lebedev_laikov/lebedev_laikov_grids.hpp>
-#include <integratorxx/quadratures/copy_grid.hpp>
+#include <integratorxx/quadratures/s2/lebedev_laikov/lebedev_laikov_grids.hpp>
+#include <integratorxx/util/copy_grid.hpp>
 
 namespace IntegratorXX {
 
