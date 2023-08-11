@@ -1,34 +1,43 @@
 #pragma once
 #include <vector>
 #include <cmath>
+#include <cassert>
 
 class SlaterTypeAtomicShell {
+  using int_container = std::vector<int>;
+  using real_container = std::vector<double>;
+  using coefficient_container = std::vector<real_container>;
+  
   /// Angular momentum
-  int angular_momentum;
+  unsigned int _angular_momentum;
   /// Exponents
-  std::vector<double> exponents;
+  real_container _exponents;
   /// Principal quantum numbers
-  std::vector<int> quantum_numbers;
-  /// Contraction orbital_coefficients
-  std::vector<std::vector<double>> orbital_coefficients;
+  int_container _quantum_numbers;
+  /// Contraction _orbital_coefficients
+  coefficient_container _orbital_coefficients;
   /// Alpha orbital occupations
-  std::vector<int> alpha_occupations;
+  int_container _alpha_occupations;
   /// Beta orbital occupations
-  std::vector<int> beta_occupations;
+  int_container _beta_occupations;
  public:
   /// Dummy constructor
-  SlaterTypeAtomicShell() {};
+  SlaterTypeAtomicShell() = default;
   /// Constructor
-  SlaterTypeAtomicShell(int angular_momentum_, const std::vector<double> & exponents_, const std::vector<int> & quantum_numbers_, const std::vector<std::vector<double>> & coefficients_, const std::vector<int> & alpha_occupations_, const std::vector<int> & beta_occupations_) : angular_momentum(angular_momentum_), exponents(exponents_), quantum_numbers(quantum_numbers_), orbital_coefficients(coefficients_), alpha_occupations(alpha_occupations_), beta_occupations(beta_occupations_) {};
-  /// Deconstructor
-  ~SlaterTypeAtomicShell() {};
+  SlaterTypeAtomicShell(unsigned int angular_momentum, const real_container & exponents, const int_container & quantum_numbers, const coefficient_container & coefficients, const int_container & alpha_occupations, const int_container & beta_occupations) : _angular_momentum(angular_momentum), _exponents(exponents), _quantum_numbers(quantum_numbers), _orbital_coefficients(coefficients), _alpha_occupations(alpha_occupations), _beta_occupations(beta_occupations) {
+    // Size checks
+    assert(_exponents.size() == _quantum_numbers.size());
+    assert(_exponents.size() == _orbital_coefficients.size());
+    assert(_alpha_occupations.size() == _orbital_coefficients[0].size());
+    assert(_beta_occupations.size() == _orbital_coefficients[0].size());
+  };
 
   /// Evaluates the basis functions
   std::vector<double> evaluate_basis_functions(double r) {
-    std::vector<double> bf(exponents.size());
+    std::vector<double> bf(_exponents.size());
     for(size_t ix=0;ix<bf.size();ix++) {
-      double normalization = std::pow(2.0*exponents[ix],quantum_numbers[ix]+0.5) * std::tgamma(2*quantum_numbers[ix]+1);
-      bf[ix] = normalization * std::pow(r, quantum_numbers[ix]-1) * std::exp(-exponents[ix]*r);
+      double normalization = std::pow(2.0*_exponents[ix],_quantum_numbers[ix]+0.5) * std::tgamma(2*_quantum_numbers[ix]+1);
+      bf[ix] = normalization * std::pow(r, _quantum_numbers[ix]-1) * std::exp(-_exponents[ix]*r);
     }
     return bf;
   }
@@ -36,11 +45,11 @@ class SlaterTypeAtomicShell {
   /// Evaluates the orbitals' values
   std::vector<double> evaluate_orbitals(double r) {
     std::vector<double> bf(evaluate_basis_functions(r));
-    std::vector<double> orbs(orbital_coefficients.size());
-    for(size_t iorb=0;iorb<alpha_occupations.size();iorb++) {
+    std::vector<double> orbs(_orbital_coefficients.size());
+    for(size_t iorb=0;iorb<_alpha_occupations.size();iorb++) {
       orbs[iorb] = 0.0;
       for(size_t ix=0;ix<bf.size();ix++)
-        orbs[iorb] += bf[ix]*orbital_coefficients[ix][iorb];
+        orbs[iorb] += bf[ix]*_orbital_coefficients[ix][iorb];
     }
     return orbs;
   }
@@ -54,8 +63,8 @@ class SlaterTypeAtomicShell {
     std::vector<double> orbs(evaluate_orbitals(r));
     for(size_t iorb=0;iorb<orbs.size();iorb++) {
       double orbital_density = std::pow(orbs[iorb],2);
-      pair.first += alpha_occupations[iorb] * orbital_density;
-      pair.second += beta_occupations[iorb] * orbital_density;
+      pair.first += _alpha_occupations[iorb] * orbital_density;
+      pair.second += _beta_occupations[iorb] * orbital_density;
     }
     
     return pair;
@@ -67,29 +76,53 @@ class SlaterTypeAtomicShell {
   std::pair<double,double> evaluate_kinetic_energy_density(double r);
   /// Evaluate density Laplacian
   std::pair<double,double> evaluate_density_laplacian(double r);
+
+  /// Return angular momentum
+  auto angular_momentum() const { return _angular_momentum; }
+
+  /// Return pointer to quantum number array
+  auto* exponents_data() const { return _exponents.data(); }
+  /// Fetch quantum number of i:th basis function
+  auto exponent(size_t i) const { return _exponents[i]; }
+
+  /// Return pointer to quantum number array
+  auto* quantum_numbers_data() const { return _quantum_numbers.data(); }
+  /// Fetch quantum number of i:th basis function
+  auto quantum_number(size_t i) const { return _quantum_numbers[i]; }
+
+  /// Return pointer to orbital coefficients for ix:th exponent
+  auto* orbital_coefficients_data(int ix) const { return _orbital_coefficients[ix].data(); }
+  /// Fetch orbital coefficient of ix:th basis function in iorb:th orbital
+  auto quantum_number(size_t ix, size_t iorb) const { return _orbital_coefficients[ix][iorb]; }
 };
 
 class SlaterTypeAtom {
   /// Atomic number
-  int Z;
+  unsigned int _Z;
   /// Shells
-  std::vector<SlaterTypeAtomicShell> shells;
+  std::vector<SlaterTypeAtomicShell> _shells;
  public:
   /// Constructor
- SlaterTypeAtom(int Z_, const std::vector<SlaterTypeAtomicShell> & shells_) : Z(Z_), shells(shells_) {};
+ SlaterTypeAtom(unsigned int Z, const std::vector<SlaterTypeAtomicShell> & shells) : _Z(Z), _shells(shells) {};
   /// Deconstructor
   ~SlaterTypeAtom() {};
 
   /// Evaluate density
   std::pair<double,double> evaluate_density(double r) {
     std::pair<double,double> p{0.0, 0.0};
-    for(auto shell: shells) {
+    for(auto shell: _shells) {
       std::pair<double,double> sp = shell.evaluate_density(r);
       p.first += sp.first;
       p.second += sp.second;
     }
     return p;
   }
+
+  /// Get shells
+  auto * shells() const { return _shells.data(); }
+  /// Get i:th shell
+  auto shell(size_t i) const { return _shells[i]; }
+  
   /// Evaluate orbitals
   std::vector<double> evaluate_orbitals(double r);
   /// Evaluate density gradient
