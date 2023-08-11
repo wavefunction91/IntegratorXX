@@ -19,7 +19,7 @@ class SlaterTypeAtomicShell {
   /// Dummy constructor
   SlaterTypeAtomicShell() {};
   /// Constructor
-  SlaterTypeAtomicShell(int angular_momentum_, std::vector<double> & exponents_, std::vector<int> & quantum_numbers_, std::vector<std::vector<double>> & coefficients_, std::vector<int> & alpha_occupations_, std::vector<int> & beta_occupations_) : angular_momentum(angular_momentum_), exponents(exponents_), quantum_numbers(quantum_numbers_), orbital_coefficients(coefficients_), alpha_occupations(alpha_occupations_), beta_occupations(beta_occupations_) {};
+  SlaterTypeAtomicShell(int angular_momentum_, const std::vector<double> & exponents_, const std::vector<int> & quantum_numbers_, const std::vector<std::vector<double>> & coefficients_, const std::vector<int> & alpha_occupations_, const std::vector<int> & beta_occupations_) : angular_momentum(angular_momentum_), exponents(exponents_), quantum_numbers(quantum_numbers_), orbital_coefficients(coefficients_), alpha_occupations(alpha_occupations_), beta_occupations(beta_occupations_) {};
   /// Deconstructor
   ~SlaterTypeAtomicShell() {};
 
