@@ -7,7 +7,7 @@ class SlaterTypeAtomicShell {
   using int_container = std::vector<int>;
   using real_container = std::vector<double>;
   using coefficient_container = std::vector<real_container>;
-  
+
   /// Angular momentum
   unsigned int _angular_momentum;
   /// Exponents
@@ -32,14 +32,29 @@ class SlaterTypeAtomicShell {
     assert(_beta_occupations.size() == _orbital_coefficients[0].size());
   };
 
+  /// Evaluate number of basis functions
+  size_t number_of_basis_functions() const {
+    return _exponents.size();
+  }
+
+  /// Evaluate number of orbitals
+  size_t number_of_orbitals() const {
+    return _orbital_coefficients[0].size();
+  }
+
   /// Evaluates the basis functions
   std::vector<double> evaluate_basis_functions(double r) {
     std::vector<double> bf(_exponents.size());
+    evaluate_basis_functions(r, bf.data());
+    return bf;
+  }
+
+  /// Same with external storage
+  void evaluate_basis_functions(double r, double *array) {
     for(size_t ix=0;ix<bf.size();ix++) {
       double normalization = std::pow(2.0*_exponents[ix],_quantum_numbers[ix]+0.5) * std::tgamma(2*_quantum_numbers[ix]+1);
-      bf[ix] = normalization * std::pow(r, _quantum_numbers[ix]-1) * std::exp(-_exponents[ix]*r);
+      array[ix] = normalization * std::pow(r, _quantum_numbers[ix]-1) * std::exp(-_exponents[ix]*r);
     }
-    return bf;
   }
 
   /// Evaluates the orbitals' values
@@ -53,7 +68,7 @@ class SlaterTypeAtomicShell {
     }
     return orbs;
   }
-  
+
   /// Evaluate density
   std::pair<double,double> evaluate_density(double r) {
     std::pair<double,double> pair;
@@ -66,10 +81,10 @@ class SlaterTypeAtomicShell {
       pair.first += _alpha_occupations[iorb] * orbital_density;
       pair.second += _beta_occupations[iorb] * orbital_density;
     }
-    
+
     return pair;
   }
-    
+
   /// Evaluate density gradient
   std::pair<double,double> evaluate_density_gradient(double r);
   /// Evaluate kinetic energy density tau
@@ -122,7 +137,7 @@ class SlaterTypeAtom {
   auto * shells() const { return _shells.data(); }
   /// Get i:th shell
   auto shell(size_t i) const { return _shells[i]; }
-  
+
   /// Evaluate orbitals
   std::vector<double> evaluate_orbitals(double r);
   /// Evaluate density gradient
@@ -132,4 +147,3 @@ class SlaterTypeAtom {
   /// Evaluate density Laplacian
   std::pair<double,double> evaluate_density_laplacian(double r);
 };
-
