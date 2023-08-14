@@ -50,7 +50,7 @@ class SlaterTypeAtomicShell {
     for(size_t ix = 0; ix < exponents_.size(); ix++) {
       normalization_[ix] =
           std::pow(2.0 * exponents_[ix], quantum_numbers_[ix] + 0.5) *
-          integratorxx::detail::factorial(2 * quantum_numbers_[ix]);
+          factorial(2 * quantum_numbers_[ix]);
     }
   };
 
@@ -96,7 +96,8 @@ class SlaterTypeAtomicShell {
   double evaluate_density(const double *orbs, const int_container &occs) {
     double density = 0.0;
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
-      double orbital_density = std::pow(orbs[iorb], 2);
+      double orbital_density = std::abs(orbs[iorb]);
+      orbital_density *= orbital_density;
       density += occs[iorb] * orbital_density;
     }
     return density;

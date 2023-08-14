@@ -2,7 +2,7 @@
 #include <cmath>
 #include <random>
 #include "quad_matcher.hpp"
-#include <integratorxx/util/factorial.hpp
+#include <integratorxx/util/factorial.hpp>
 
 namespace detail {
 }
@@ -14,8 +14,8 @@ struct AssociatedLegendre {
 
 struct SphericalHarmonic {
   static auto evaluate(int l, int m, double theta, double phi) {
-    double fac_ratio  = IntegratorXX::detail::factorial(l-m);
-           fac_ratio /= IntegratorXX::detail::factorial(l+m);
+    double fac_ratio  = IntegratorXX::factorial(l-m);
+           fac_ratio /= IntegratorXX::factorial(l+m);
     double prefactor  = (2.0 * l + 1.0) / (4.0 * M_PI);
            prefactor *= fac_ratio;
     prefactor = std::sqrt(prefactor);
