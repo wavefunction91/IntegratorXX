@@ -7,7 +7,6 @@
 class SlaterTypeAtomicShell {
   using int_container = std::vector<int>;
   using real_container = std::vector<double>;
-  using coefficient_container = std::vector<real_container>;
 
   /// Angular momentum
   unsigned int angular_momentum_;
@@ -16,7 +15,7 @@ class SlaterTypeAtomicShell {
   /// Principal quantum numbers
   int_container quantum_numbers_;
   /// Contraction coefficients
-  coefficient_container orbital_coefficients_;
+  real_container orbital_coefficients_;
   /// Alpha orbital occupations
   int_container alpha_occupations_;
   /// Beta orbital occupations
@@ -31,7 +30,7 @@ class SlaterTypeAtomicShell {
   SlaterTypeAtomicShell(unsigned int angular_momentum,
                         const real_container &exponents,
                         const int_container &quantum_numbers,
-                        const coefficient_container &coefficients,
+                        const real_container &coefficients,
                         const int_container &alpha_occupations,
                         const int_container &beta_occupations)
       : angular_momentum_(angular_momentum),
@@ -43,14 +42,14 @@ class SlaterTypeAtomicShell {
     // Size checks
     assert(exponents_.size() == quantum_numbers_.size());
     assert(exponents_.size() == orbital_coefficients_.size());
-    assert(alpha_occupations_.size() == orbital_coefficients_[0].size());
-    assert(beta_occupations_.size() == orbital_coefficients_[0].size());
+    assert(alpha_occupations_.size()*exponents_.size() == orbital_coefficients_.size());
+    assert(beta_occupations_.size()*exponents_.size() == orbital_coefficients_.size());
     // Basis function normalization factors
     normalization_.resize(exponents_.size());
     for(size_t ix = 0; ix < exponents_.size(); ix++) {
       normalization_[ix] =
           std::pow(2.0 * exponents_[ix], quantum_numbers_[ix] + 0.5) *
-          factorial(2 * quantum_numbers_[ix]);
+        IntegratorXX::factorial(2 * quantum_numbers_[ix]);
     }
   };
 
@@ -58,7 +57,7 @@ class SlaterTypeAtomicShell {
   size_t number_of_basis_functions() const { return exponents_.size(); }
 
   /// Evaluate number of orbitals
-  size_t number_of_orbitals() const { return orbital_coefficients_[0].size(); }
+  size_t number_of_orbitals() const { return alpha_occupations_.size(); }
 
   /// Evaluates the basis functions
   void evaluate_basis_functions(double r, double *array) {
@@ -80,7 +79,7 @@ class SlaterTypeAtomicShell {
     for(size_t iorb = 0; iorb < alpha_occupations_.size(); iorb++) {
       orbs[iorb] = 0.0;
       for(size_t ix = 0; ix < exponents_.size(); ix++)
-        orbs[iorb] += bf[ix] * orbital_coefficients_[ix][iorb];
+        orbs[iorb] += bf[ix] * orbital_coefficients_[iorb*alpha_occupations_.size() + ix];
     }
   }
 
@@ -152,12 +151,12 @@ class SlaterTypeAtomicShell {
   auto quantum_number(size_t i) const { return quantum_numbers_[i]; }
 
   /// Return pointer to orbital coefficients for ix:th exponent
-  auto *orbital_coefficients_data(int ix) const {
-    return orbital_coefficients_[ix].data();
+  auto *orbital_coefficients_data() const {
+    return orbital_coefficients_.data();
   }
   /// Fetch orbital coefficient of ix:th basis function in iorb:th orbital
   auto quantum_number(size_t ix, size_t iorb) const {
-    return orbital_coefficients_[ix][iorb];
+    return orbital_coefficients_[iorb*exponents_.size()+ix];
   }
 };
 
