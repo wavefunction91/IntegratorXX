@@ -84,9 +84,7 @@ class SlaterTypeAtomicShell {
   double evaluate_density(const double *orbs, const int_container &occs) {
     double density = 0.0;
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
-      double orbital_density = std::abs(orbs[iorb]);
-      orbital_density *= orbital_density;
-      density += occs[iorb] * orbital_density;
+      density += occs[iorb] * orbs[iorb]*orbs[iorb];
     }
     return density;
   }
