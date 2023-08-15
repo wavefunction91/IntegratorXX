@@ -42,14 +42,16 @@ class SlaterTypeAtomicShell {
     // Size checks
     assert(exponents_.size() == quantum_numbers_.size());
     assert(exponents_.size() == orbital_coefficients_.size());
-    assert(alpha_occupations_.size()*exponents_.size() == orbital_coefficients_.size());
-    assert(beta_occupations_.size()*exponents_.size() == orbital_coefficients_.size());
+    assert(alpha_occupations_.size() * exponents_.size() ==
+           orbital_coefficients_.size());
+    assert(beta_occupations_.size() * exponents_.size() ==
+           orbital_coefficients_.size());
     // Basis function normalization factors
     normalization_.resize(exponents_.size());
     for(size_t ix = 0; ix < exponents_.size(); ix++) {
       normalization_[ix] =
           std::pow(2.0 * exponents_[ix], quantum_numbers_[ix] + 0.5) *
-        IntegratorXX::factorial(2 * quantum_numbers_[ix]);
+          IntegratorXX::factorial(2 * quantum_numbers_[ix]);
     }
   };
 
@@ -67,28 +69,15 @@ class SlaterTypeAtomicShell {
     }
   }
 
-  /// Evaluates the basis functions; does memory allocation
-  std::vector<double> evaluate_basis_functions(double r) {
-    std::vector<double> bf(exponents_.size());
-    evaluate_basis_functions(r, bf.data());
-    return bf;
-  }
-
   /// Evaluates the orbitals' values
   void evaluate_orbitals(const double *bf, double *orbs) {
     for(size_t iorb = 0; iorb < alpha_occupations_.size(); iorb++) {
       orbs[iorb] = 0.0;
       for(size_t ix = 0; ix < exponents_.size(); ix++)
-        orbs[iorb] += bf[ix] * orbital_coefficients_[iorb*alpha_occupations_.size() + ix];
+        orbs[iorb] +=
+            bf[ix] *
+            orbital_coefficients_[iorb * alpha_occupations_.size() + ix];
     }
-  }
-
-  /// Same but with allocations
-  std::vector<double> evaluate_orbitals(double r) {
-    std::vector<double> bf(evaluate_basis_functions(r));
-    std::vector<double> orbs(orbital_coefficients_.size());
-    evaluate_orbitals(bf.data(), orbs.data());
-    return orbs;
   }
 
   /// Helper to evaluate electron densities
@@ -107,21 +96,9 @@ class SlaterTypeAtomicShell {
     return evaluate_density(orbs, alpha_occupations_);
   }
 
-  /// Evaluates alpha electron density; computes orbitals
-  double evaluate_alpha_density(double r) {
-    std::vector<double> orbs(evaluate_orbitals(r));
-    return evaluate_alpha_density(orbs.data());
-  }
-
   /// Evaluates beta electron density from computed orbitals
   double evaluate_beta_density(const double *orbs) {
     return evaluate_density(orbs, beta_occupations_);
-  }
-
-  /// Evaluates beta electron density; computes orbitals
-  double evaluate_beta_density(double r) {
-    std::vector<double> orbs(evaluate_orbitals(r));
-    return evaluate_beta_density(orbs.data());
   }
 
   /// Evaluate density gradient
@@ -156,7 +133,7 @@ class SlaterTypeAtomicShell {
   }
   /// Fetch orbital coefficient of ix:th basis function in iorb:th orbital
   auto quantum_number(size_t ix, size_t iorb) const {
-    return orbital_coefficients_[iorb*exponents_.size()+ix];
+    return orbital_coefficients_[iorb * exponents_.size() + ix];
   }
 };
 
@@ -174,21 +151,61 @@ class SlaterTypeAtom {
   /// Deconstructor
   ~SlaterTypeAtom(){};
 
-  /// Evaluate density
-  double evaluate_alpha_density(double r) const {
-    double density = 0.0;
-    for(auto shell : shells_) density += shell.evaluate_alpha_density(r);
-    return density;
+  /// Determine maximum number of basis functions
+  auto maximum_number_of_basis_functions() {
+    size_t max_bf = 0;
+    for(auto shell : shells_)
+      max_bf = std::max(max_bf, shell.number_of_basis_functions());
+    return max_bf;
   }
-  /// Evaluate density
-  double evaluate_beta_density(double r) const {
-    double density = 0.0;
-    for(auto shell : shells_) density += shell.evaluate_beta_density(r);
-    return density;
+
+  /// Determine maximum number of orbitals
+  auto maximum_number_of_orbitals() {
+    size_t max_orb = 0;
+    for(auto shell : shells_)
+      max_orb = std::max(max_orb, shell.number_of_orbitals());
+    return max_orb;
   }
 
   /// Get shells
-  auto *shells() const { return shells_.data(); }
+  auto shells() const { return shells_; }
   /// Get i:th shell
   auto shell(size_t i) const { return shells_[i]; }
+};
+
+/// Helper class for evaluating orbitals
+class SlaterEvaluator {
+  /// Atom
+  SlaterTypeAtom atom_;
+  /// Array for basis function data
+  std::vector<double> bf_;
+  /// Array for orbital data
+  std::vector<double> orbs_;
+
+ public:
+  SlaterEvaluator(const SlaterTypeAtom &atom) : atom_(atom) {
+    bf_.resize(atom_.maximum_number_of_basis_functions());
+    orbs_.resize(atom_.maximum_number_of_orbitals());
+  }
+
+  /// Evaluate density
+  double evaluate_alpha_density(double r) {
+    double density = 0.0;
+    for(auto shell : atom_.shells()) {
+      shell.evaluate_basis_functions(r, bf_.data());
+      shell.evaluate_orbitals(bf_.data(), orbs_.data());
+      density += shell.evaluate_alpha_density(orbs_.data());
+    }
+    return density;
+  }
+  /// Evaluate density
+  double evaluate_beta_density(double r) {
+    double density = 0.0;
+    for(auto shell : atom_.shells()) {
+      shell.evaluate_basis_functions(r, bf_.data());
+      shell.evaluate_orbitals(bf_.data(), orbs_.data());
+      density += shell.evaluate_alpha_density(orbs_.data());
+    }
+    return density;
+  }
 };
