@@ -45,8 +45,8 @@ get_filename_component(IntegratorXX_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 list(APPEND CMAKE_MODULE_PATH ${IntegratorXX_CMAKE_DIR})
 
-if(NOT TARGET IntegratorXX::integratorxx)
+if(NOT TARGET IntegratorXX::IntegratorXX)
     include("${IntegratorXX_CMAKE_DIR}/IntegratorXXTargets.cmake")
 endif()
 
-set(IntegratorXX_LIBRARIES IntegratorXX::integratorxx)
+set(IntegratorXX_LIBRARIES IntegratorXX::IntegratorXX)
