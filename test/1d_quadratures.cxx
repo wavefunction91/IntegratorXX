@@ -1,8 +1,5 @@
 #include "catch2/catch_all.hpp"
-#include <integratorxx/quadratures/primitive.hpp>
-#include <integratorxx/quadratures/radial.hpp>
-#include <integratorxx/quadratures/s2.hpp>
-
+#include <integratorxx/quadratures/all.hpp>
 #include <cmath>
 #include <complex>
 #include <iostream>
@@ -170,7 +167,7 @@ TEST_CASE( "Gauss-Chebyshev T3 Quadratures", "[1d-quad]" ) {
 }
 
 
-TEST_CASE( "Euler-Maclaurin Quadratures", "[1d-quad]" ) {
+TEST_CASE( "Euler-Maclaurin Quadratures by Murray, Handy, and Laming", "[1d-quad]" ) {
   IntegratorXX::MurrayHandyLaming<double,double> quad(150);
   const auto msg = "Euler-Maclaurin N = " + std::to_string(quad.npts());
   test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
@@ -182,9 +179,15 @@ TEST_CASE( "Treutler-Ahlrichs Quadratures", "[1d-quad]" ) {
   test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
 }
 
-TEST_CASE( "Knowles Quadratures", "[1d-quad]" ) {
+TEST_CASE( "Mura-Knowles Quadratures", "[1d-quad]" ) {
   IntegratorXX::MuraKnowles<double,double> quad(350);
   const auto msg = "Mura-Knowles N = " + std::to_string(quad.npts());
+  test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
+}
+
+TEST_CASE( "Becke Quadratures", "[1d-quad]" ) {
+  IntegratorXX::Becke<double,double> quad(350);
+  const auto msg = "Becke N = " + std::to_string(quad.npts());
   test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
 }
 
