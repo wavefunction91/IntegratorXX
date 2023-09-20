@@ -1,6 +1,6 @@
 #pragma once
 
-#include "types.hpp"
+#include <integratorxx/types.hpp>
 #include <complex>
 
 namespace IntegratorXX::detail {

@@ -1,6 +1,6 @@
 // clang-format off
 #include "catch2/catch_all.hpp"
-#include <integratorxx/quadratures/muraknowles.hpp>
+#include <integratorxx/quadratures/radial/muraknowles.hpp>
 #include <numeric>
 #include <vector>
 // clang-format on

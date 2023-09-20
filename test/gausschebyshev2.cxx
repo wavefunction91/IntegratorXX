@@ -5,7 +5,7 @@
 
 // clang-format off
 #include "catch2/catch_all.hpp"
-#include <integratorxx/quadratures/gausschebyshev2.hpp>
+#include <integratorxx/quadratures/primitive/gausschebyshev2.hpp>
 #include <numeric>
 #include <vector>
 #include "quad_matcher.hpp"
