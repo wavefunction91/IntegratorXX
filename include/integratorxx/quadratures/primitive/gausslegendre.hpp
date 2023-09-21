@@ -2,6 +2,7 @@
 
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/util/legendre.hpp>
+#include <vector>
 
 namespace IntegratorXX {
 
