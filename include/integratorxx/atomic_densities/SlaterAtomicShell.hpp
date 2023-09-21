@@ -45,12 +45,12 @@ class SlaterTypeAtomicShell {
            orbital_coefficients_.size());
     assert(beta_occupations_.size() * exponents_.size() ==
            orbital_coefficients_.size());
-    // Basis function normalization factors
+    // Basis function normalization factors; include angular factor here for simplicity
     normalization_.resize(exponents_.size());
     for(size_t ix = 0; ix < exponents_.size(); ix++) {
       normalization_[ix] =
           std::pow(2.0 * exponents_[ix], quantum_numbers_[ix] + 0.5) /
-        std::sqrt(IntegratorXX::factorial(2 * quantum_numbers_[ix]));
+        std::sqrt(4.0*M_PI * IntegratorXX::factorial(2 * quantum_numbers_[ix]));
     }
   };
 
