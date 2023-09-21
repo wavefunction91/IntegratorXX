@@ -100,7 +100,7 @@ class SlaterTypeAtomicShell {
       for(size_t ix = 0; ix < exponents_.size(); ix++)
         orbs[iorb] +=
             bf[ix] *
-            orbital_coefficients_[iorb * alpha_occupations_.size() + ix];
+            orbital_coefficients_[iorb * exponents_.size() + ix];
     }
   }
 
