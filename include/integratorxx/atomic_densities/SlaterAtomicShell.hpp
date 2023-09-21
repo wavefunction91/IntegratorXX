@@ -41,7 +41,6 @@ class SlaterTypeAtomicShell {
         beta_occupations_(beta_occupations) {
     // Size checks
     assert(exponents_.size() == quantum_numbers_.size());
-    assert(exponents_.size() == orbital_coefficients_.size());
     assert(alpha_occupations_.size() * exponents_.size() ==
            orbital_coefficients_.size());
     assert(beta_occupations_.size() * exponents_.size() ==
@@ -50,8 +49,8 @@ class SlaterTypeAtomicShell {
     normalization_.resize(exponents_.size());
     for(size_t ix = 0; ix < exponents_.size(); ix++) {
       normalization_[ix] =
-          std::pow(2.0 * exponents_[ix], quantum_numbers_[ix] + 0.5) *
-          IntegratorXX::factorial(2 * quantum_numbers_[ix]);
+          std::pow(2.0 * exponents_[ix], quantum_numbers_[ix] + 0.5) /
+        std::sqrt(IntegratorXX::factorial(2 * quantum_numbers_[ix]));
     }
   };
 
