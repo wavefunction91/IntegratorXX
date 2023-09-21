@@ -3,6 +3,7 @@
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/util/copy_grid.hpp>
 #include <integratorxx/quadratures/s2/delley/delley_grids.hpp>
+#include <vector>
 
 namespace IntegratorXX {
 
