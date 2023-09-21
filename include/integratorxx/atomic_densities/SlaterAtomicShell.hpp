@@ -283,7 +283,7 @@ class SlaterEvaluator {
     for(auto shell : atom_.shells()) {
       shell.evaluate_basis_functions(r, bf_.data());
       shell.evaluate_orbitals(bf_.data(), orbs_.data());
-      density += shell.evaluate_alpha_density(orbs_.data());
+      density += shell.evaluate_beta_density(orbs_.data());
     }
     return density;
   }
@@ -307,7 +307,7 @@ class SlaterEvaluator {
       shell.evaluate_basis_function_gradients(r, df_.data());
       shell.evaluate_orbitals(bf_.data(), orbs_.data());
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
-      gradient += shell.evaluate_alpha_density_gradient(orbs_.data(), dorbs_.data());
+      gradient += shell.evaluate_beta_density_gradient(orbs_.data(), dorbs_.data());
     }
     return gradient;
   }
