@@ -2,6 +2,7 @@
 
 #include <integratorxx/quadratures/primitive/uniform.hpp>
 #include <integratorxx/quadratures/radial/radial_transform.hpp>
+#include <vector>
 
 namespace IntegratorXX {
 
