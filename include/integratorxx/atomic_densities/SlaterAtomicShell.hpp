@@ -41,16 +41,17 @@ class SlaterTypeAtomicShell {
         beta_occupations_(beta_occupations) {
     // Size checks
     assert(exponents_.size() == quantum_numbers_.size());
+    assert(alpha_occupations_.size() == beta_occupations_.size());
     assert(alpha_occupations_.size() * exponents_.size() ==
            orbital_coefficients_.size());
-    assert(beta_occupations_.size() * exponents_.size() ==
-           orbital_coefficients_.size());
-    // Basis function normalization factors; include angular factor here for simplicity
+    // Basis function normalization factors; include angular factor here for
+    // simplicity
     normalization_.resize(exponents_.size());
     for(size_t ix = 0; ix < exponents_.size(); ix++) {
       normalization_[ix] =
           std::pow(2.0 * exponents_[ix], quantum_numbers_[ix] + 0.5) /
-        std::sqrt(4.0*M_PI * IntegratorXX::factorial(2 * quantum_numbers_[ix]));
+          std::sqrt(4.0 * M_PI *
+                    IntegratorXX::factorial(2 * quantum_numbers_[ix]));
     }
   };
 
@@ -71,25 +72,30 @@ class SlaterTypeAtomicShell {
   /// Evaluates the basis function gradients
   void evaluate_basis_function_gradients(double r, double *array) {
     for(size_t ix = 0; ix < exponents_.size(); ix++) {
-      array[ix] = -exponents_[ix]*std::pow(r, quantum_numbers_[ix] - 1);
+      array[ix] = -exponents_[ix] * std::pow(r, quantum_numbers_[ix] - 1);
       if(quantum_numbers_[ix] > 0) {
-        array[ix] += (quantum_numbers_[ix]-1)*std::pow(r, quantum_numbers_[ix] - 2);
+        array[ix] +=
+            (quantum_numbers_[ix] - 1) * std::pow(r, quantum_numbers_[ix] - 2);
       }
-      array[ix] *= normalization_[ix]*std::exp(-exponents_[ix] * r);
+      array[ix] *= normalization_[ix] * std::exp(-exponents_[ix] * r);
     }
   }
 
   /// Evaluates the basis function second derivatives
   void evaluate_basis_function_laplacians(double r, double *array) {
     for(size_t ix = 0; ix < exponents_.size(); ix++) {
-      array[ix] = exponents_[ix]*exponents_[ix]*std::pow(r, quantum_numbers_[ix] - 1);
+      array[ix] = exponents_[ix] * exponents_[ix] *
+                  std::pow(r, quantum_numbers_[ix] - 1);
       if(quantum_numbers_[ix] > 1) {
-        array[ix] -= 2.0*exponents_[ix]*(quantum_numbers_[ix]-1)*std::pow(r, quantum_numbers_[ix] - 2);
+        array[ix] -= 2.0 * exponents_[ix] * (quantum_numbers_[ix] - 1) *
+                     std::pow(r, quantum_numbers_[ix] - 2);
         if(quantum_numbers_[ix] > 2) {
-          array[ix] += (quantum_numbers_[ix]*quantum_numbers_[ix] - 3*quantum_numbers_[ix] + 2)*std::pow(r, quantum_numbers_[ix] - 3);
+          array[ix] += (quantum_numbers_[ix] * quantum_numbers_[ix] -
+                        3 * quantum_numbers_[ix] + 2) *
+                       std::pow(r, quantum_numbers_[ix] - 3);
         }
       }
-      array[ix] *= normalization_[ix]*std::exp(-exponents_[ix] * r);
+      array[ix] *= normalization_[ix] * std::exp(-exponents_[ix] * r);
     }
   }
 
@@ -99,8 +105,7 @@ class SlaterTypeAtomicShell {
       orbs[iorb] = 0.0;
       for(size_t ix = 0; ix < exponents_.size(); ix++)
         orbs[iorb] +=
-            bf[ix] *
-            orbital_coefficients_[iorb * exponents_.size() + ix];
+            bf[ix] * orbital_coefficients_[iorb * exponents_.size() + ix];
     }
   }
 
@@ -108,16 +113,17 @@ class SlaterTypeAtomicShell {
   double evaluate_density(const double *orbs, const int_container &occs) {
     double density = 0.0;
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
-      density += occs[iorb] * orbs[iorb]*orbs[iorb];
+      density += occs[iorb] * orbs[iorb] * orbs[iorb];
     }
     return density;
   }
 
   /// Helper to evaluate electron density gradient
-  double evaluate_density_gradient(const double *orbs, const double *dorbs, const int_container &occs) {
+  double evaluate_density_gradient(const double *orbs, const double *dorbs,
+                                   const int_container &occs) {
     double gradient = 0.0;
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
-      gradient += 2.0*occs[iorb] * orbs[iorb]*dorbs[iorb];
+      gradient += 2.0 * occs[iorb] * orbs[iorb] * dorbs[iorb];
     }
     return gradient;
   }
@@ -126,16 +132,19 @@ class SlaterTypeAtomicShell {
   double evaluate_tau(const double *dorbs, const int_container &occs) {
     double tau = 0.0;
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
-      tau += occs[iorb] * dorbs[iorb]*dorbs[iorb];
+      tau += occs[iorb] * dorbs[iorb] * dorbs[iorb];
     }
     return tau;
   }
 
   /// Helper to evaluate electron density laplacian
-  double evaluate_density_laplacian(const double *orbs, const double *dorbs, const double *lorbs, const int_container &occs) {
+  double evaluate_density_laplacian(const double *orbs, const double *dorbs,
+                                    const double *lorbs,
+                                    const int_container &occs) {
     double lapl = 0.0;
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
-      lapl += 2.0*occs[iorb] * (dorbs[iorb]*dorbs[iorb] + orbs[iorb]*lorbs[iorb]);
+      lapl += 2.0 * occs[iorb] *
+              (dorbs[iorb] * dorbs[iorb] + orbs[iorb] * lorbs[iorb]);
     }
     return lapl;
   }
@@ -151,12 +160,14 @@ class SlaterTypeAtomicShell {
   }
 
   /// Evaluates alpha electron density from computed orbitals
-  double evaluate_alpha_density_gradient(const double *orbs, const double *dorbs) {
+  double evaluate_alpha_density_gradient(const double *orbs,
+                                         const double *dorbs) {
     return evaluate_density_gradient(orbs, dorbs, alpha_occupations_);
   }
 
   /// Evaluates beta electron density from computed orbitals
-  double evaluate_beta_density_gradient(const double *orbs, const double *dorbs) {
+  double evaluate_beta_density_gradient(const double *orbs,
+                                        const double *dorbs) {
     return evaluate_density_gradient(orbs, dorbs, beta_occupations_);
   }
 
@@ -171,12 +182,16 @@ class SlaterTypeAtomicShell {
   }
 
   /// Evaluates alpha electron density from computed orbitals
-  double evaluate_alpha_density_laplacian(const double *orbs, const double *dorbs, const double *lorbs) {
+  double evaluate_alpha_density_laplacian(const double *orbs,
+                                          const double *dorbs,
+                                          const double *lorbs) {
     return evaluate_density_laplacian(orbs, dorbs, lorbs, alpha_occupations_);
   }
 
   /// Evaluates beta electron density from computed orbitals
-  double evaluate_beta_density_laplacian(const double *orbs, const double *dorbs, const double *lorbs) {
+  double evaluate_beta_density_laplacian(const double *orbs,
+                                         const double *dorbs,
+                                         const double *lorbs) {
     return evaluate_density_laplacian(orbs, dorbs, lorbs, beta_occupations_);
   }
 
@@ -295,7 +310,8 @@ class SlaterEvaluator {
       shell.evaluate_basis_function_gradients(r, df_.data());
       shell.evaluate_orbitals(bf_.data(), orbs_.data());
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
-      gradient += shell.evaluate_alpha_density_gradient(orbs_.data(), dorbs_.data());
+      gradient +=
+          shell.evaluate_alpha_density_gradient(orbs_.data(), dorbs_.data());
     }
     return gradient;
   }
@@ -307,7 +323,8 @@ class SlaterEvaluator {
       shell.evaluate_basis_function_gradients(r, df_.data());
       shell.evaluate_orbitals(bf_.data(), orbs_.data());
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
-      gradient += shell.evaluate_beta_density_gradient(orbs_.data(), dorbs_.data());
+      gradient +=
+          shell.evaluate_beta_density_gradient(orbs_.data(), dorbs_.data());
     }
     return gradient;
   }
@@ -341,7 +358,8 @@ class SlaterEvaluator {
       shell.evaluate_orbitals(bf_.data(), orbs_.data());
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
       shell.evaluate_orbitals(lf_.data(), lorbs_.data());
-      lapl += shell.evaluate_alpha_density_laplacian(orbs_.data(), dorbs_.data(), lorbs_.data());
+      lapl += shell.evaluate_alpha_density_laplacian(
+          orbs_.data(), dorbs_.data(), lorbs_.data());
     }
     return lapl;
   }
@@ -355,7 +373,8 @@ class SlaterEvaluator {
       shell.evaluate_orbitals(bf_.data(), orbs_.data());
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
       shell.evaluate_orbitals(lf_.data(), lorbs_.data());
-      lapl += shell.evaluate_beta_density_laplacian(orbs_.data(), dorbs_.data(), lorbs_.data());
+      lapl += shell.evaluate_beta_density_laplacian(orbs_.data(), dorbs_.data(),
+                                                    lorbs_.data());
     }
     return lapl;
   }
