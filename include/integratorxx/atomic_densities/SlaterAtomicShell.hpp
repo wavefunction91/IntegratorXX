@@ -134,6 +134,7 @@ class SlaterTypeAtomicShell {
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
       tau += occs[iorb] * dorbs[iorb] * dorbs[iorb];
     }
+    tau *= 0.5;
     return tau;
   }
 
