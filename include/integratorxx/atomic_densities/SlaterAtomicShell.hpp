@@ -129,23 +129,27 @@ class SlaterTypeAtomicShell {
   }
 
   /// Helper to evaluate electron density gradient
-  double evaluate_tau(const double *dorbs, const int_container &occs) {
+  double evaluate_tau(double r, const double *orbs, const double *dorbs,
+                      const int_container &occs) {
     double tau = 0.0;
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
-      tau += occs[iorb] * dorbs[iorb] * dorbs[iorb];
+      tau += occs[iorb] * (dorbs[iorb] * dorbs[iorb] +
+                           angular_momentum_ * (angular_momentum_ + 1) *
+                               orbs[iorb] * orbs[iorb] / (r * r));
     }
     tau *= 0.5;
     return tau;
   }
 
   /// Helper to evaluate electron density laplacian
-  double evaluate_density_laplacian(const double *orbs, const double *dorbs,
-                                    const double *lorbs,
+  double evaluate_density_laplacian(double r, const double *orbs,
+                                    const double *dorbs, const double *lorbs,
                                     const int_container &occs) {
     double lapl = 0.0;
     for(size_t iorb = 0; iorb < occs.size(); iorb++) {
       lapl += 2.0 * occs[iorb] *
-              (dorbs[iorb] * dorbs[iorb] + orbs[iorb] * lorbs[iorb]);
+              (dorbs[iorb] * dorbs[iorb] + orbs[iorb] * lorbs[iorb] +
+               2.0 / r * orbs[iorb] * dorbs[iorb]);
     }
     return lapl;
   }
@@ -173,27 +177,28 @@ class SlaterTypeAtomicShell {
   }
 
   /// Evaluates alpha electron density from computed orbitals
-  double evaluate_alpha_tau(const double *dorbs) {
-    return evaluate_tau(dorbs, alpha_occupations_);
+  double evaluate_alpha_tau(double r, const double *orbs, const double *dorbs) {
+    return evaluate_tau(r, orbs, dorbs, alpha_occupations_);
   }
 
   /// Evaluates beta electron density from computed orbitals
-  double evaluate_beta_tau(const double *dorbs) {
-    return evaluate_tau(dorbs, beta_occupations_);
+  double evaluate_beta_tau(double r, const double *orbs, const double *dorbs) {
+    return evaluate_tau(r, orbs, dorbs, beta_occupations_);
   }
 
   /// Evaluates alpha electron density from computed orbitals
-  double evaluate_alpha_density_laplacian(const double *orbs,
+  double evaluate_alpha_density_laplacian(double r, const double *orbs,
                                           const double *dorbs,
                                           const double *lorbs) {
-    return evaluate_density_laplacian(orbs, dorbs, lorbs, alpha_occupations_);
+    return evaluate_density_laplacian(r, orbs, dorbs, lorbs,
+                                      alpha_occupations_);
   }
 
   /// Evaluates beta electron density from computed orbitals
-  double evaluate_beta_density_laplacian(const double *orbs,
+  double evaluate_beta_density_laplacian(double r, const double *orbs,
                                          const double *dorbs,
                                          const double *lorbs) {
-    return evaluate_density_laplacian(orbs, dorbs, lorbs, beta_occupations_);
+    return evaluate_density_laplacian(r, orbs, dorbs, lorbs, beta_occupations_);
   }
 
   /// Return angular momentum
@@ -333,9 +338,11 @@ class SlaterEvaluator {
   double evaluate_alpha_tau(double r) {
     double tau = 0.0;
     for(auto shell : atom_.shells()) {
+      shell.evaluate_basis_functions(r, bf_.data());
       shell.evaluate_basis_function_gradients(r, df_.data());
+      shell.evaluate_orbitals(bf_.data(), orbs_.data());
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
-      tau += shell.evaluate_alpha_tau(dorbs_.data());
+      tau += shell.evaluate_alpha_tau(r, orbs_.data(), dorbs_.data());
     }
     return tau;
   }
@@ -343,9 +350,11 @@ class SlaterEvaluator {
   double evaluate_beta_tau(double r) {
     double tau = 0.0;
     for(auto shell : atom_.shells()) {
+      shell.evaluate_basis_functions(r, bf_.data());
       shell.evaluate_basis_function_gradients(r, df_.data());
+      shell.evaluate_orbitals(bf_.data(), orbs_.data());
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
-      tau += shell.evaluate_beta_tau(dorbs_.data());
+      tau += shell.evaluate_beta_tau(r, orbs_.data(), dorbs_.data());
     }
     return tau;
   }
@@ -360,7 +369,7 @@ class SlaterEvaluator {
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
       shell.evaluate_orbitals(lf_.data(), lorbs_.data());
       lapl += shell.evaluate_alpha_density_laplacian(
-          orbs_.data(), dorbs_.data(), lorbs_.data());
+          r, orbs_.data(), dorbs_.data(), lorbs_.data());
     }
     return lapl;
   }
@@ -374,8 +383,8 @@ class SlaterEvaluator {
       shell.evaluate_orbitals(bf_.data(), orbs_.data());
       shell.evaluate_orbitals(df_.data(), dorbs_.data());
       shell.evaluate_orbitals(lf_.data(), lorbs_.data());
-      lapl += shell.evaluate_beta_density_laplacian(orbs_.data(), dorbs_.data(),
-                                                    lorbs_.data());
+      lapl += shell.evaluate_beta_density_laplacian(
+          r, orbs_.data(), dorbs_.data(), lorbs_.data());
     }
     return lapl;
   }
