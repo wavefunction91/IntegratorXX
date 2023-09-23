@@ -24,6 +24,9 @@ target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain inte
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
 target_link_libraries( quadrature_manipulation PUBLIC integratorxx_common_ut )
 
+add_executable( c_api c_api.cxx )
+target_link_libraries( c_api PUBLIC integratorxx_common_ut )
+
 add_executable( 1d_quadratures 1d_quadratures.cxx )
 target_link_libraries( 1d_quadratures PUBLIC integratorxx_common_ut )
 
