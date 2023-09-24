@@ -44,6 +44,7 @@ int intxx_quad_init(intxx_quad_type* p, int quad) {
     // TODO: Get spherical quadrature info
   } else if(is_radq) {
     // TODO: Get radial quadrature info
+    error = intxx_get_radq_info(finfo, quad);
   } else {
     // Angular by exclusion
     // TODO: Get angular quadrature info

@@ -140,6 +140,32 @@ int intxx_get_prmq_info(intxx_quad_info_type* p, int quad) {
   }
 }
 
+
+int intxx_get_radq_info(intxx_quad_info_type* p, int quad) {
+  if(p == NULL) return INTXX_NULL_INFOPTR;
+
+  quad = quad & INTXX_RADQ_MASK;
+  p->number = quad;
+  p->kind   = INTXX_RAD_QUAD;
+  switch(quad) {
+    case INTXX_RADQ_BECKE:
+      p->name = "BECKE";
+      break;
+    case INTXX_RADQ_MHL:
+      p->name = "MURRAY_HANDY_LAMING";
+      break;
+    case INTXX_RADQ_TA:
+      p->name = "TREUTLER_AHLRICHS";
+      break;
+    case INTXX_RADQ_MK:
+      p->name = "MURA_KNOWLES";
+      break;
+    default:
+      return INTXX_INVALID_QUAD;
+  }
+  return INTXX_SUCCESS;
+}
+
 int intxx_noparam_info(intxx_quad_info_type* p, 
   int (*g)(intxx_quad_type*),
   int (*d)(intxx_quad_type*)) {
