@@ -1,3 +1,5 @@
+#include <integratorxx/quadratures/primitive/uniform.hpp>
+
 #include "c_internal.h"
 #include <cstddef>
 
@@ -11,11 +13,15 @@ int intxx_get_gausscheb2_info(intxx_quad_info_type* p);
 int intxx_get_gausscheb2m_info(intxx_quad_info_type* p);
 int intxx_get_gausscheb3_info(intxx_quad_info_type* p);
 
+int intxx_generate_uniform(intxx_quad_type* p);
+int intxx_destroy_uniform(intxx_quad_type* p);
+
 void intxx_default_quad_info(intxx_quad_info_type* p) {
   p->number = 0; // Invalid
   p->kind   = 0; // Invalid
   p->name   = "Default"; // Default state
-  //p->init   = NULL;
+  p->generate = NULL;
+  p->destroy  = NULL;
 }
 
 int intxx_get_prmq_info(intxx_quad_info_type* p, int quad) {
@@ -51,34 +57,98 @@ int intxx_get_prmq_info(intxx_quad_info_type* p, int quad) {
   }
 }
 
-int intxx_noparam_info(intxx_quad_info_type* p) {
+int intxx_noparam_info(intxx_quad_info_type* p, 
+  int (*g)(intxx_quad_type*),
+  int (*d)(intxx_quad_type*)) {
   if(p == NULL) return INTXX_NULL_INFOPTR;
 
   p->ext_params.n = 0; /// No External Parameters
+  p->generate = g;
+  p->destroy  = d;
 
   return INTXX_SUCCESS;
 }
 
 int intxx_get_uniform_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p);
+  return intxx_noparam_info(p, &intxx_generate_uniform,
+    &intxx_destroy_uniform);
 }
 int intxx_get_gausslob_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p);
+  return intxx_noparam_info(p, NULL, NULL);
 }
 int intxx_get_gaussleg_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p);
+  return intxx_noparam_info(p, NULL, NULL);
 }
 int intxx_get_gausscheb1_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p);
+  return intxx_noparam_info(p, NULL, NULL);
 }
 int intxx_get_gausscheb2_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p);
+  return intxx_noparam_info(p, NULL, NULL);
 }
 int intxx_get_gausscheb2m_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p);
+  return intxx_noparam_info(p, NULL, NULL);
 }
 int intxx_get_gausscheb3_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p);
+  return intxx_noparam_info(p, NULL, NULL);
+}
+
+
+
+int intxx_generate_uniform(intxx_quad_type* p) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+
+  using namespace IntegratorXX;
+  using quad_type = UniformTrapezoid<double,double>;
+  using alloc_type = std::allocator<quad_type>;
+  using alloc_traits = std::allocator_traits<alloc_type>;
+
+  int npts = p->npoints;
+  if( npts <= 0 ) {
+    // Return error code
+  }
+
+  if(p->_state != NULL) {
+    // Check if we need to regenerate
+  }
+
+
+  // Allocate and construct the quadrature instance
+  alloc_type alloc;
+  auto ptr = alloc_traits::allocate(alloc, 1);
+  alloc_traits::construct(alloc, ptr, npts, 0.0, 1.0);
+
+  // Store the pointer
+  p->_state = (void*)ptr;
+    
+  return INTXX_SUCCESS;
+
+} 
+
+int intxx_destroy_uniform(intxx_quad_type* p) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+  
+  using namespace IntegratorXX;
+  using quad_type = UniformTrapezoid<double,double>;
+  using alloc_type = std::allocator<quad_type>;
+  using alloc_traits = std::allocator_traits<alloc_type>;
+
+  if(p->_state != NULL) { 
+    alloc_type alloc;
+
+    // Cross your fingers...
+    auto ptr = p->_state;
+    auto quad_ptr = reinterpret_cast<quad_type*>(ptr);
+
+    // Destroy and deallocate
+    alloc_traits::destroy(alloc, quad_ptr);
+    alloc_traits::deallocate(alloc, quad_ptr, 1);
+    
+    // Null out state
+    p->_state = NULL;
+  }
+  return INTXX_SUCCESS;
 }
 
 }

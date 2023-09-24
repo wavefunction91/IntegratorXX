@@ -11,6 +11,7 @@ int intxx_quad_init(intxx_quad_type* p, int quad) {
   // Sanity check
   if(p == NULL) return INTXX_NULL_QUADPTR;
   p->info    = NULL;
+  p->_state  = NULL;
   p->npoints = -1;
 
   if(quad < 0) return INTXX_INVALID_QUAD;
@@ -84,4 +85,17 @@ int intxx_quad_get_npts(intxx_quad_type* p, int* npts) {
   *npts = p->npoints;
   return *npts > 0 ? INTXX_SUCCESS : INTXX_INVALID_OUT;
 }
+
+int intxx_generate_quad(intxx_quad_type* p) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+
+  return p->info->generate(p);
+}
   
+int intxx_destroy_quad(intxx_quad_type* p) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+
+  return p->info->destroy(p);
+}

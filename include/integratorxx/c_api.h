@@ -66,12 +66,14 @@ typedef struct {
 
   intxx_quad_params_type ext_params; ///< External params
 
-  //void (*init)(struct intxx_quad_type* p);
+  int (*generate)(struct intxx_quad_type* p);
+  int (*destroy) (struct intxx_quad_type* p);
 } intxx_quad_info_type;
 
 struct intxx_quad_type {
   int npoints;
   const intxx_quad_info_type* info;
+  void* _state; ///< Internal state, NOT FOR PUBLIC USE
 };
 
 typedef struct intxx_quad_type intxx_quad_type;
@@ -134,6 +136,10 @@ int intxx_quad_set_npts(intxx_quad_type* p, int npts);
  *           INTXX_INVALID_OUT:  `npts` is not valid (npts < 0)
  */ 
 int intxx_quad_get_npts(intxx_quad_type* p, int* npts);
+
+
+int intxx_generate_quad(intxx_quad_type* p);
+int intxx_destroy_quad(intxx_quad_type* p);
 
 #ifdef __cplusplus
 }
