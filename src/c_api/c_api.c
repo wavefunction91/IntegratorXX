@@ -120,3 +120,18 @@ int intxx_destroy_quad(intxx_quad_type* p) {
     return p->info->destroy(p);
   else return INTXX_SUCCESS;
 }
+
+int intxx_get_ext_param_name(intxx_quad_type* p, const char* name, double* v) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+  if(p->info->ext_params.n <= 0) {
+    return INTXX_INVALID_OPT;
+  }
+
+  if(p->info->ext_params.get_name == NULL) {
+    // Something more descriptive?
+    return INTXX_INVALID_OPT;
+  }
+
+  return p->info->ext_params.get_name(p, name, v);
+}

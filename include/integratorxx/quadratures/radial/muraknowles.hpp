@@ -155,6 +155,8 @@ public:
     return R_ * 3.0 * x2 / (1.0 - x2 * x);
   }
 
+  /// Return radial scaling factor
+  auto R() const { return R_; }
 }; 
 
 template <typename PointType, typename WeightType>

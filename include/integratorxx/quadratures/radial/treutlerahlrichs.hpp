@@ -64,6 +64,8 @@ public:
     return R_ * pow_term / ln_2 * ( alpha_ * log_term / (a+x) + (1./(1.-x)) );
   }
 
+  /// Return radial scaling factor
+  auto R() const { return R_; }
 };
 
 

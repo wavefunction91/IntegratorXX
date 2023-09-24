@@ -47,6 +47,9 @@ class BeckeRadialTraits {
   inline auto radial_jacobian(PointType x) const noexcept {
     return R_ * 2.0 / std::pow(1.0 - x, 2);
   }
+
+  /// Return radial scaling factor
+  auto R() const { return R_; }
 };
 
 /**

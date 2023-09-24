@@ -3,6 +3,7 @@
 
 #include "c_internal.h"
 #include <cstddef>
+#include <cstring>
 
 template <typename DataType, typename... Args>
 auto generate_quadrature(Args&&... args) {
@@ -121,6 +122,39 @@ int intxx_destroy_params_impl(intxx_quad_type* p) {
   return INTXX_SUCCESS;
 }
 
+template <typename TraitsType>
+int intxx_get_rad_scal_impl(intxx_quad_type* p, double* R) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+
+  if(R == NULL) {
+    // Return error code
+  }
+
+  auto ext_param = p->info->ext_params;
+
+  // Check that this quadrature has a radial scaling factor
+  bool r_found = false;
+  for(int i = 0; i < ext_param.n; ++i) {
+    if(r_found) break;
+    const auto name = ext_param.names[i];
+    r_found = strcmp(name, "RAD_SCAL");
+  }
+
+  if(not r_found) {
+    // Return error code
+  }
+  
+  if(p->_state_parm == NULL) {
+    // Return error code
+  }
+
+  // Read data
+  *R = reinterpret_cast<TraitsType*>(p->_state_parm)->R();
+
+  return INTXX_SUCCESS;
+}
+
 
 extern "C" {
 
@@ -144,7 +178,8 @@ int intxx_get_##cname##_quad_info(intxx_quad_info_type* p); \
 int intxx_generate_##cname##_quad(intxx_quad_type* p); \
 int intxx_destroy_##cname##_quad(intxx_quad_type* p); \
 int intxx_generate_##cname##_quad_params(intxx_quad_type* p); \
-int intxx_destroy_##cname##_quad_params(intxx_quad_type* p);
+int intxx_destroy_##cname##_quad_params(intxx_quad_type* p); \
+int intxx_get_name_##cname##_quad(intxx_quad_type* p, const char* name, double *v);
 
 FWD_RAD(becke)
 FWD_RAD(mhl)
@@ -262,6 +297,8 @@ INTXX_NOPARAM_GET_INFO_IMPL(gausscheb3);
 
 
 int intxx_radscal_info(intxx_quad_info_type* p, 
+  int (*sn)(intxx_quad_type*,const char*,double),
+  int (*gn)(intxx_quad_type*,const char*,double*),
   int (*gparm)(intxx_quad_type*),
   int (*dparm)(intxx_quad_type*),
   int (*gquad)(intxx_quad_type*),
@@ -272,8 +309,8 @@ int intxx_radscal_info(intxx_quad_info_type* p,
   static const char* desc[]  = {"Radial Scaling Factor"};
   p->ext_params = {
     1, names, desc, 
-    NULL, /* set_name */
-    NULL, /* get_name */
+    sn, /* set_name */
+    gn, /* get_name */
     gparm, /* generate */
     dparm  /* destroy */
   };
@@ -287,6 +324,8 @@ int intxx_radscal_info(intxx_quad_info_type* p,
 #define INTXX_RADSCAL_GET_INFO_IMPL(cname) \
 int intxx_get_##cname##_quad_info(intxx_quad_info_type* p) { \
   return intxx_radscal_info(p, \
+    NULL, \
+    intxx_get_name_##cname##_quad, \
     intxx_generate_##cname##_quad_params, \
     intxx_destroy_##cname##_quad_params,  \
     intxx_generate_##cname##_quad, \
@@ -326,8 +365,19 @@ INTXX_RAD_TRAITS_IMPL(mk,    mk_traits_type   );
 
 #undef INTXX_RAD_TRAITS_IMPL
 
+/**********************************/
+/****** Radial Quad GET_NAME ******/
+/**********************************/
+#define INTXX_RAD_GETSET_IMPL(cname, traits_type) \
+int intxx_get_name_##cname##_quad(intxx_quad_type* p, const char* name, double *v) { \
+  if(strcmp(name, "RAD_SCAL")){ return INTXX_INVALID_OPT; } \
+  return intxx_get_rad_scal_impl<traits_type>(p, v);\
+}
 
-
+INTXX_RAD_GETSET_IMPL(becke, becke_traits_type);
+INTXX_RAD_GETSET_IMPL(mhl,   mhl_traits_type  );
+INTXX_RAD_GETSET_IMPL(ta,    ta_traits_type   );
+INTXX_RAD_GETSET_IMPL(mk,    mk_traits_type   );
 
 #define INTXX_GD_BASIC_IMPL(cname, qname, ...)   \
 int intxx_generate_##cname(intxx_quad_type* p) { \

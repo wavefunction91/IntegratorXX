@@ -122,14 +122,18 @@ TEST_CASE("C API") {
   SECTION("Radial") {
     const char* name;
     const int base_npts = 100;
+    const double RSCAL = 2.0;
     using base_quad_type = QuadratureBase<std::vector<double>, std::vector<double>>;
     std::unique_ptr<base_quad_type> base_quad_default = nullptr;
+    std::unique_ptr<base_quad_type> base_quad_scaled  = nullptr;
 
     SECTION("Becke") {
       using quad_type = Becke<double,double>;
+      using traits_type = typename quad_type::traits_type;
       error = intxx_quad_init(&quad, INTXX_RADQ_BECKE);
       name = "BECKE";
       base_quad_default = std::make_unique<quad_type>(base_npts);
+      base_quad_scaled  = std::make_unique<quad_type>(base_npts,traits_type(RSCAL));
     }
 
     SECTION("MHL") {
@@ -161,9 +165,15 @@ TEST_CASE("C API") {
     REQUIRE(quad._state_quad == NULL);
     REQUIRE(!strcmp(quad.info->name, name));
 
+
+    // Check default parameters
     REQUIRE(quad.info->ext_params.n == 1);
     REQUIRE(!strcmp(quad.info->ext_params.names[0], "RAD_SCAL"));
     REQUIRE(!strcmp(quad.info->ext_params.descriptions[0], "Radial Scaling Factor"));
+
+    double R;
+    intxx_get_ext_param_name(&quad, "RAD_SCAL", &R);
+    REQUIRE(R == 1.0);
 
     // Get before set
     int npts;
@@ -196,6 +206,11 @@ TEST_CASE("C API") {
 
       intxx_destroy_quad(&quad);
       REQUIRE(quad._state_quad == NULL);
+    }
+
+    // Check Scaling Works
+    if(base_quad_scaled) {
+    
     }
   }
 

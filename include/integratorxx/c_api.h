@@ -7,7 +7,7 @@
 #define INTXX_NULL_INFOPTR -3
 #define INTXX_INVALID_OPT  -4
 #define INTXX_INVALID_ARG  -5
-#define INTXX_INVALID_OUT  -5
+#define INTXX_INVALID_OUT  -6
 
 /*** Quadrature Classes ***/
 #define INTXX_PRM_QUAD 1
@@ -52,9 +52,9 @@ typedef struct {
   const char** names;        ///< Names of the params
   const char** descriptions; ///< Long descriptions of params
 
-  void (*set_name)(struct intxx_quad_type* p, const char* name, double v);
-    ///< Set parameter function
-  void (*get_name)(struct intxx_quad_type* p, const char* name, double* v);
+  int (*set_name)(struct intxx_quad_type* p, const char* name, double v);
+  ///< Set parameter function
+  int (*get_name)(struct intxx_quad_type* p, const char* name, double* v);
     ///< Get parameter function
   int (*generate)(struct intxx_quad_type* p);
   int (*destroy) (struct intxx_quad_type* p);
@@ -144,6 +144,12 @@ int intxx_quad_get_npts(intxx_quad_type* p, int* npts);
 
 int intxx_generate_quad(intxx_quad_type* p);
 int intxx_destroy_quad(intxx_quad_type* p);
+
+int intxx_get_ext_param_name(intxx_quad_type* p, const char* name, double* v);
+int intxx_set_ext_param_name(intxx_quad_type* p, const char* name, double v);
+
+int intxx_get_rad_scal(intxx_quad_type* p, double *R);
+int intxx_set_rad_scal(intxx_quad_type* p, double R);
 
 #ifdef __cplusplus
 }
