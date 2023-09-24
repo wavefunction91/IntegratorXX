@@ -40,6 +40,10 @@ jobs:
       shell: bash
       run: cmake --build ${{runner.workspace}}/build -j2 
 
+    - name: Install Valgrind
+      shell: bash
+      run: apt install valgrind
+
     - name: Test
       shell: bash
       run: cmake --build ${{runner.workspace}}/build --target test
@@ -71,6 +75,10 @@ jobs:
     - name: Build
       shell: bash
       run: cmake --build ${{runner.workspace}}/build -j2 
+
+    - name: Install Valgrind
+      shell: bash
+      run: apt install valgrind
 
     - name: Test
       shell: bash
