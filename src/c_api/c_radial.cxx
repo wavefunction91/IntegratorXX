@@ -155,6 +155,45 @@ int intxx_get_rad_scal_impl(intxx_quad_type* p, double* R) {
   return INTXX_SUCCESS;
 }
 
+template <typename TraitsType>
+int intxx_set_rad_scal_impl(intxx_quad_type* p, double R) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+
+  if(R <= 0.0) {
+    // Return error code
+  }
+
+  auto ext_param = p->info->ext_params;
+
+  // Check that this quadrature has a radial scaling factor
+  bool r_found = false;
+  for(int i = 0; i < ext_param.n; ++i) {
+    if(r_found) break;
+    const auto name = ext_param.names[i];
+    r_found = strcmp(name, "RAD_SCAL");
+  }
+
+  if(not r_found) {
+    // Return error code
+  }
+  
+  if(p->_state_parm == NULL) {
+    // Return error code
+  }
+
+  // Overwrite
+  *reinterpret_cast<TraitsType*>(p->_state_parm) = TraitsType(R);
+
+  // Regenerate if quadrature is populated
+  if(p->_state_quad) {
+    intxx_destroy_quad(p);
+    intxx_generate_quad(p);
+  }
+
+  return INTXX_SUCCESS;
+}
+
 
 extern "C" {
 
@@ -179,7 +218,8 @@ int intxx_generate_##cname##_quad(intxx_quad_type* p); \
 int intxx_destroy_##cname##_quad(intxx_quad_type* p); \
 int intxx_generate_##cname##_quad_params(intxx_quad_type* p); \
 int intxx_destroy_##cname##_quad_params(intxx_quad_type* p); \
-int intxx_get_name_##cname##_quad(intxx_quad_type* p, const char* name, double *v);
+int intxx_get_name_##cname##_quad(intxx_quad_type* p, const char* name, double *v); \
+int intxx_set_name_##cname##_quad(intxx_quad_type* p, const char* name, double v);
 
 FWD_RAD(becke)
 FWD_RAD(mhl)
@@ -324,7 +364,7 @@ int intxx_radscal_info(intxx_quad_info_type* p,
 #define INTXX_RADSCAL_GET_INFO_IMPL(cname) \
 int intxx_get_##cname##_quad_info(intxx_quad_info_type* p) { \
   return intxx_radscal_info(p, \
-    NULL, \
+    intxx_set_name_##cname##_quad, \
     intxx_get_name_##cname##_quad, \
     intxx_generate_##cname##_quad_params, \
     intxx_destroy_##cname##_quad_params,  \
@@ -372,6 +412,10 @@ INTXX_RAD_TRAITS_IMPL(mk,    mk_traits_type   );
 int intxx_get_name_##cname##_quad(intxx_quad_type* p, const char* name, double *v) { \
   if(strcmp(name, "RAD_SCAL")){ return INTXX_INVALID_OPT; } \
   return intxx_get_rad_scal_impl<traits_type>(p, v);\
+}\
+int intxx_set_name_##cname##_quad(intxx_quad_type* p, const char* name, double v) { \
+  if(strcmp(name, "RAD_SCAL")){ return INTXX_INVALID_OPT; } \
+  return intxx_set_rad_scal_impl<traits_type>(p, v);\
 }
 
 INTXX_RAD_GETSET_IMPL(becke, becke_traits_type);

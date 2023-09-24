@@ -210,7 +210,33 @@ TEST_CASE("C API") {
 
     // Check Scaling Works
     if(base_quad_scaled) {
+      intxx_set_ext_param_name(&quad, "RAD_SCAL", RSCAL);
     
+      // Check change stuck
+      intxx_get_ext_param_name(&quad, "RAD_SCAL", &R);
+      REQUIRE(R == RSCAL);
+
+      // Regenerate and check
+      intxx_generate_quad(&quad);
+
+      auto state_as_quad = reinterpret_cast<base_quad_type*>(quad._state_quad);
+      REQUIRE(state_as_quad->npts() == npts);
+      for(auto i = 0; i < npts; ++ i) {
+        REQUIRE_THAT(state_as_quad->points()[i], Matchers::WithinAbs(name, base_quad_scaled->points()[i], 1e-15));
+        REQUIRE_THAT(state_as_quad->weights()[i], Matchers::WithinAbs(name, base_quad_scaled->weights()[i], 1e-15));
+      }
+
+
+      // Set without destroying to make sure quadratures are regerated
+      intxx_set_ext_param_name(&quad, "RAD_SCAL", 1.0);
+      state_as_quad = reinterpret_cast<base_quad_type*>(quad._state_quad);
+      REQUIRE(state_as_quad->npts() == npts);
+      for(auto i = 0; i < npts; ++ i) {
+        REQUIRE_THAT(state_as_quad->points()[i], Matchers::WithinAbs(name, base_quad_default->points()[i], 1e-15));
+        REQUIRE_THAT(state_as_quad->weights()[i], Matchers::WithinAbs(name, base_quad_default->weights()[i], 1e-15));
+      }
+    
+     
     }
   }
 
