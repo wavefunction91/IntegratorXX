@@ -62,13 +62,18 @@ TEST_CASE("C API") {
     REQUIRE(quad.info->ext_params.n == 0);
     REQUIRE(!strcmp(quad.info->name, name));
 
+    // Get before set
+    int npts;
+    error = intxx_quad_get_npts(&quad, &npts);
+    REQUIRE(error == INTXX_INVALID_OUT);
+    REQUIRE(npts == -1);
+
     // Set NPTS
     error = intxx_quad_set_npts(&quad, base_npts);
     REQUIRE(error == INTXX_SUCCESS);
     REQUIRE(quad.npoints == base_npts);
 
     // Get NPTS
-    int npts;
     error = intxx_quad_get_npts(&quad, &npts);
     REQUIRE(error == INTXX_SUCCESS);
     REQUIRE(npts == base_npts);

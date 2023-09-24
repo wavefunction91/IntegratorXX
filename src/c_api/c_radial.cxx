@@ -15,7 +15,7 @@ void intxx_default_quad_info(intxx_quad_info_type* p) {
   p->number = 0; // Invalid
   p->kind   = 0; // Invalid
   p->name   = "Default"; // Default state
-  p->init   = NULL;
+  //p->init   = NULL;
 }
 
 int intxx_get_prmq_info(intxx_quad_info_type* p, int quad) {

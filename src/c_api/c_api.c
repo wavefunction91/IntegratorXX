@@ -82,6 +82,6 @@ int intxx_quad_get_npts(intxx_quad_type* p, int* npts) {
 
   // TODO: Handle the case when NPTS is derived from params
   *npts = p->npoints;
-  return INTXX_SUCCESS;
+  return *npts > 0 ? INTXX_SUCCESS : INTXX_INVALID_OUT;
 }
   

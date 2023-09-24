@@ -7,6 +7,7 @@
 #define INTXX_NULL_INFOPTR -3
 #define INTXX_INVALID_OPT  -4
 #define INTXX_INVALID_ARG  -5
+#define INTXX_INVALID_OUT  -5
 
 /*** Quadrature Classes ***/
 #define INTXX_PRM_QUAD 1
@@ -52,7 +53,7 @@ typedef struct {
   const char** descriptions; ///< Long descriptions of params
   const double *values;      ///< Default values of params
 
-  void (*set)(struct intxx_quad_type* p, const double** v);
+  //void (*set)(struct intxx_quad_type* p, const double** v);
     ///< Set function
 } intxx_quad_params_type;
 
@@ -65,7 +66,7 @@ typedef struct {
 
   intxx_quad_params_type ext_params; ///< External params
 
-  void (*init)(struct intxx_quad_type* p);
+  //void (*init)(struct intxx_quad_type* p);
 } intxx_quad_info_type;
 
 struct intxx_quad_type {
@@ -77,11 +78,61 @@ typedef struct intxx_quad_type intxx_quad_type;
 
 
 
-
+/**
+ *  @brief Initialize a specified quadrature
+ *
+ *  See error code returns for how to interpret failures.
+ *
+ *  @param[out] p Quadrature instance of the specified type
+ *  @param[in]  quad Type of the specified quadrature
+ *
+ *  @returns INTXX_SUCCESS:      no errors were encountered
+ *           INTXX_NULL_QUADPTR: `p == NULL`
+ *           INTXX_INVALID_QUAD: `quad` is invalid
+ */
 int  intxx_quad_init(intxx_quad_type* p, int quad);
+
+/// Frees a quadrature instance. No throw gurantee
 void intxx_quad_end (intxx_quad_type* p);
 
+/**
+ *  @brief Set the number of quadrature points
+ *
+ *  Sets the number of nodes for the passed quadrature 
+ *  instance. Only sensible for quadratures in which
+ *  the size is a free parameter (most).
+ *
+ *  See error code returns for how to interpret failures.
+ *
+ *  @param[out] p The quadrature for which to set npts.
+ *  @param[in]  npts The number of points
+ *
+ *  @returns INTXX_SUCCESS:      no errors were encountered
+ *           INTXX_NULL_QUADPTR: `p == NULL`
+ *           INTXX_NULL_INFOPTR: `p->info == NULL` (uninit)
+ *           INTXX_INVALID_ARG:  invalid npts (e.g. npts < 0)
+ */
 int intxx_quad_set_npts(intxx_quad_type* p, int npts);
+
+/**
+ *  @brief Retrieve the number of points for a quadrature
+ *
+ *  Retreieves the number of grid points for a specified 
+ *  quadrature. In necessicary, this will be initialized 
+ *  from the default parameters, otherwise it will be
+ *  read from p->npoints.
+ *
+ *  See error code returns for how to interpret failures.
+ *
+ *  @param[in]   p    The quadrature for which to get npts.
+ *  @param[out]  npts The number of points
+ *
+ *  @returns INTXX_SUCCESS:      no errors were encountered
+ *           INTXX_NULL_QUADPTR: `p == NULL`
+ *           INTXX_NULL_INFOPTR: `p->info == NULL` (uninit)
+ *           INTXX_INVALID_ARG:  `npts == NULL` 
+ *           INTXX_INVALID_OUT:  `npts` is not valid (npts < 0)
+ */ 
 int intxx_quad_get_npts(intxx_quad_type* p, int* npts);
 
 #ifdef __cplusplus
