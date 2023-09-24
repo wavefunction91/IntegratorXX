@@ -26,7 +26,8 @@ int intxx_quad_init(intxx_quad_type* p, int quad) {
   if(!is_prmq && !is_radq && !is_angq) 
     return INTXX_INVALID_QUAD;
 
-  // Primitive quadratures cannot be mixed with angular ones
+  // Primitive quadratures cannot be mixed with angular or
+  // radial quadratures
   if(is_prmq && is_radq) return INTXX_INVALID_QUAD;
   if(is_prmq && is_angq) return INTXX_INVALID_QUAD;
 
@@ -54,6 +55,9 @@ int intxx_quad_init(intxx_quad_type* p, int quad) {
 void intxx_quad_end(intxx_quad_type* p) {
   // Stateless - just bail
   if(p == NULL || p->info == NULL) return;
+
+  // Destroy quadrature state if populated
+  intxx_destroy_quad(p);
 
   // Free info
   free((void*)p->info);
@@ -90,12 +94,16 @@ int intxx_generate_quad(intxx_quad_type* p) {
   if(p == NULL) return INTXX_NULL_QUADPTR;
   if(p->info == NULL) return INTXX_NULL_INFOPTR;
 
-  return p->info->generate(p);
+  if(p->info->generate)
+    return p->info->generate(p);
+  else return INTXX_SUCCESS;
 }
   
 int intxx_destroy_quad(intxx_quad_type* p) {
   if(p == NULL) return INTXX_NULL_QUADPTR;
   if(p->info == NULL) return INTXX_NULL_INFOPTR;
 
-  return p->info->destroy(p);
+  if(p->info->destroy)
+    return p->info->destroy(p);
+  else return INTXX_SUCCESS;
 }
