@@ -3,6 +3,7 @@
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/quadratures/s2/ahrens_beylkin/ahrens_beylkin_grids.hpp>
 #include <integratorxx/util/copy_grid.hpp>
+#include <vector>
 
 namespace IntegratorXX {
 
