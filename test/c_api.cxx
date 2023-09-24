@@ -34,13 +34,17 @@ TEST_CASE("C API") {
     }
 
     SECTION("Gauss-Legendre") {
+      using quad_type = GaussLegendre<double,double>;
       error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSLEG);
       name = "GAUSS_LEGENDRE";
+      base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Lobatto") {
+      using quad_type = GaussLobatto<double,double>;
       error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSLOB);
       name = "GAUSS_LOBATTO";
+      base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Chebyshev 1") {

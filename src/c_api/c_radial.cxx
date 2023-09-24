@@ -1,4 +1,4 @@
-#include <integratorxx/quadratures/primitive/uniform.hpp>
+#include <integratorxx/quadratures/primitive.hpp>
 
 #include "c_internal.h"
 #include <cstddef>
@@ -56,6 +56,24 @@ void destroy_quadrature(void* ptr) {
   alloc_traits::deallocate(alloc, quad_ptr, 1);
 }
 
+template <typename QuadType>
+int intxx_destroy_impl(intxx_quad_type* p) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+  
+  using namespace IntegratorXX;
+  using quad_type = QuadType;
+
+  if(p->_state != NULL) { 
+    // Destroy quadrature
+    destroy_quadrature<quad_type>(p->_state);
+    
+    // Null out state
+    p->_state = NULL;
+  }
+  return INTXX_SUCCESS;
+}
+
 extern "C" {
 
 int intxx_get_uniform_info(intxx_quad_info_type* p);
@@ -68,6 +86,10 @@ int intxx_get_gausscheb3_info(intxx_quad_info_type* p);
 
 int intxx_generate_uniform(intxx_quad_type* p);
 int intxx_destroy_uniform(intxx_quad_type* p);
+int intxx_generate_gaussleg(intxx_quad_type* p);
+int intxx_destroy_gaussleg(intxx_quad_type* p);
+int intxx_generate_gausslob(intxx_quad_type* p);
+int intxx_destroy_gausslob(intxx_quad_type* p);
 
 void intxx_default_quad_info(intxx_quad_info_type* p) {
   p->number = 0; // Invalid
@@ -127,10 +149,12 @@ int intxx_get_uniform_info(intxx_quad_info_type* p) {
     &intxx_destroy_uniform);
 }
 int intxx_get_gausslob_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p, NULL, NULL);
+  return intxx_noparam_info(p, &intxx_generate_gausslob,
+    &intxx_destroy_gausslob);
 }
 int intxx_get_gaussleg_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p, NULL, NULL);
+  return intxx_noparam_info(p, &intxx_generate_gaussleg,
+    &intxx_destroy_gaussleg);
 }
 int intxx_get_gausscheb1_info(intxx_quad_info_type* p) {
   return intxx_noparam_info(p, NULL, NULL);
@@ -145,26 +169,28 @@ int intxx_get_gausscheb3_info(intxx_quad_info_type* p) {
   return intxx_noparam_info(p, NULL, NULL);
 }
 
-
+using uniform_quad_type = IntegratorXX::UniformTrapezoid<double,double>;
 int intxx_generate_uniform(intxx_quad_type* p) {
-  return intxx_generate_impl<IntegratorXX::UniformTrapezoid<double,double>>(p, 0.0, 1.0);
+  return intxx_generate_impl<uniform_quad_type>(p, 0.0, 1.0);
 }
-
 int intxx_destroy_uniform(intxx_quad_type* p) {
-  if(p == NULL) return INTXX_NULL_QUADPTR;
-  if(p->info == NULL) return INTXX_NULL_INFOPTR;
-  
-  using namespace IntegratorXX;
-  using quad_type = UniformTrapezoid<double,double>;
-
-  if(p->_state != NULL) { 
-    // Destroy quadrature
-    destroy_quadrature<quad_type>(p->_state);
-    
-    // Null out state
-    p->_state = NULL;
-  }
-  return INTXX_SUCCESS;
+  return intxx_destroy_impl<uniform_quad_type>(p);
 }
+
+
+#define INTXX_GD_BASIC_IMPL(cname, qname)      \
+int intxx_generate_##cname(intxx_quad_type* p) { \
+  return intxx_generate_impl<qname>(p);        \
+}                                              \
+int intxx_destroy_##cname(intxx_quad_type* p) {  \
+  return intxx_destroy_impl<qname>(p);         \
+}
+
+using gaussleg_quad_type = IntegratorXX::GaussLegendre<double,double>;
+using gausslob_quad_type = IntegratorXX::GaussLobatto<double,double>;
+INTXX_GD_BASIC_IMPL(gaussleg, gaussleg_quad_type);
+INTXX_GD_BASIC_IMPL(gausslob, gausslob_quad_type);
+
+#undef INTXX_GD_BASIC_IMPL
 
 }
