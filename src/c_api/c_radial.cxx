@@ -3,6 +3,59 @@
 #include "c_internal.h"
 #include <cstddef>
 
+template <typename QuadType, typename... Args>
+auto generate_quadrature(Args&&... args) {
+  using alloc_type = std::allocator<QuadType>;
+  using alloc_traits = std::allocator_traits<alloc_type>;
+  
+  alloc_type alloc;
+  auto ptr = alloc_traits::allocate(alloc, 1);
+  alloc_traits::construct(alloc, ptr, std::forward<Args>(args)...);
+
+  return ptr;
+}
+
+template <typename QuadType, typename... Args>
+int intxx_generate_impl(intxx_quad_type* p, Args&&... args) {
+  if(p == NULL) return INTXX_NULL_QUADPTR;
+  if(p->info == NULL) return INTXX_NULL_INFOPTR;
+
+  using quad_type = QuadType;
+
+  int npts = p->npoints;
+  if( npts <= 0 ) {
+    // Return error code
+  }
+
+  if(p->_state != NULL) {
+    // Check if we need to regenerate
+  }
+
+  // Allocate and construct the quadrature instance
+  auto ptr = generate_quadrature<quad_type>(npts, std::forward<Args>(args)... );
+
+  // Store the pointer
+  p->_state = (void*)ptr;
+    
+  return INTXX_SUCCESS;
+
+} 
+
+template <typename QuadType>
+void destroy_quadrature(void* ptr) {
+  using alloc_type = std::allocator<QuadType>;
+  using alloc_traits = std::allocator_traits<alloc_type>;
+
+  alloc_type alloc;
+
+  // Cross your fingers...
+  auto quad_ptr = reinterpret_cast<QuadType*>(ptr);
+
+  // Destroy and deallocate
+  alloc_traits::destroy(alloc, quad_ptr);
+  alloc_traits::deallocate(alloc, quad_ptr, 1);
+}
+
 extern "C" {
 
 int intxx_get_uniform_info(intxx_quad_info_type* p);
@@ -93,37 +146,9 @@ int intxx_get_gausscheb3_info(intxx_quad_info_type* p) {
 }
 
 
-
 int intxx_generate_uniform(intxx_quad_type* p) {
-  if(p == NULL) return INTXX_NULL_QUADPTR;
-  if(p->info == NULL) return INTXX_NULL_INFOPTR;
-
-  using namespace IntegratorXX;
-  using quad_type = UniformTrapezoid<double,double>;
-  using alloc_type = std::allocator<quad_type>;
-  using alloc_traits = std::allocator_traits<alloc_type>;
-
-  int npts = p->npoints;
-  if( npts <= 0 ) {
-    // Return error code
-  }
-
-  if(p->_state != NULL) {
-    // Check if we need to regenerate
-  }
-
-
-  // Allocate and construct the quadrature instance
-  alloc_type alloc;
-  auto ptr = alloc_traits::allocate(alloc, 1);
-  alloc_traits::construct(alloc, ptr, npts, 0.0, 1.0);
-
-  // Store the pointer
-  p->_state = (void*)ptr;
-    
-  return INTXX_SUCCESS;
-
-} 
+  return intxx_generate_impl<IntegratorXX::UniformTrapezoid<double,double>>(p, 0.0, 1.0);
+}
 
 int intxx_destroy_uniform(intxx_quad_type* p) {
   if(p == NULL) return INTXX_NULL_QUADPTR;
@@ -131,19 +156,10 @@ int intxx_destroy_uniform(intxx_quad_type* p) {
   
   using namespace IntegratorXX;
   using quad_type = UniformTrapezoid<double,double>;
-  using alloc_type = std::allocator<quad_type>;
-  using alloc_traits = std::allocator_traits<alloc_type>;
 
   if(p->_state != NULL) { 
-    alloc_type alloc;
-
-    // Cross your fingers...
-    auto ptr = p->_state;
-    auto quad_ptr = reinterpret_cast<quad_type*>(ptr);
-
-    // Destroy and deallocate
-    alloc_traits::destroy(alloc, quad_ptr);
-    alloc_traits::deallocate(alloc, quad_ptr, 1);
+    // Destroy quadrature
+    destroy_quadrature<quad_type>(p->_state);
     
     // Null out state
     p->_state = NULL;
