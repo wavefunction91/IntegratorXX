@@ -80,7 +80,7 @@ TEST_CASE("C API") {
     // Meta data
     REQUIRE(quad.info != NULL);
     REQUIRE(quad.npoints == -1);
-    REQUIRE(quad._state == NULL);
+    REQUIRE(quad._state_quad == NULL);
     REQUIRE(quad.info->ext_params.n == 0);
     REQUIRE(!strcmp(quad.info->name, name));
 
@@ -103,10 +103,10 @@ TEST_CASE("C API") {
     // Check Quadrature Generation and Destruction
     if(base_quad) {
       intxx_generate_quad(&quad);
-      REQUIRE(quad._state != NULL);
+      REQUIRE(quad._state_quad != NULL);
 
       // Check validity of the state
-      auto state_as_quad = reinterpret_cast<base_quad_type*>(quad._state);
+      auto state_as_quad = reinterpret_cast<base_quad_type*>(quad._state_quad);
       REQUIRE(state_as_quad->npts() == npts);
       for(auto i = 0; i < npts; ++ i) {
         REQUIRE_THAT(state_as_quad->points()[i], Matchers::WithinAbs(name, base_quad->points()[i], 1e-15));
@@ -114,7 +114,7 @@ TEST_CASE("C API") {
       }
 
       intxx_destroy_quad(&quad);
-      REQUIRE(quad._state == NULL);
+      REQUIRE(quad._state_quad == NULL);
     }
   }
 
@@ -126,31 +126,31 @@ TEST_CASE("C API") {
     std::unique_ptr<base_quad_type> base_quad_default = nullptr;
 
     SECTION("Becke") {
-      //using quad_type = UniformTrapezoid<double,double>;
+      using quad_type = Becke<double,double>;
       error = intxx_quad_init(&quad, INTXX_RADQ_BECKE);
       name = "BECKE";
-      //base_quad = std::make_unique<quad_type>(base_npts);
+      base_quad_default = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("MHL") {
-      //using quad_type = UniformTrapezoid<double,double>;
+      using quad_type = MurrayHandyLaming<double,double>;
       error = intxx_quad_init(&quad, INTXX_RADQ_MHL);
       name = "MURRAY_HANDY_LAMING";
-      //base_quad = std::make_unique<quad_type>(base_npts);
+      base_quad_default = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("TA") {
-      //using quad_type = UniformTrapezoid<double,double>;
+      using quad_type = TreutlerAhlrichs<double,double>;
       error = intxx_quad_init(&quad, INTXX_RADQ_TA);
       name = "TREUTLER_AHLRICHS";
-      //base_quad = std::make_unique<quad_type>(base_npts);
+      base_quad_default = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("MK") {
-      //using quad_type = UniformTrapezoid<double,double>;
+      using quad_type = MuraKnowles<double,double>;
       error = intxx_quad_init(&quad, INTXX_RADQ_MK);
       name = "MURA_KNOWLES";
-      //base_quad = std::make_unique<quad_type>(base_npts);
+      base_quad_default = std::make_unique<quad_type>(base_npts);
     }
 
     REQUIRE(error == INTXX_SUCCESS);
@@ -158,8 +158,12 @@ TEST_CASE("C API") {
     // Meta data
     REQUIRE(quad.info != NULL);
     REQUIRE(quad.npoints == -1);
-    REQUIRE(quad._state == NULL);
+    REQUIRE(quad._state_quad == NULL);
     REQUIRE(!strcmp(quad.info->name, name));
+
+    REQUIRE(quad.info->ext_params.n == 1);
+    REQUIRE(!strcmp(quad.info->ext_params.names[0], "RAD_SCAL"));
+    REQUIRE(!strcmp(quad.info->ext_params.descriptions[0], "Radial Scaling Factor"));
 
     // Get before set
     int npts;
@@ -176,6 +180,23 @@ TEST_CASE("C API") {
     error = intxx_quad_get_npts(&quad, &npts);
     REQUIRE(error == INTXX_SUCCESS);
     REQUIRE(npts == base_npts);
+
+    // Check Quadrature Generation and Destruction
+    if(base_quad_default) {
+      intxx_generate_quad(&quad);
+      REQUIRE(quad._state_quad != NULL);
+
+      // Check validity of the state
+      auto state_as_quad = reinterpret_cast<base_quad_type*>(quad._state_quad);
+      REQUIRE(state_as_quad->npts() == npts);
+      for(auto i = 0; i < npts; ++ i) {
+        REQUIRE_THAT(state_as_quad->points()[i], Matchers::WithinAbs(name, base_quad_default->points()[i], 1e-15));
+        REQUIRE_THAT(state_as_quad->weights()[i], Matchers::WithinAbs(name, base_quad_default->weights()[i], 1e-15));
+      }
+
+      intxx_destroy_quad(&quad);
+      REQUIRE(quad._state_quad == NULL);
+    }
   }
 
   intxx_quad_end(&quad);

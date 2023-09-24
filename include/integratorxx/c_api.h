@@ -51,10 +51,13 @@ typedef struct {
   
   const char** names;        ///< Names of the params
   const char** descriptions; ///< Long descriptions of params
-  const double *values;      ///< Default values of params
 
-  //void (*set)(struct intxx_quad_type* p, const double** v);
-    ///< Set function
+  void (*set_name)(struct intxx_quad_type* p, const char* name, double v);
+    ///< Set parameter function
+  void (*get_name)(struct intxx_quad_type* p, const char* name, double* v);
+    ///< Get parameter function
+  int (*generate)(struct intxx_quad_type* p);
+  int (*destroy) (struct intxx_quad_type* p);
 } intxx_quad_params_type;
 
 typedef struct {
@@ -73,7 +76,8 @@ typedef struct {
 struct intxx_quad_type {
   int npoints;
   const intxx_quad_info_type* info;
-  void* _state; ///< Internal state, NOT FOR PUBLIC USE
+  void* _state_quad; ///< Internal state, NOT FOR EXTERNAL USE
+  void* _state_parm; ///< Internal state, NOT FOR EXTERNAL USE
 };
 
 typedef struct intxx_quad_type intxx_quad_type;

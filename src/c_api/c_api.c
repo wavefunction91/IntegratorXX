@@ -10,8 +10,9 @@ int intxx_quad_init(intxx_quad_type* p, int quad) {
 
   // Sanity check
   if(p == NULL) return INTXX_NULL_QUADPTR;
-  p->info    = NULL;
-  p->_state  = NULL;
+  p->info        = NULL;
+  p->_state_quad = NULL;
+  p->_state_parm = NULL;
   p->npoints = -1;
 
   if(quad < 0) return INTXX_INVALID_QUAD;
@@ -50,12 +51,23 @@ int intxx_quad_init(intxx_quad_type* p, int quad) {
     // TODO: Get angular quadrature info
   }
 
+  if(error) return error;
+
+  if(finfo->ext_params.n && finfo->ext_params.generate) {
+    error = finfo->ext_params.generate(p);
+  }
+
   return error;
 }
 
 void intxx_quad_end(intxx_quad_type* p) {
   // Stateless - just bail
   if(p == NULL || p->info == NULL) return;
+
+  // Destroy traits if required
+  if(p->info->ext_params.n && p->info->ext_params.destroy) {
+    p->info->ext_params.destroy(p);
+  }
 
   // Destroy quadrature state if populated
   intxx_destroy_quad(p);

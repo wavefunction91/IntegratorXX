@@ -12,6 +12,9 @@ struct RadialTransformQuadrature :
 
 public:
 
+  using quad_type   = BaseQuad;
+  using traits_type = RadialTraits;
+
   using point_type       = typename base_type::point_type;
   using weight_type      = typename base_type::weight_type;
   using point_container  = typename base_type::point_container;
