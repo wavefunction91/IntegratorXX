@@ -42,7 +42,7 @@ jobs:
 
     - name: Install Valgrind
       shell: bash
-      run: apt install -y valgrind
+      run: apt update && apt install -y valgrind
 
     - name: Test
       shell: bash
@@ -78,7 +78,7 @@ jobs:
 
     - name: Install Valgrind
       shell: bash
-      run: apt install -y valgrind
+      run: apt update && apt install -y valgrind
 
     - name: Test
       shell: bash
