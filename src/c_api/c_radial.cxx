@@ -90,13 +90,21 @@ int intxx_generate_gaussleg(intxx_quad_type* p);
 int intxx_destroy_gaussleg(intxx_quad_type* p);
 int intxx_generate_gausslob(intxx_quad_type* p);
 int intxx_destroy_gausslob(intxx_quad_type* p);
+int intxx_generate_gausscheb1(intxx_quad_type* p);
+int intxx_destroy_gausscheb1(intxx_quad_type* p);
+int intxx_generate_gausscheb2(intxx_quad_type* p);
+int intxx_destroy_gausscheb2(intxx_quad_type* p);
+int intxx_generate_gausscheb3(intxx_quad_type* p);
+int intxx_destroy_gausscheb3(intxx_quad_type* p);
+int intxx_generate_gausscheb2mod(intxx_quad_type* p);
+int intxx_destroy_gausscheb2mod(intxx_quad_type* p);
 
 void intxx_default_quad_info(intxx_quad_info_type* p) {
   p->number = 0; // Invalid
   p->kind   = 0; // Invalid
   p->name   = "Default"; // Default state
-  p->generate = NULL;
-  p->destroy  = NULL;
+  p->generate = NULL; // Invalid
+  p->destroy  = NULL; // Invalid
 }
 
 int intxx_get_prmq_info(intxx_quad_info_type* p, int quad) {
@@ -157,16 +165,20 @@ int intxx_get_gaussleg_info(intxx_quad_info_type* p) {
     &intxx_destroy_gaussleg);
 }
 int intxx_get_gausscheb1_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p, NULL, NULL);
+  return intxx_noparam_info(p, &intxx_generate_gausscheb1,
+    &intxx_destroy_gausscheb1);
 }
 int intxx_get_gausscheb2_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p, NULL, NULL);
+  return intxx_noparam_info(p, &intxx_generate_gausscheb2,
+    &intxx_destroy_gausscheb2);
 }
 int intxx_get_gausscheb2m_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p, NULL, NULL);
+  return intxx_noparam_info(p, &intxx_generate_gausscheb2mod,
+    &intxx_destroy_gausscheb2mod);
 }
 int intxx_get_gausscheb3_info(intxx_quad_info_type* p) {
-  return intxx_noparam_info(p, NULL, NULL);
+  return intxx_noparam_info(p, &intxx_generate_gausscheb3,
+    &intxx_destroy_gausscheb3);
 }
 
 using uniform_quad_type = IntegratorXX::UniformTrapezoid<double,double>;
@@ -186,10 +198,19 @@ int intxx_destroy_##cname(intxx_quad_type* p) {  \
   return intxx_destroy_impl<qname>(p);         \
 }
 
-using gaussleg_quad_type = IntegratorXX::GaussLegendre<double,double>;
-using gausslob_quad_type = IntegratorXX::GaussLobatto<double,double>;
-INTXX_GD_BASIC_IMPL(gaussleg, gaussleg_quad_type);
-INTXX_GD_BASIC_IMPL(gausslob, gausslob_quad_type);
+using gaussleg_quad_type      = IntegratorXX::GaussLegendre<double,double>;
+using gausslob_quad_type      = IntegratorXX::GaussLobatto<double,double>;
+using gausscheb1_quad_type    = IntegratorXX::GaussChebyshev1<double,double>;
+using gausscheb2_quad_type    = IntegratorXX::GaussChebyshev2<double,double>;
+using gausscheb3_quad_type    = IntegratorXX::GaussChebyshev3<double,double>;
+using gausscheb2mod_quad_type = IntegratorXX::GaussChebyshev2Modified<double,double>;
+
+INTXX_GD_BASIC_IMPL(gaussleg,      gaussleg_quad_type     );
+INTXX_GD_BASIC_IMPL(gausslob,      gausslob_quad_type     );
+INTXX_GD_BASIC_IMPL(gausscheb1,    gausscheb1_quad_type   );
+INTXX_GD_BASIC_IMPL(gausscheb2,    gausscheb2_quad_type   );
+INTXX_GD_BASIC_IMPL(gausscheb3,    gausscheb3_quad_type   );
+INTXX_GD_BASIC_IMPL(gausscheb2mod, gausscheb2mod_quad_type);
 
 #undef INTXX_GD_BASIC_IMPL
 

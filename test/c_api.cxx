@@ -48,23 +48,31 @@ TEST_CASE("C API") {
     }
 
     SECTION("Gauss-Chebyshev 1") {
+      using quad_type = GaussChebyshev1<double,double>;
       error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSCHEB_1);
       name = "GAUSS_CHEBYSHEV_1";
+      base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Chebyshev 2") {
+      using quad_type = GaussChebyshev2<double,double>;
       error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSCHEB_2);
       name = "GAUSS_CHEBYSHEV_2";
+      base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Chebyshev 2MOD") {
+      using quad_type = GaussChebyshev2Modified<double,double>;
       error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSCHEB_2MOD);
       name = "GAUSS_CHEBYSHEV_2MOD";
+      base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Chebyshev 3") {
+      using quad_type = GaussChebyshev3<double,double>;
       error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSCHEB_3);
       name = "GAUSS_CHEBYSHEV_3";
+      base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     REQUIRE(error == INTXX_SUCCESS);
