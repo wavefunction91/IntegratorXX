@@ -55,4 +55,11 @@ add_test( NAME QUADRATURES_LOBATTO      COMMAND gausslobatto            )
 add_test( NAME QUADRATURES_CHEBYSHEV1   COMMAND gausschebyshev1         )
 add_test( NAME QUADRATURES_CHEBYSHEV2   COMMAND gausschebyshev2         )
 add_test( NAME C_API COMMAND c_api )
-add_test( NAME C_API_MEMORY COMMAND valgrind --leak-check=full --error-exitcode=100 $<TARGET_FILE:c_api> )
+
+# Memory check
+find_program( VALGRIND_EXECUTABLE valgrind )
+if(VALGRIND_EXECUTABLE)
+  message(STATUS "Found Valgrind: ${VALGRIND_EXECUTABLE}")
+  message(STATUS "Enabling C_API_MEMORY test")
+  add_test( NAME C_API_MEMORY COMMAND ${VALGRIND_EXECUTABLE} --leak-check=full --error-exitcode=100 $<TARGET_FILE:c_api> )
+endif()
