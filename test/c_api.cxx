@@ -147,23 +147,29 @@ TEST_CASE("C API") {
 
     SECTION("MHL") {
       using quad_type = MurrayHandyLaming<double,double>;
+      using traits_type = typename quad_type::traits_type;
       quad_num = INTXX_RADQ_MHL;
       name = "MURRAY_HANDY_LAMING";
       base_quad_default = std::make_unique<quad_type>(base_npts);
+      base_quad_scaled  = std::make_unique<quad_type>(base_npts,traits_type(RSCAL));
     }
 
     SECTION("TA") {
       using quad_type = TreutlerAhlrichs<double,double>;
+      using traits_type = typename quad_type::traits_type;
       quad_num = INTXX_RADQ_TA;
       name = "TREUTLER_AHLRICHS";
       base_quad_default = std::make_unique<quad_type>(base_npts);
+      base_quad_scaled  = std::make_unique<quad_type>(base_npts,traits_type(RSCAL));
     }
 
     SECTION("MK") {
       using quad_type = MuraKnowles<double,double>;
+      using traits_type = typename quad_type::traits_type;
       quad_num = INTXX_RADQ_MK;
       name = "MURA_KNOWLES";
       base_quad_default = std::make_unique<quad_type>(base_npts);
+      base_quad_scaled  = std::make_unique<quad_type>(base_npts,traits_type(RSCAL));
     }
 
     // Initialize
