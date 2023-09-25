@@ -19,12 +19,14 @@ void intxx_default_quad_info(intxx_quad_info_type* p) {
 
 int intxx_noparam_info(intxx_quad_info_type* p, 
   int (*g)(intxx_quad_type*),
-  int (*d)(intxx_quad_type*)) {
+  int (*d)(intxx_quad_type*),
+  int (*s)(intxx_quad_type*, int)) {
   if(p == NULL) return INTXX_NULL_INFOPTR;
 
   p->ext_params.n = 0; /// No External Parameters
   p->generate = g;
   p->destroy  = d;
+  p->set_npts = s;
 
   return INTXX_SUCCESS;
 }
@@ -54,6 +56,7 @@ int intxx_radscal_info(intxx_quad_info_type* p,
 
   p->generate = gquad;
   p->destroy  = dquad;
+  p->set_npts = NULL;
 
   return INTXX_SUCCESS;
 }

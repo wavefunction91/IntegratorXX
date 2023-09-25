@@ -78,7 +78,7 @@ int intxx_get_prmq_info(intxx_quad_info_type* p, int quad) {
 #define INTXX_NOPARAM_GET_INFO_IMPL(cname) \
 int intxx_get_##cname##_info(intxx_quad_info_type* p) { \
   return intxx_noparam_info(p, &intxx_generate_##cname, \
-    &intxx_destroy_##cname);                            \
+    &intxx_destroy_##cname, NULL);                      \
 }
 
 INTXX_NOPARAM_GET_INFO_IMPL(uniform);

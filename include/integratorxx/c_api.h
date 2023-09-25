@@ -72,6 +72,7 @@ typedef struct {
 
   int (*generate)(struct intxx_quad_type* p);
   int (*destroy) (struct intxx_quad_type* p);
+  int (*set_npts)(struct intxx_quad_type* p, int);
 } intxx_quad_info_type;
 
 struct intxx_quad_type {

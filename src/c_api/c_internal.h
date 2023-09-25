@@ -13,7 +13,8 @@ int  intxx_get_prmq_info(intxx_quad_info_type* p, int quad);
 
 int intxx_noparam_info(intxx_quad_info_type* p, 
   int (*g)(intxx_quad_type*),
-  int (*d)(intxx_quad_type*)); 
+  int (*d)(intxx_quad_type*),
+  int (*s)(intxx_quad_type*, int)); 
 
 int intxx_radscal_info(intxx_quad_info_type* p, 
   int (*sn)(intxx_quad_type*,const char*,double),

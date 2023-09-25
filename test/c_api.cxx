@@ -274,24 +274,32 @@ TEST_CASE("C API") {
       using quad_type = LebedevLaikov<double>;
       quad_num = INTXX_ANGQ_LEB;
       name = "LEBEDEV_LAIKOV";
+      default_npts = 302;
+      other_npts   = 974;
     }
 
     SECTION("Delley") {
       using quad_type = Delley<double>;
       quad_num = INTXX_ANGQ_DEL;
       name = "DELLEY";
+      default_npts = 302;
+      other_npts   = 974;
     }
 
     SECTION("AB") {
       using quad_type = AhrensBeylkin<double>;
       quad_num = INTXX_ANGQ_AB;
       name = "AHRENS_BEYLKIN";
+      default_npts = 372;
+      other_npts   = 972;
     }
 
     SECTION("WOM") {
       using quad_type = Womersley<double>;
       quad_num = INTXX_ANGQ_WOM;
       name = "WOMERSLEY";
+      default_npts = 393;
+      other_npts   = 969;
     }
 
     // Initialize
@@ -319,17 +327,25 @@ TEST_CASE("C API") {
     REQUIRE(error == INTXX_INVALID_OUT);
     REQUIRE(npts == -1);
 
-#if 0
-    // Set NPTS
-    error = intxx_quad_set_npts(&quad, base_npts);
+    // Set NPTS (incorrect)
+    error = intxx_quad_set_npts(&quad, default_npts+1);
+    REQUIRE(error == INTXX_INVALID_ARG);
+    error = intxx_quad_get_npts(&quad, &npts);
+    REQUIRE(error == INTXX_INVALID_OUT);
+    REQUIRE(npts == -1);
+
+    // Set NPTS (correct)
+    error = intxx_quad_set_npts(&quad, default_npts);
     REQUIRE(error == INTXX_SUCCESS);
-    REQUIRE(quad.npoints == base_npts);
+    REQUIRE(quad.npoints == default_npts);
+
 
     // Get NPTS
     error = intxx_quad_get_npts(&quad, &npts);
     REQUIRE(error == INTXX_SUCCESS);
-    REQUIRE(npts == base_npts);
+    REQUIRE(npts == default_npts);
 
+#if 0
     // Check Quadrature Generation and Destruction
     if(base_quad_default) {
       intxx_generate_quad(&quad);

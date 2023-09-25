@@ -11,6 +11,7 @@ using delley_quad_type = IntegratorXX::Delley<double>;
 using wom_quad_type    = IntegratorXX::Womersley<double>;
 using ab_quad_type     = IntegratorXX::AhrensBeylkin<double>;
 
+
 /*******************************************************/
 /****** Forward declare C-API for ANG Quadratures ******/
 /*******************************************************/
@@ -57,6 +58,27 @@ int intxx_get_angq_info(intxx_quad_info_type* p, int quad) {
   return INTXX_SUCCESS;
 }
 
+/**********************************************/
+/****** NPTS Setters for ANG Quadratures ******/
+/**********************************************/
+
+#define INTXX_ANG_SET_NPTS(cname, nsp) \
+int intxx_##cname##_set_npts(intxx_quad_type* p, int npts) {\
+  using namespace IntegratorXX::detail::nsp;\
+  if(algebraic_order_by_npts(npts) > 0) {\
+    p->npoints = npts;\
+    return INTXX_SUCCESS;\
+  } else {\
+    p->npoints = -1;\
+    return INTXX_INVALID_ARG;\
+  }\
+}
+
+INTXX_ANG_SET_NPTS(leb, lebedev)
+INTXX_ANG_SET_NPTS(delley, delley)
+INTXX_ANG_SET_NPTS(ab, ahrensbeylkin)
+INTXX_ANG_SET_NPTS(wom, womersley)
+
 /*************************************************/
 /****** Info generation for ANG Quadratures ******/
 /*************************************************/
@@ -64,7 +86,7 @@ int intxx_get_angq_info(intxx_quad_info_type* p, int quad) {
 #define INTXX_NOPARAM_GET_INFO_IMPL(cname) \
 int intxx_get_##cname##_info(intxx_quad_info_type* p) { \
   return intxx_noparam_info(p, &intxx_generate_##cname, \
-    &intxx_destroy_##cname);                            \
+    &intxx_destroy_##cname, intxx_##cname##_set_npts);  \
 }
 
 INTXX_NOPARAM_GET_INFO_IMPL(leb);

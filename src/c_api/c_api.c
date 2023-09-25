@@ -87,8 +87,13 @@ int intxx_quad_set_npts(intxx_quad_type* p, int npts) {
   if(npts <= 0) return INTXX_INVALID_ARG;
 
   // TODO: Handle the case when NPTS is derived from params
-  p->npoints = npts;
-  return INTXX_SUCCESS;
+  if(p->info->set_npts) {
+    // Some quadratures have rules about how to set npts (e.g. angular grids)
+    return p->info->set_npts(p, npts);
+  } else {
+    p->npoints = npts;
+    return INTXX_SUCCESS;
+  }
 }
 
 int intxx_quad_get_npts(intxx_quad_type* p, int* npts) {
