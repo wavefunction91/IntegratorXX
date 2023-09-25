@@ -26,61 +26,69 @@ TEST_CASE("C API") {
     using base_quad_type = QuadratureBase<std::vector<double>, std::vector<double>>;
     std::unique_ptr<base_quad_type> base_quad = nullptr;
 
+    int quad_num;
     SECTION("Uniform") {
       using quad_type = UniformTrapezoid<double,double>;
-      error = intxx_quad_init(&quad, INTXX_PRMQ_UNIFORM);
+      quad_num = INTXX_PRMQ_UNIFORM;
       name = "UNIFORM";
       base_quad = std::make_unique<quad_type>(base_npts, 0.0, 1.0);
     }
 
     SECTION("Gauss-Legendre") {
       using quad_type = GaussLegendre<double,double>;
-      error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSLEG);
+      quad_num = INTXX_PRMQ_GAUSSLEG;
       name = "GAUSS_LEGENDRE";
       base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Lobatto") {
       using quad_type = GaussLobatto<double,double>;
-      error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSLOB);
+      quad_num = INTXX_PRMQ_GAUSSLOB;
       name = "GAUSS_LOBATTO";
       base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Chebyshev 1") {
       using quad_type = GaussChebyshev1<double,double>;
-      error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSCHEB_1);
+      quad_num = INTXX_PRMQ_GAUSSCHEB_1;
       name = "GAUSS_CHEBYSHEV_1";
       base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Chebyshev 2") {
       using quad_type = GaussChebyshev2<double,double>;
-      error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSCHEB_2);
+      quad_num = INTXX_PRMQ_GAUSSCHEB_2;
       name = "GAUSS_CHEBYSHEV_2";
       base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Chebyshev 2MOD") {
       using quad_type = GaussChebyshev2Modified<double,double>;
-      error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSCHEB_2MOD);
+      quad_num = INTXX_PRMQ_GAUSSCHEB_2MOD;
       name = "GAUSS_CHEBYSHEV_2MOD";
       base_quad = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("Gauss-Chebyshev 3") {
       using quad_type = GaussChebyshev3<double,double>;
-      error = intxx_quad_init(&quad, INTXX_PRMQ_GAUSSCHEB_3);
+      quad_num = INTXX_PRMQ_GAUSSCHEB_3;
       name = "GAUSS_CHEBYSHEV_3";
       base_quad = std::make_unique<quad_type>(base_npts);
     }
 
+    // Initialize
+    error = intxx_quad_init(&quad, quad_num);
     REQUIRE(error == INTXX_SUCCESS);
 
     // Meta data
     REQUIRE(quad.info != NULL);
     REQUIRE(quad.npoints == -1);
     REQUIRE(quad._state_quad == NULL);
+    REQUIRE(quad.info->number == quad_num);
+    REQUIRE(quad.info->kind == INTXX_PRM_QUAD);
+    REQUIRE(quad.info->dim == 1);
+    REQUIRE(quad.info->generate != NULL);
+    REQUIRE(quad.info->destroy != NULL);
     REQUIRE(quad.info->ext_params.n == 0);
     REQUIRE(!strcmp(quad.info->name, name));
 
@@ -127,10 +135,11 @@ TEST_CASE("C API") {
     std::unique_ptr<base_quad_type> base_quad_default = nullptr;
     std::unique_ptr<base_quad_type> base_quad_scaled  = nullptr;
 
+    int quad_num;
     SECTION("Becke") {
       using quad_type = Becke<double,double>;
       using traits_type = typename quad_type::traits_type;
-      error = intxx_quad_init(&quad, INTXX_RADQ_BECKE);
+      quad_num = INTXX_RADQ_BECKE;
       name = "BECKE";
       base_quad_default = std::make_unique<quad_type>(base_npts);
       base_quad_scaled  = std::make_unique<quad_type>(base_npts,traits_type(RSCAL));
@@ -138,31 +147,38 @@ TEST_CASE("C API") {
 
     SECTION("MHL") {
       using quad_type = MurrayHandyLaming<double,double>;
-      error = intxx_quad_init(&quad, INTXX_RADQ_MHL);
+      quad_num = INTXX_RADQ_MHL;
       name = "MURRAY_HANDY_LAMING";
       base_quad_default = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("TA") {
       using quad_type = TreutlerAhlrichs<double,double>;
-      error = intxx_quad_init(&quad, INTXX_RADQ_TA);
+      quad_num = INTXX_RADQ_TA;
       name = "TREUTLER_AHLRICHS";
       base_quad_default = std::make_unique<quad_type>(base_npts);
     }
 
     SECTION("MK") {
       using quad_type = MuraKnowles<double,double>;
-      error = intxx_quad_init(&quad, INTXX_RADQ_MK);
+      quad_num = INTXX_RADQ_MK;
       name = "MURA_KNOWLES";
       base_quad_default = std::make_unique<quad_type>(base_npts);
     }
 
+    // Initialize
+    error = intxx_quad_init(&quad, quad_num);
     REQUIRE(error == INTXX_SUCCESS);
 
     // Meta data
     REQUIRE(quad.info != NULL);
     REQUIRE(quad.npoints == -1);
     REQUIRE(quad._state_quad == NULL);
+    REQUIRE(quad.info->number == quad_num);
+    REQUIRE(quad.info->kind == INTXX_RAD_QUAD);
+    REQUIRE(quad.info->dim == 1);
+    REQUIRE(quad.info->generate != NULL);
+    REQUIRE(quad.info->destroy != NULL);
     REQUIRE(!strcmp(quad.info->name, name));
 
 

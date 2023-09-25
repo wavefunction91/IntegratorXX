@@ -6,6 +6,7 @@ extern "C" {
 void intxx_default_quad_info(intxx_quad_info_type* p) {
   p->number = 0; // Invalid
   p->kind   = 0; // Invalid
+  p->dim    = 0; // Invalid
   p->name   = "Default"; // Default state
   p->generate = NULL; // Invalid
   p->destroy  = NULL; // Invalid

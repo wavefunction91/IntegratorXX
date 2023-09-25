@@ -43,6 +43,7 @@ int intxx_get_prmq_info(intxx_quad_info_type* p, int quad) {
   quad = quad & INTXX_PRMQ_MASK;
   p->number = quad;
   p->kind   = INTXX_PRM_QUAD;
+  p->dim    = 1;
   switch(quad) {
     case INTXX_PRMQ_UNIFORM:
       p->name = "UNIFORM";

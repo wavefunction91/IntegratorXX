@@ -48,6 +48,7 @@ int intxx_get_radq_info(intxx_quad_info_type* p, int quad) {
   quad = quad & INTXX_RADQ_MASK;
   p->number = quad;
   p->kind   = INTXX_RAD_QUAD;
+  p->dim    = 1;
   switch(quad) {
     case INTXX_RADQ_BECKE:
       p->name = "BECKE";

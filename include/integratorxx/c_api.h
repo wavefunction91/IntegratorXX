@@ -63,6 +63,7 @@ typedef struct {
 typedef struct {
   int number; ///< Quadrature identifier
   int kind;   ///< Type of quadrature (PRM, RAD, ANG, SPH)
+  int dim;    ///< Dimension of the grid (1D or 3D)
 
   const char* name; ///< Name of the functional, e.g. "Becke"
   // TODO References
