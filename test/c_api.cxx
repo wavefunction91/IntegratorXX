@@ -266,7 +266,7 @@ TEST_CASE("C API") {
     const char* name;
     using base_quad_type = QuadratureBase<std::vector<std::array<double,3>>, std::vector<double>>;
     std::unique_ptr<base_quad_type> base_quad_default = nullptr;
-    std::unique_ptr<base_quad_type> base_quad_other   = nullptr;
+    //std::unique_ptr<base_quad_type> base_quad_other   = nullptr;
 
     int default_npts, other_npts;
     int quad_num;
@@ -284,6 +284,8 @@ TEST_CASE("C API") {
       name = "DELLEY";
       default_npts = 302;
       other_npts   = 974;
+      base_quad_default = std::make_unique<quad_type>(default_npts);
+      //base_quad_other = std::make_unique<quad_type>(other_npts);
     }
 
     SECTION("AB") {
@@ -292,6 +294,8 @@ TEST_CASE("C API") {
       name = "AHRENS_BEYLKIN";
       default_npts = 372;
       other_npts   = 972;
+      base_quad_default = std::make_unique<quad_type>(default_npts);
+      //base_quad_other = std::make_unique<quad_type>(other_npts);
     }
 
     SECTION("WOM") {
@@ -300,6 +304,8 @@ TEST_CASE("C API") {
       name = "WOMERSLEY";
       default_npts = 393;
       other_npts   = 969;
+      base_quad_default = std::make_unique<quad_type>(default_npts);
+      //base_quad_other = std::make_unique<quad_type>(other_npts);
     }
 
     // Initialize
@@ -339,13 +345,11 @@ TEST_CASE("C API") {
     REQUIRE(error == INTXX_SUCCESS);
     REQUIRE(quad.npoints == default_npts);
 
-
     // Get NPTS
     error = intxx_quad_get_npts(&quad, &npts);
     REQUIRE(error == INTXX_SUCCESS);
     REQUIRE(npts == default_npts);
 
-#if 0
     // Check Quadrature Generation and Destruction
     if(base_quad_default) {
       intxx_generate_quad(&quad);
@@ -355,14 +359,14 @@ TEST_CASE("C API") {
       auto state_as_quad = reinterpret_cast<base_quad_type*>(quad._state_quad);
       REQUIRE(state_as_quad->npts() == npts);
       for(auto i = 0; i < npts; ++ i) {
-        REQUIRE_THAT(state_as_quad->points()[i], Matchers::WithinAbs(name, base_quad_default->points()[i], 1e-15));
-        REQUIRE_THAT(state_as_quad->weights()[i], Matchers::WithinAbs(name, base_quad_default->weights()[i], 1e-15));
+        REQUIRE(state_as_quad->points()[i] == base_quad_default->points()[i]);
+        REQUIRE(state_as_quad->weights()[i] == base_quad_default->weights()[i]);
       }
 
       intxx_destroy_quad(&quad);
       REQUIRE(quad._state_quad == NULL);
     }
-#endif
+
   }
 
   intxx_quad_end(&quad);
