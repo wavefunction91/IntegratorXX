@@ -24,6 +24,9 @@ target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain inte
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
 target_link_libraries( quadrature_manipulation PUBLIC integratorxx_common_ut )
 
+add_executable( c_api c_api.cxx )
+target_link_libraries( c_api PUBLIC integratorxx_common_ut )
+
 add_executable( 1d_quadratures 1d_quadratures.cxx )
 target_link_libraries( 1d_quadratures PUBLIC integratorxx_common_ut )
 
@@ -51,3 +54,12 @@ add_test( NAME QUADRATURES_LEGENDRE     COMMAND gausslegendre           )
 add_test( NAME QUADRATURES_LOBATTO      COMMAND gausslobatto            )
 add_test( NAME QUADRATURES_CHEBYSHEV1   COMMAND gausschebyshev1         )
 add_test( NAME QUADRATURES_CHEBYSHEV2   COMMAND gausschebyshev2         )
+add_test( NAME C_API COMMAND c_api )
+
+# Memory check
+find_program( VALGRIND_EXECUTABLE valgrind )
+if(VALGRIND_EXECUTABLE)
+  message(STATUS "Found Valgrind: ${VALGRIND_EXECUTABLE}")
+  message(STATUS "Enabling C_API_MEMORY test")
+  add_test( NAME C_API_MEMORY COMMAND ${VALGRIND_EXECUTABLE} --leak-check=full --error-exitcode=100 $<TARGET_FILE:c_api> )
+endif()

@@ -4,19 +4,33 @@ cmake_minimum_required( VERSION 3.17 ) # Require CMake 3.17+
 project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 
 
-add_library( integratorxx INTERFACE )
-add_library( IntegratorXX::IntegratorXX ALIAS integratorxx )
 
 #option( INTEGRATORXX_ENABLE_TESTS "Enable Tets" ON )
+option( INTEGRATORXX_ENABLE_C_API "Enable C Bindings" ON )
 
 
+if(INTEGRATORXX_ENABLE_C_API)
+  set( INTEGRATORXX_HEADER_ONLY FALSE )
+  enable_language(C)
+  add_subdirectory(src/c_api)
+else()
+  # Header only if no C-API
+  set( INTEGRATORXX_HEADER_ONLY TRUE )
+  add_library( integratorxx INTERFACE )
+endif()
+add_library( IntegratorXX::IntegratorXX ALIAS integratorxx )
 
 
 
 # Target features
-target_compile_features( integratorxx INTERFACE cxx_std_17 )
+if(INTEGRATORXX_HEADER_ONLY)
+  set(INTEGRATORXX_PROPERTY_TYPE INTERFACE)
+else()
+  set(INTEGRATORXX_PROPERTY_TYPE PUBLIC)
+endif()
+target_compile_features( integratorxx ${INTEGRATORXX_PROPERTY_TYPE} cxx_std_17 )
 target_include_directories( integratorxx
-  INTERFACE
+  ${INTEGRATORXX_PROPERTY_TYPE}
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
@@ -24,7 +38,7 @@ target_include_directories( integratorxx
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-Wno-missing-braces" INTEGRATORXX_HAS_NO_MISSING_BRACES )
 if( INTEGRATORXX_HAS_NO_MISSING_BRACES )
-	target_compile_options( integratorxx INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wno-missing-braces> )
+	target_compile_options( integratorxx ${INTEGRATORXX_PROPERTY_TYPE} $<$<COMPILE_LANGUAGE:CXX>: -Wno-missing-braces> )
 endif()
 
 

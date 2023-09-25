@@ -47,6 +47,8 @@ public:
     return R_ * M * std::pow(x, M-1) / std::pow(1.0 - x, M+1);
   }
 
+  /// Return radial scaling factor
+  auto R() const { return R_; }
 };
 
 
