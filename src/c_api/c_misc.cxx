@@ -8,6 +8,7 @@ void intxx_default_quad_info(intxx_quad_info_type* p) {
   p->kind   = 0; // Invalid
   p->dim    = 0; // Invalid
   p->name   = "Default"; // Default state
+  p->ext_params.n = 0; // To initialize *everything*
   p->generate = NULL; // Invalid
   p->destroy  = NULL; // Invalid
 }

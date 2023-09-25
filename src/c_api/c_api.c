@@ -48,7 +48,7 @@ int intxx_quad_init(intxx_quad_type* p, int quad) {
     error = intxx_get_radq_info(finfo, quad);
   } else {
     // Angular by exclusion
-    // TODO: Get angular quadrature info
+    error = intxx_get_angq_info(finfo, quad);
   }
 
   if(error) return error;

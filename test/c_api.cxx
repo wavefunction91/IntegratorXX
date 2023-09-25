@@ -262,6 +262,93 @@ TEST_CASE("C API") {
     }
   }
 
+  SECTION("Angular") {
+    const char* name;
+    using base_quad_type = QuadratureBase<std::vector<std::array<double,3>>, std::vector<double>>;
+    std::unique_ptr<base_quad_type> base_quad_default = nullptr;
+    std::unique_ptr<base_quad_type> base_quad_other   = nullptr;
+
+    int default_npts, other_npts;
+    int quad_num;
+    SECTION("LebedevLaikov") {
+      using quad_type = LebedevLaikov<double>;
+      quad_num = INTXX_ANGQ_LEB;
+      name = "LEBEDEV_LAIKOV";
+    }
+
+    SECTION("Delley") {
+      using quad_type = Delley<double>;
+      quad_num = INTXX_ANGQ_DEL;
+      name = "DELLEY";
+    }
+
+    SECTION("AB") {
+      using quad_type = AhrensBeylkin<double>;
+      quad_num = INTXX_ANGQ_AB;
+      name = "AHRENS_BEYLKIN";
+    }
+
+    SECTION("WOM") {
+      using quad_type = Womersley<double>;
+      quad_num = INTXX_ANGQ_WOM;
+      name = "WOMERSLEY";
+    }
+
+    // Initialize
+    error = intxx_quad_init(&quad, quad_num);
+    REQUIRE(error == INTXX_SUCCESS);
+
+    // Meta data
+    REQUIRE(quad.info != NULL);
+    REQUIRE(quad.npoints == -1);
+    REQUIRE(quad._state_quad == NULL);
+    REQUIRE(quad.info->number == quad_num);
+    REQUIRE(quad.info->kind == INTXX_ANG_QUAD);
+    REQUIRE(quad.info->dim == 3);
+    REQUIRE(quad.info->generate != NULL);
+    REQUIRE(quad.info->destroy != NULL);
+    REQUIRE(!strcmp(quad.info->name, name));
+
+
+    // Check default parameters
+    REQUIRE(quad.info->ext_params.n == 0);
+
+    // Get before set
+    int npts;
+    error = intxx_quad_get_npts(&quad, &npts);
+    REQUIRE(error == INTXX_INVALID_OUT);
+    REQUIRE(npts == -1);
+
+#if 0
+    // Set NPTS
+    error = intxx_quad_set_npts(&quad, base_npts);
+    REQUIRE(error == INTXX_SUCCESS);
+    REQUIRE(quad.npoints == base_npts);
+
+    // Get NPTS
+    error = intxx_quad_get_npts(&quad, &npts);
+    REQUIRE(error == INTXX_SUCCESS);
+    REQUIRE(npts == base_npts);
+
+    // Check Quadrature Generation and Destruction
+    if(base_quad_default) {
+      intxx_generate_quad(&quad);
+      REQUIRE(quad._state_quad != NULL);
+
+      // Check validity of the state
+      auto state_as_quad = reinterpret_cast<base_quad_type*>(quad._state_quad);
+      REQUIRE(state_as_quad->npts() == npts);
+      for(auto i = 0; i < npts; ++ i) {
+        REQUIRE_THAT(state_as_quad->points()[i], Matchers::WithinAbs(name, base_quad_default->points()[i], 1e-15));
+        REQUIRE_THAT(state_as_quad->weights()[i], Matchers::WithinAbs(name, base_quad_default->weights()[i], 1e-15));
+      }
+
+      intxx_destroy_quad(&quad);
+      REQUIRE(quad._state_quad == NULL);
+    }
+#endif
+  }
+
   intxx_quad_end(&quad);
 
 }
