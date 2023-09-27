@@ -46,4 +46,23 @@ RealType lambert_w0(RealType x) {
 
 }
 
+template< typename RealType>
+RealType lambert_wm1(RealType x) {
+  const RealType one = 1;
+  const auto e = std::exp(one);
+  if(x < -one/e)       return std::numeric_limits<RealType>::quiet_NaN();
+  if(x >= RealType(0)) return std::numeric_limits<RealType>::infinity();
+  if(x == -one/e)      return -1.0;
+  
+  RealType wm1;
+  if(x > -0.25) {
+    wm1 = std::log(-x) - std::log(-std::log(-x));
+  } else {
+    wm1 = -1.0 - std::sqrt(2.0*(1.0 + x * e));
+  }
+
+  return lambert_w_newton(x, wm1);
+
+}
+
 }
