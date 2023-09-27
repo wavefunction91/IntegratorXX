@@ -389,4 +389,66 @@ TEST_CASE("LMG", "[1d-quad]") {
 
   }
 
+  SECTION("LMG Radial Bounds") {
+
+    // aug-cc-pVTZ Hydrogen Data
+    SECTION("H aug-cc-pVTZ") {
+      const double alpha_min_0 = 0.02526;
+      const double alpha_min_1 = 0.10200;
+      const double alpha_min_2 = 0.24700;
+
+      const double alpha_max_0 = 33.87;
+      //const double alpha_max_1 = 1.407;
+      const double alpha_max_2 = 1.057;
+
+      auto r_lower_0 = lmg::r_lower(0, alpha_max_0, 1e-12);
+      auto r_lower_2 = lmg::r_lower(2, alpha_max_2, 1e-12);
+
+      auto r_upper_0 = lmg::r_upper(0, alpha_min_0, 1e-12);
+      auto r_upper_1 = lmg::r_upper(1, alpha_min_1, 1e-12);
+      auto r_upper_2 = lmg::r_upper(2, alpha_min_2, 1e-12);
+
+
+      REQUIRE_THAT(r_lower_0, Catch::Matchers::WithinAbs(3.2370214224347012e-05, 1e-15));
+      REQUIRE_THAT(r_lower_2, Catch::Matchers::WithinAbs(3.1703237193762383e-03, 1e-15));
+
+      REQUIRE_THAT(r_upper_0, Catch::Matchers::WithinAbs(3.3998088412766542e+01, 1e-15));
+      REQUIRE_THAT(r_upper_1, Catch::Matchers::WithinAbs(1.7452224096146878e+01, 1e-15));
+      REQUIRE_THAT(r_upper_2, Catch::Matchers::WithinAbs(1.1588086549342464e+01, 1e-15));
+    }
+
+    // aug-cc-pVTZ Carbon Data
+    SECTION("C aug-cc-pVTZ") {
+      const double alpha_min_0 = 3.3423e-02;
+      const double alpha_min_1 = 3.3258e-02;
+      const double alpha_min_2 = 7.6815e-02;
+      const double alpha_min_3 = 1.7636e-01;;
+      const double alpha_min_4 = 5.1329e-01;
+
+      const double alpha_max_0 = 6.177194e+06;
+      const double alpha_max_2 = 8.857680e+01;
+      const double alpha_max_4 = 1.445900e+00;
+
+      auto r_lower_0 = lmg::r_lower(0, alpha_max_0, 1e-12);
+      auto r_lower_2 = lmg::r_lower(2, alpha_max_2, 1e-12);
+      auto r_lower_4 = lmg::r_lower(4, alpha_max_4, 1e-12);
+
+      auto r_upper_0 = lmg::r_upper(0, alpha_min_0, 1e-12);
+      auto r_upper_1 = lmg::r_upper(1, alpha_min_1, 1e-12);
+      auto r_upper_2 = lmg::r_upper(2, alpha_min_2, 1e-12);
+      auto r_upper_3 = lmg::r_upper(3, alpha_min_3, 1e-12);
+      auto r_upper_4 = lmg::r_upper(4, alpha_min_4, 1e-12);
+
+      REQUIRE_THAT(r_lower_0, Catch::Matchers::WithinAbs(7.5797965945427875e-08,1e-15));
+      REQUIRE_THAT(r_lower_2, Catch::Matchers::WithinAbs(3.4632282095817583e-04,1e-15));
+      REQUIRE_THAT(r_lower_4, Catch::Matchers::WithinAbs(1.1559748847781975e-02,1e-15));
+
+      REQUIRE_THAT(r_upper_0, Catch::Matchers::WithinAbs(2.9556190534662171e+01,1e-15));
+      REQUIRE_THAT(r_upper_1, Catch::Matchers::WithinAbs(3.0563480016561439e+01,1e-15));
+      REQUIRE_THAT(r_upper_2, Catch::Matchers::WithinAbs(2.0779600292386970e+01,1e-15));
+      REQUIRE_THAT(r_upper_3, Catch::Matchers::WithinAbs(1.4179981794582680e+01,1e-15));
+      REQUIRE_THAT(r_upper_4, Catch::Matchers::WithinAbs(8.5952200832939525e+00,1e-15));
+    }
+  }
+
 }
