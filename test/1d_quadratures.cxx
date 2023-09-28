@@ -1,7 +1,6 @@
 #include "catch2/catch_all.hpp"
 #include <integratorxx/quadratures/all.hpp>
 #include <integratorxx/util/lambert_w.hpp>
-#include <boost/math/special_functions/lambert_w.hpp>
 #include <cmath>
 #include <complex>
 #include <iostream>
