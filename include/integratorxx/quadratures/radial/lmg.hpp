@@ -50,5 +50,25 @@ inline double r_lower(int m, double alpha, double prec) {
 	 std::sqrt(alpha);
 }
 
+inline double step_size(int m, double prec) {
+
+  // Recast Eqs 17/18 into the form
+  // R == C * x^L * EXP[-PI/2 * X] with X == PI/h
+  // X = - 2*L / PI * LAMBERT_W( -PI/(2*L) * (R/C)^(1/L) )
+  double C = 4 * M_SQRT2; // This is the constant in Eq 17
+  double L;
+  if( m == 0 ) {
+    L = 1;
+  } else {
+    L = m / 2.0 + 1.0; // Eq 17 -> Eq 18
+    C = C * std::tgamma(1.5) / std::tgamma((m + 3.0) / 2.0); 
+  }
+
+  const double L_FAC = M_PI_2 / L;
+  const double X = -(1.0 / L_FAC) * lambert_wm1( -L_FAC * std::pow(prec/C, 1/L));
+  return M_PI / X;
+
+}
+
 }
 }

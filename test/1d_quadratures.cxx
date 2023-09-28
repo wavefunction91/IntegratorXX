@@ -390,7 +390,6 @@ TEST_CASE("LMG", "[1d-quad]") {
   }
 
   SECTION("LMG Radial Bounds") {
-
     // aug-cc-pVTZ Hydrogen Data
     SECTION("H aug-cc-pVTZ") {
       const double alpha_min_0 = 0.02526;
@@ -449,6 +448,15 @@ TEST_CASE("LMG", "[1d-quad]") {
       REQUIRE_THAT(r_upper_3, Catch::Matchers::WithinAbs(1.4179981794582680e+01,1e-15));
       REQUIRE_THAT(r_upper_4, Catch::Matchers::WithinAbs(8.5952200832939525e+00,1e-15));
     }
+  }
+
+
+  SECTION("LMG Step Size") {
+    REQUIRE_THAT(lmg::step_size(0, 1e-12), Catch::Matchers::WithinAbs(1.5235497564176387e-01,1e-15));
+    REQUIRE_THAT(lmg::step_size(1, 1e-12), Catch::Matchers::WithinAbs(1.4579053103691331e-01,1e-15));
+    REQUIRE_THAT(lmg::step_size(2, 1e-12), Catch::Matchers::WithinAbs(1.4028895246473957e-01,1e-15));
+    REQUIRE_THAT(lmg::step_size(3, 1e-12), Catch::Matchers::WithinAbs(1.3554180272204153e-01,1e-15));
+    REQUIRE_THAT(lmg::step_size(4, 1e-12), Catch::Matchers::WithinAbs(1.3136472924710046e-01,1e-15));
   }
 
 }
