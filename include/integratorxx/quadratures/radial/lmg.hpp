@@ -43,7 +43,7 @@ inline double r_lower(int m, double alpha, double prec) {
       Dm = -2.3;
       break;
     default:
-      Dm = NAN;
+      Dm = 4.0; // Not in the paper, taken from soruce provided by Roland Lindh
   }
 
   return std::exp(1.0 / (m + 3.0) * (Dm - std::log(1.0 / prec))) /
