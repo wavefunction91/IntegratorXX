@@ -72,18 +72,19 @@ inline double step_size(int m, double prec) {
 
 
 class LindhMalmqvistGagliardiRadialTraits {
-  double r_min_;
-  double r_max_;
+  using self_type = LindhMalmqvistGagliardiRadialTraits;
+
   double step_size_;
   double c_;
 
 public:
 
-  LindhMalmqvistGagliardiRadialTraits(double r_min, double r_max, int l_max, double prec) :
-    r_min_(r_min), r_max_(r_max),
-    // H is determined by L_MAX
-    step_size_(lmg::step_size(2*l_max, prec)),
-    c_(r_min_ / (std::exp(step_size_) - 1.0)) { }
+  LindhMalmqvistGagliardiRadialTraits(double c, double step_size) :
+    step_size_(step_size), c_(c) { }
+
+  LindhMalmqvistGagliardiRadialTraits(const self_type&) = default;
+  self_type& operator=(const self_type&) = default;
+  
 
   template <typename PointType>
   inline auto radial_transform(PointType x) const noexcept {
@@ -94,5 +95,33 @@ public:
   inline auto radial_jacobian(PointType x) const noexcept {
     return c_ * std::exp(x);
   }
+
+  template <typename BaseQuad>
+  std::enable_if_t<
+    // LMG really only makes sense with a Trapezoid grid
+    std::is_same_v<
+      BaseQuad,
+      UniformTrapezoid<typename BaseQuad::point_type,
+                       typename BaseQuad::weight_type>
+    >
+  > preprocess_base_quad(typename BaseQuad::point_container& points,
+		         typename BaseQuad::weight_container& weights) const {
+
+    using point_type = typename BaseQuad::point_type;
+    assert(points.size() > 2);
+    const auto npts = points.size() - 2;
+    point_type up = npts * step_size_;
+
+    // Scale points and weights
+    for(auto& x : points ) x *= step_size_ * (npts + 1);
+    for(auto& w : weights) w  = step_size_;
+  }
+  
 };
+
+template <typename PointType, typename WeightType>
+using LindhMalmqvistGagliardi = RadialTransformQuadrature<
+  UniformTrapezoid<PointType, WeightType>, LindhMalmqvistGagliardiRadialTraits
+>;
+
 }

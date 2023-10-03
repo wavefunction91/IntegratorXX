@@ -458,4 +458,31 @@ TEST_CASE("LMG", "[1d-quad]") {
     REQUIRE_THAT(lmg::step_size(4, 1e-12), Catch::Matchers::WithinAbs(1.3136472924710046e-01,1e-15));
   }
 
+  SECTION("LMG Integrate") {
+    double alpha_min = 0.3203;
+    double alpha_max = 80.0;
+
+    // Reference values from OpenMolcas
+    double r_lower = 2.1062415621095990e-005;
+    double r_upper = 9.9559233798449043;
+    double h       = 0.15235041341729277;
+
+    double c = r_lower / (std::exp(h) - 1);
+    int    n = std::log(1.0 + r_upper/c) / h + 1.0;
+    printf("ALPHA_MIN = %.4e ALPHA_MAX = %.4e H = %.4e C = %.6e N = %d\n",
+      alpha_min, alpha_max, h, c, n);
+
+
+    LindhMalmqvistGagliardiRadialTraits traits(c, h);
+    LindhMalmqvistGagliardi<double, double> quad(n, traits);
+    for(int i = 0; i < n; ++i) {
+      double x = (i+1) * h;
+      double r = c * (std::exp(x) - 1.0);
+      double w = h*(r + c);
+      printf("%d R = %.16e W = %.16e \n", i, r - quad.points()[i], w-quad.weights()[i]);
+    }
+
+
+  }
+
 }
