@@ -50,7 +50,7 @@ public:
   template <typename PointType>
   inline auto radial_jacobian(PointType x) const noexcept {
     const auto log_term = std::log(1.0 - x*x);
-    return - 2.0 * Rfac_ * x / (1.0 - x*x);
+    return 2.0 * Rfac_ * x / (1.0 - x*x);
   }
 
 };
