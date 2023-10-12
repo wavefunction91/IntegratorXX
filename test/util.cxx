@@ -1,6 +1,7 @@
 #include "catch2/catch_all.hpp"
 #include <integratorxx/util/factorial.hpp>
 #include <integratorxx/util/gamma.hpp>
+#include <integratorxx/util/pow.hpp>
 #include <integratorxx/util/pow_2.hpp>
 #include <iostream>
 
@@ -32,6 +33,17 @@ TEST_CASE("Factorial", "[util]") {
   for(uint64_t i = 0; i <= 32; ++i) {
     REQUIRE(double_factorial(i) == dumb_double_factorial(i));
   }
+}
+
+TEST_CASE("Pow", "[util]") {
+
+  using namespace IntegratorXX;
+  using namespace Catch::Matchers;
+  for(int i = 0; i < 10; ++i) {
+    REQUIRE_THAT(integer_pow(2.0, i), WithinAbs(std::pow(2.0,i), 1e-16));
+    REQUIRE_THAT(half_integer_pow(2.0, i), WithinAbs(std::pow(2.0,i/2.0), 1e-16));
+  }
+
 }
 
 TEST_CASE("Pow 2", "[util]") {
