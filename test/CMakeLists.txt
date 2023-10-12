@@ -21,6 +21,9 @@ endif()
 add_library(integratorxx_common_ut quad_matcher.cxx)
 target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain integratorxx )
 
+add_executable( util_test util.cxx )
+target_link_libraries( util_test PUBLIC integratorxx_common_ut )
+
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
 target_link_libraries( quadrature_manipulation PUBLIC integratorxx_common_ut )
 
