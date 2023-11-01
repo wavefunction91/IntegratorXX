@@ -257,6 +257,13 @@ TEST_CASE( "Delley", "[1d-quad]" ) {
 
 TEST_CASE("LMG", "[1d-quad]") {
   using namespace IntegratorXX;
+  using namespace Catch::Matchers;
+
+  SECTION("HALF INTEGRAL GAMMA") {
+    REQUIRE_THAT(half_integral_tgamma<double>(1), WithinAbs(std::sqrt(M_PI),  1e-15));
+    REQUIRE_THAT(half_integral_tgamma<double>(3), WithinAbs(std::sqrt(M_PI)/2,1e-15));
+  }
+
   SECTION("Lambert W") {
     size_t n = 50;
 
@@ -469,8 +476,8 @@ TEST_CASE("LMG", "[1d-quad]") {
 
     double c = r_lower / (std::exp(h) - 1);
     int    n = std::log(1.0 + r_upper/c) / h + 1.0;
-    printf("ALPHA_MIN = %.4e ALPHA_MAX = %.4e H = %.4e C = %.6e N = %d\n",
-      alpha_min, alpha_max, h, c, n);
+    //printf("ALPHA_MIN = %.4e ALPHA_MAX = %.4e H = %.4e C = %.6e N = %d\n",
+    //  alpha_min, alpha_max, h, c, n);
 
 
     LindhMalmqvistGagliardiRadialTraits traits(c, h);
@@ -479,7 +486,7 @@ TEST_CASE("LMG", "[1d-quad]") {
       double x = (i+1) * h;
       double r = c * (std::exp(x) - 1.0);
       double w = h*(r + c);
-      printf("%d R = %.16e W = %.16e \n", i, r - quad.points()[i], w-quad.weights()[i]);
+      //printf("%d R = %.16e W = %.16e \n", i, r - quad.points()[i], w-quad.weights()[i]);
     }
 
 

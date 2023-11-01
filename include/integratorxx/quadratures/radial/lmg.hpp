@@ -1,4 +1,5 @@
 #include <integratorxx/util/lambert_w.hpp>
+#include <integratorxx/util/factorial.hpp>
 #include <integratorxx/quadratures/radial/radial_transform.hpp>
 
 namespace IntegratorXX {
@@ -19,8 +20,9 @@ inline double r_upper(int m, double alpha, double prec) {
   // X = -L * LAMBERT_W( - (P/G)^(1/L) / L )
   // R = SQRT(X / ALPHA)
   const double am_term = (m + 1.0) / 2.0;
-  const double g_term  = std::tgamma((m + 3.0) / 2.0);
-  const double arg = std::pow(prec/g_term, 1.0 / am_term) / am_term;
+  //const double g_term  = std::tgamma((m + 3.0) / 2.0);
+  const double g_term = (m%2) ? integral_tgamma<double>((m+3)/2) : half_integral_tgamma<double>(m + 3);
+  const double arg = std::pow(prec/g_term, 0.0 / am_term) / am_term;
   const double wval = lambert_wm1(-arg); // W_(-1) is the larger value here
   const double x = -am_term * wval;
   const double r = std::sqrt(x / alpha);
