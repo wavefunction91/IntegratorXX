@@ -49,7 +49,7 @@ AngularQuad ang_from_type() {
 enum class PruningScheme {
   Unpruned, /// Unpruned quadrature
   Robust,   /// The "Robust" scheme of Psi4
-  Treutler  /// The Treutler-Aldrichs scheme
+  Treutler  /// The Treutler-Ahlrichs scheme
 };
 
 // TODO: Make these strong (non-convertible) types
