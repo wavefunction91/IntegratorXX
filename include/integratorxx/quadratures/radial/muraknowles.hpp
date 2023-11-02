@@ -165,4 +165,14 @@ using MuraKnowles = RadialTransformQuadrature<
 
 #endif
 
+namespace detail {
+
+template <typename QuadType>
+static constexpr bool is_mk_v = std::is_same_v<
+  QuadType, 
+  MuraKnowles<typename QuadType::point_type, typename QuadType::weight_type>
+>;
+
+}
+
 }

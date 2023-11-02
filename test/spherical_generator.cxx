@@ -192,3 +192,81 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
   }
 
 }
+
+using bk_type  = IntegratorXX::Becke<double,double>;
+using mk_type  = IntegratorXX::MuraKnowles<double,double>;
+using mhl_type = IntegratorXX::MurrayHandyLaming<double,double>;
+using ta_type  = IntegratorXX::TreutlerAhlrichs<double,double>;
+
+using ah_type = IntegratorXX::AhrensBeylkin<double>;
+using de_type = IntegratorXX::Delley<double>;
+using ll_type = IntegratorXX::LebedevLaikov<double>;
+using wo_type = IntegratorXX::Womersley<double>;
+
+using sph_test_types = std::tuple<
+  std::tuple<bk_type, ah_type>,
+  std::tuple<bk_type, de_type>,
+  std::tuple<bk_type, ll_type>,
+  std::tuple<bk_type, wo_type>,
+
+  std::tuple<mk_type, ah_type>,
+  std::tuple<mk_type, de_type>,
+  std::tuple<mk_type, ll_type>,
+  std::tuple<mk_type, wo_type>,
+
+  std::tuple<mhl_type, ah_type>,
+  std::tuple<mhl_type, de_type>,
+  std::tuple<mhl_type, ll_type>,
+  std::tuple<mhl_type, wo_type>,
+
+  std::tuple<ta_type, ah_type>,
+  std::tuple<ta_type, de_type>,
+  std::tuple<ta_type, ll_type>,
+  std::tuple<ta_type, wo_type>
+>;
+
+
+
+TEMPLATE_LIST_TEST_CASE("Unpruned", "[sph-gen]", sph_test_types) {
+  using namespace IntegratorXX;
+  using radial_type  = std::decay_t<decltype(std::get<0>(std::declval<TestType>()))>;
+  using angular_type = std::decay_t<decltype(std::get<1>(std::declval<TestType>()))>;
+  using angular_traits = quadrature_traits<angular_type>;
+
+  using spherical_type = SphericalQuadrature<radial_type,angular_type>;
+
+  size_t nrad = 10;
+  size_t nang = angular_traits::npts_by_algebraic_order(
+    angular_traits::next_algebraic_order(1)); // Smallest possible angular grid
+
+  // Generate the quadrature manually
+  radial_type rq(nrad, 1.0);
+  angular_type aq(nang);
+  spherical_type sph_ref(rq,aq);
+
+
+  // Generate via runtime API
+  UnprunedSphericalGridSpecification unp{
+    rad_from_type<radial_type>(), nrad, 1.0,
+    ang_from_type<angular_type>(), nang
+  };
+
+  auto sph = SphericalGridFactory::generate_grid(unp);
+
+  // Check that they're the same
+  REQUIRE(sph->npts() == sph_ref.npts());
+
+  const auto npts = sph->npts();
+  for(auto i = 0; i < npts; ++i) {
+    auto pt = sph->points()[i];
+    auto pt_ref = sph_ref.points()[i];
+    REQUIRE_THAT(pt[0], Catch::Matchers::WithinAbs(pt_ref[0],1e-15));
+    REQUIRE_THAT(pt[1], Catch::Matchers::WithinAbs(pt_ref[1],1e-15));
+    REQUIRE_THAT(pt[2], Catch::Matchers::WithinAbs(pt_ref[2],1e-15));
+
+    auto w = sph->weights()[i];
+    auto w_ref = sph_ref.weights()[i];
+    REQUIRE_THAT(w, Catch::Matchers::WithinAbs(w_ref,1e-15));
+  }
+  
+}

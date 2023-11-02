@@ -91,4 +91,14 @@ using TreutlerAhlrichs = RadialTransformQuadrature<
   TreutlerAhlrichsRadialTraits 
 >;
 
+namespace detail {
+
+template <typename QuadType>
+static constexpr bool is_ta_v = std::is_same_v<
+  QuadType, 
+  TreutlerAhlrichs<typename QuadType::point_type, typename QuadType::weight_type>
+>;
+
+}
+
 }

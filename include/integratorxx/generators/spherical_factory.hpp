@@ -2,6 +2,8 @@
 #include <memory>
 #include <vector>
 #include <array>
+#include <integratorxx/quadratures/radial.hpp>
+#include <integratorxx/quadratures/s2.hpp>
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 
@@ -15,12 +17,32 @@ enum class RadialQuad : uint32_t {
   TreutlerAhlrichs  = 0x0040
 };
 
+template <typename RadQuadType>
+RadialQuad rad_from_type() {
+  if constexpr (detail::is_becke_v<RadQuadType>) return RadialQuad::Becke;
+  if constexpr (detail::is_mk_v<RadQuadType>   ) return RadialQuad::MuraKnowles;
+  if constexpr (detail::is_mhl_v<RadQuadType>)   return RadialQuad::MurrayHandyLaming;
+  if constexpr (detail::is_ta_v<RadQuadType>)    return RadialQuad::TreutlerAhlrichs;
+
+  throw std::runtime_error("Unrecognized Radial Quadrature");
+};
+
 /// High-level specification of angular quadratures
 enum class AngularQuad : uint32_t {
   AhrensBeylkin     = 0x0100,
   Delley            = 0x0200,
   LebedevLaikov     = 0x0300,
   Womersley         = 0x0400
+};
+
+template <typename AngQuadType>
+AngularQuad ang_from_type() {
+  if constexpr (detail::is_ahrens_beyklin_v<AngQuadType>) return AngularQuad::AhrensBeylkin;
+  if constexpr (detail::is_delley_v<AngQuadType>   ) return AngularQuad::Delley;
+  if constexpr (detail::is_lebedev_laikov_v<AngQuadType>)   return AngularQuad::LebedevLaikov;
+  if constexpr (detail::is_womersley_v<AngQuadType>)    return AngularQuad::Womersley;
+
+  throw std::runtime_error("Unrecognized Angular Quadrature");
 };
 
 /// High-level specification of pruning schemes for spherical quadratures

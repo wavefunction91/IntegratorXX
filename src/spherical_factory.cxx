@@ -158,71 +158,13 @@ spherical_grid_ptr SphericalGridFactory::generate_grid(
  * Default Pruning Schemes *
  ***************************/
 
-template <typename AngularQuad>
-struct s2_quad_traits;
-
-template <>
-struct s2_quad_traits<ll_type> {
-  static auto npts_by_algebraic_order(size_t order) {
-    return detail::lebedev::npts_by_algebraic_order(order);
-  }
-  static auto next_algebraic_order(size_t order) {
-    return detail::lebedev::next_algebraic_order(order);
-  }
-  static auto algebraic_order_by_npts(size_t order) {
-    return detail::lebedev::algebraic_order_by_npts(order);
-  }
-};
-
-template <>
-struct s2_quad_traits<ah_type> {
-  static auto npts_by_algebraic_order(size_t order) {
-    return detail::ahrensbeylkin::npts_by_algebraic_order(order);
-  }
-  static auto next_algebraic_order(size_t order) {
-    return detail::ahrensbeylkin::next_algebraic_order(order);
-  }
-  static auto algebraic_order_by_npts(size_t order) {
-    return detail::ahrensbeylkin::algebraic_order_by_npts(order);
-  }
-};
-
-template <>
-struct s2_quad_traits<de_type> {
-  static auto npts_by_algebraic_order(size_t order) {
-    return detail::delley::npts_by_algebraic_order(order);
-  }
-  static auto next_algebraic_order(size_t order) {
-    return detail::delley::next_algebraic_order(order);
-  }
-  static auto algebraic_order_by_npts(size_t order) {
-    return detail::delley::algebraic_order_by_npts(order);
-  }
-};
-
-template <>
-struct s2_quad_traits<wo_type> {
-  static auto npts_by_algebraic_order(size_t order) {
-    return detail::womersley::npts_by_algebraic_order(order);
-  }
-  static auto next_algebraic_order(size_t order) {
-    return detail::womersley::next_algebraic_order(order);
-  }
-  static auto algebraic_order_by_npts(size_t order) {
-    return detail::womersley::algebraic_order_by_npts(order);
-  }
-};
-
-
-
-
 
 /*** Psi4 Robust ***/
 
 
 template <typename AngularQuad>
 auto get_robust_low_med_sizes(AngularSize asz) {
-  using traits = s2_quad_traits<AngularQuad>;
+  using traits = quadrature_traits<AngularQuad>;
   const auto base_order = traits::algebraic_order_by_npts(asz);
   if( base_order < 0 ) throw std::runtime_error("Invalid Base Grid");
 
@@ -290,7 +232,7 @@ PrunedSphericalGridSpecification robust_psi4_pruning_scheme(
 
 template <typename AngularQuad>
 auto get_treutler_low_med_sizes() {
-  using traits = s2_quad_traits<AngularQuad>;
+  using traits = quadrature_traits<AngularQuad>;
   AngularSize med_sz(traits::npts_by_algebraic_order(traits::next_algebraic_order(11)));
   AngularSize low_sz(traits::npts_by_algebraic_order(traits::next_algebraic_order(7 )));
 
