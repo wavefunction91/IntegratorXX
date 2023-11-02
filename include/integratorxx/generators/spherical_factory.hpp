@@ -140,7 +140,7 @@ struct SphericalGridFactory {
   >;
 
   /**
-   *  @brief Generate an unpruned spherical grid given a suppled radial and
+   *  @brief Generate an unpruned spherical grid given a supplied radial and
    *         angular quadrature.
    *
    *  All arguments are passed with perfect forwarding
