@@ -9,10 +9,10 @@ there combination into spherical grids.
 
 ## Design Goals 
 
-* Provide a stable and reproducable implementation of the various atomic and
+* Provide a stable and reproducible implementation of the various atomic and
 molecular grids commonly encountered in quantum chemistry calculations
 * Develop a modern, modular, extensible C++ API to allow for the implementation
-and validataion new atomic and molecular quadrature schemes.
+and validation new atomic and molecular quadrature schemes.
 
 ## Dependencies
 
@@ -21,14 +21,14 @@ and validataion new atomic and molecular quadrature schemes.
 
 ## Major Contributors
 
-* David Williams-Young - LBNL (dbwy at lbl dot goc)
+* David Williams-Young - LBNL (dbwy at lbl dot gov)
 * Susi Lehtola - University of Helsinki
 
 ## Implemented Quadratures
 
 A note on quadrature classifications:
 * Primitive quadratures are those generated on a finite bound (e.g. Gauss quadrature rules). The general software design pattern of IntegratorXX is to build up higher-order quadrature rules (e.g. radial transformation, etc) from these primitive quadratures.
-* Radial quadratures are convolutions of primitive quadrature rules with a radial transformation scheme (mapping the natural domain of the primitive quadrature to postive semiindefinite). The jacobian of the transformation *is* included while the radial component of the spherical jacobian is *not*
+* Radial quadratures are convolutions of primitive quadrature rules with a radial transformation scheme (mapping the natural domain of the primitive quadrature to positive semi-indefinite). The jacobian of the transformation *is* included while the radial component of the spherical jacobian is *not*
 * Angular quadratures integrate over $S^2$ (solid angle). It is typically the case that these are manually constructed to integrate spherical harmonics up to a specific order, and are thus only compatible witch *specific* grid orders.
 
 
@@ -54,17 +54,17 @@ source for appropriate references.
 
 
 For the generation of spherical quadratures, IntegratorXX additionally supports the following radial pruning schemes:
-| Name      | Description                         | C++ Specifier             |
-|-----------|-------------------------------------|---------------------------|
-| Unpruned  | No not perform pruning              | `PruningScheme::Unpruned` |
-| Robust    | The Psi4 "robust" pruning scheme    | `PruningScheme::Robust`   |
-| Treutler  | The Treuter-Ahlrichs pruning scheme | `PruntinScheme::Treutler` |
+| Name      | Description                          | C++ Specifier             |
+|-----------|--------------------------------------|---------------------------|
+| Unpruned  | No not perform pruning               | `PruningScheme::Unpruned` |
+| Robust    | The Psi4 "robust" pruning scheme     | `PruningScheme::Robust`   |
+| Treutler  | The Treutler-Ahlrichs pruning scheme | `PruntinScheme::Treutler` |
 
 ### A Note on Angular Quadratures
 
 All of the currently implemented angular quadrature schemes are only compatible with *specific* grid
-orders correspong to *specific* algebratic orders of spherical harmonics they integrate exactly.
-The construction of the angualr grids takes the number of points as argument, and will fail if the
+orders corresponding to *specific* algebraic orders of spherical harmonics they integrate exactly.
+The construction of the angular grids takes the number of points as argument, and will fail if the
 grid order is incompatible. As these *magic numbers* are different for each of the quadratures,
 we provide a set of look-up functions which can safely produce compatible grid orders:
 
