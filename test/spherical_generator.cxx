@@ -270,3 +270,58 @@ TEMPLATE_LIST_TEST_CASE("Unpruned", "[sph-gen]", sph_test_types) {
   }
   
 }
+
+TEMPLATE_LIST_TEST_CASE("Pruned", "[sph-gen]", sph_test_types) {
+  using namespace IntegratorXX;
+  using radial_type  = std::decay_t<decltype(std::get<0>(std::declval<TestType>()))>;
+  using angular_type = std::decay_t<decltype(std::get<1>(std::declval<TestType>()))>;
+  using angular_traits = quadrature_traits<angular_type>;
+
+  using spherical_type = PrunedSphericalQuadrature<radial_type,angular_type>;
+
+  size_t nrad = 99;
+  size_t nang = angular_traits::npts_by_algebraic_order(
+    angular_traits::next_algebraic_order(29)); // Smallest possible angular grid
+
+  // Generate pruning scheme
+  UnprunedSphericalGridSpecification unp{
+    rad_from_type<radial_type>(), nrad, 1.0,
+    ang_from_type<angular_type>(), nang
+  };
+
+  auto pruning_spec = robust_psi4_pruning_scheme(unp);
+
+
+  // Generate the quadrature manually
+  radial_type rq(nrad, 1.0);
+  RadialGridPartition<angular_type> rgp;
+  for(auto pr : pruning_spec.pruning_regions) {
+    angular_type aq(pr.angular_size);
+    rgp.add_quad(rq, pr.idx_st, aq);
+  }
+  rgp.finalize(rq);
+
+  spherical_type sph_ref(rq, rgp);
+
+
+  // Generate via runtime API
+
+  auto sph = SphericalGridFactory::generate_grid(pruning_spec);
+
+  // Check that they're the same
+  REQUIRE(sph->npts() == sph_ref.npts());
+
+  const auto npts = sph->npts();
+  for(auto i = 0; i < npts; ++i) {
+    auto pt = sph->points()[i];
+    auto pt_ref = sph_ref.points()[i];
+    REQUIRE_THAT(pt[0], Catch::Matchers::WithinAbs(pt_ref[0],1e-15));
+    REQUIRE_THAT(pt[1], Catch::Matchers::WithinAbs(pt_ref[1],1e-15));
+    REQUIRE_THAT(pt[2], Catch::Matchers::WithinAbs(pt_ref[2],1e-15));
+
+    auto w = sph->weights()[i];
+    auto w_ref = sph_ref.weights()[i];
+    REQUIRE_THAT(w, Catch::Matchers::WithinAbs(w_ref,1e-15));
+  }
+  
+}
