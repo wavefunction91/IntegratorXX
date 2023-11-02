@@ -228,8 +228,8 @@ auto get_robust_low_med_sizes(AngularSize asz) {
 
   const auto med_order = 
     traits::next_algebraic_order(base_order > 6 ? base_order-6 : base_order);
-  const auto low_order = 7;
-  
+  const auto low_order = traits::next_algebraic_order(7);
+
   AngularSize med_sz(traits::npts_by_algebraic_order(med_order));
   AngularSize low_sz(traits::npts_by_algebraic_order(low_order));
 
@@ -257,9 +257,10 @@ PrunedSphericalGridSpecification robust_psi4_pruning_scheme_impl(
 }
 
 PrunedSphericalGridSpecification robust_psi4_pruning_scheme(
-  AngularQuad angular_quad, UnprunedSphericalGridSpecification unp ) {
+  UnprunedSphericalGridSpecification unp ) {
 
   size_t low_sz, med_sz;
+  const auto angular_quad = unp.angular_quad;
   const auto asz = unp.angular_size;
   switch(angular_quad) {
     case AngularQuad::AhrensBeylkin:
@@ -318,9 +319,10 @@ PrunedSphericalGridSpecification treutler_pruning_scheme_impl(
 
 
 PrunedSphericalGridSpecification treutler_pruning_scheme(
-  AngularQuad angular_quad, UnprunedSphericalGridSpecification unp ) {
+  UnprunedSphericalGridSpecification unp ) {
 
   size_t low_sz, med_sz;
+  const auto angular_quad = unp.angular_quad;
   switch(angular_quad) {
     case AngularQuad::AhrensBeylkin:
       std::tie(low_sz, med_sz) = get_treutler_low_med_sizes<ah_type>();
@@ -345,20 +347,20 @@ PrunedSphericalGridSpecification treutler_pruning_scheme(
 
 
 PrunedSphericalGridSpecification create_pruned_spec(
-  PruningScheme scheme, AngularQuad aq, UnprunedSphericalGridSpecification unp
+  PruningScheme scheme, UnprunedSphericalGridSpecification unp
 ) {
 
   switch(scheme) {
     case PruningScheme::Robust:
-      return robust_psi4_pruning_scheme(aq, unp);
+      return robust_psi4_pruning_scheme(unp);
     case PruningScheme::Treutler:
-      return treutler_pruning_scheme(aq, unp);
+      return treutler_pruning_scheme(unp);
     
     // Default to Unpruned Grid
     case PruningScheme::Unpruned:
     default:
       std::vector<PruningRegion> pruning_regions = {
-        {0ul, (size_t)unp.radial_size, aq, unp.angular_size}
+        {0ul, (size_t)unp.radial_size, unp.angular_quad, unp.angular_size}
       };
       return PrunedSphericalGridSpecification{
         unp.radial_quad, unp.radial_size, unp.radial_scale, pruning_regions

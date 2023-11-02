@@ -69,24 +69,31 @@ struct PrunedSphericalGridSpecification {
   RadialScale radial_scale; ///< Radial scaling factor
 
   std::vector<PruningRegion> pruning_regions; ///< List of pruning regions over the radial quadrature
+
+  inline bool operator==(const PrunedSphericalGridSpecification& other) const noexcept {
+    return radial_quad == other.radial_quad and
+           radial_size == other.radial_size and
+           radial_scale == other.radial_scale and 
+           pruning_regions == other.pruning_regions;
+  }
 };
 
 /// Generate a "Robust"-Psi4 Pruning specification from an 
 /// unpruned quadrature specification
 PrunedSphericalGridSpecification robust_psi4_pruning_scheme(
-  AngularQuad, UnprunedSphericalGridSpecification
+  UnprunedSphericalGridSpecification
 );
 
 /// Generate a Pruning specification according to the Treutler-Ahlrichs 
 /// scheme from an unpruned specification
 PrunedSphericalGridSpecification treutler_pruning_scheme(
-  AngularQuad, UnprunedSphericalGridSpecification
+  UnprunedSphericalGridSpecification
 );
 
 /// Generate a pruning specification from a specificed pruning scheme and 
 /// an unpruned grid specification
 PrunedSphericalGridSpecification create_pruned_spec(
-  PruningScheme, AngularQuad, UnprunedSphericalGridSpecification
+  PruningScheme, UnprunedSphericalGridSpecification
 );
 
 
