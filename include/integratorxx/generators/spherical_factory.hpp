@@ -69,7 +69,7 @@ struct UnprunedSphericalGridSpecification {
 };
 
 
-/// Speficiation of a pruned region of an spierical quadrature
+/// Specification of a pruned region of an spherical quadrature
 struct PruningRegion {
   size_t idx_st; ///< Starting radial index for pruned region
   size_t idx_en; ///< Ending radial index (exclusive) for the pruned region
