@@ -57,7 +57,7 @@ source for appropriate references.
 For the generation of spherical quadratures, IntegratorXX additionally supports the following radial pruning schemes:
 | Name      | Description                          | C++ Specifier             |
 |-----------|--------------------------------------|---------------------------|
-| Unpruned  | No not perform pruning               | `PruningScheme::Unpruned` |
+| Unpruned  | Do not perform pruning               | `PruningScheme::Unpruned` |
 | Robust    | The Psi4 "robust" pruning scheme     | `PruningScheme::Robust`   |
 | Treutler  | The Treutler-Ahlrichs pruning scheme | `PruntinScheme::Treutler` |
 
