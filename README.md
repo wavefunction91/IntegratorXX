@@ -27,47 +27,65 @@ and validation new atomic and molecular quadrature schemes.
 
 ## Implemented Quadratures
 
-A note on quadrature classifications:
-* Primitive quadratures are those generated on a finite bound (e.g. Gauss quadrature rules). The general software design pattern of IntegratorXX is to build up higher-order quadrature rules (e.g. radial transformation, etc) from these primitive quadratures.
-* Radial quadratures are convolutions of primitive quadrature rules with a radial transformation scheme (mapping the natural domain of the primitive quadrature to positive semi-indefinite). The jacobian of the transformation *is* included while the radial component of the spherical jacobian is *not*
-* Angular quadratures integrate over $S^2$ (solid angle). It is typically the case that these are manually constructed to integrate spherical harmonics up to a specific order, and are thus only compatible witch *specific* grid orders.
-
-
-Below are the quadratures currently implemented in IntegratorXX. Please refer to the
+Here we list the quadratures currently implemented in IntegratorXX. Please refer to the
 source for appropriate references.
 
-| Quadrature Name                 | Quadrature Class | Domain  | C++ Class           |
-|---------------------------------|------------------|---------|---------------------|
-| Gauss-Chebyshev (First Kind)    | Primitive        | (-1,1)  | `GaussChebyshev1`   |
-| Gauss-Chebyshev (Second Kind)   | Primitive        | [-1,1]  | `GaussChebyshev2`   |
-| Gauss-Chebyshev (Third Kind)    | Primitive        | (0,1)   | `GaussChebyshev3`   |
-| Gauss-Legendre                  | Primitive        | [-1,1]  | `GaussLegendre`     |
-| Gauss-Lobatto                   | Primitive        | [-1,1]  | `GaussLobatto`      |
-| Trapezoid Rule                  | Primitive        | [0,1]   | `UniformTrapezoid`  |
-| Becke                           | Radial           | (0,inf) | `Becke`             |
-| Murray-Handy-Laming (MHL)       | Radial           | (0,inf) | `MurrayHandyLaming` |
-| Mura-Knowles (MK)               | Radial           | (0,inf) | `MuraKnowles`       |
-| Treutler-Ahlrichs (TA, M3 + M4) | Radial           | (0,inf) | `TreutlerAhlrichs`  |
-| Ahrens-Beylkin                  | Angular          | $S^2$   | `AhrensBeylkin`     |
-| Delley                          | Angular          | $S^2$   | `Delley`            |
-| Lebedev-Laikov                  | Angular          | $S^2$   | `LebedevLaikov`     |
-| Womersley                       | Angular          | $S^2$   | `Womersley`         |
 
 
-For the generation of spherical quadratures, IntegratorXX additionally supports the following radial pruning schemes:
-| Name      | Description                          | C++ Specifier             |
-|-----------|--------------------------------------|---------------------------|
-| Unpruned  | Do not perform pruning               | `PruningScheme::Unpruned` |
-| Robust    | The Psi4 "robust" pruning scheme     | `PruningScheme::Robust`   |
-| Treutler  | The Treutler-Ahlrichs pruning scheme | `PruntinScheme::Treutler` |
+### Primitive Quadratures
 
-### A Note on Angular Quadratures
+Primitive quadratures are those generated on a finite bound (e.g. Gauss
+quadrature rules). The general software design pattern of IntegratorXX is to
+build up higher-order quadrature rules (e.g. radial transformation, etc) from
+these primitive quadratures.
 
-All of the currently implemented angular quadrature schemes are only compatible with *specific* grid
-orders corresponding to *specific* algebraic orders of spherical harmonics they integrate exactly.
-The construction of the angular grids takes the number of points as argument, and will fail if the
-grid order is incompatible. As these *magic numbers* are different for each of the quadratures,
-we provide a set of look-up functions which can safely produce compatible grid orders:
+| Quadrature Name                 | Domain    | C++ Class           |
+|---------------------------------|-----------|---------------------|
+| Gauss-Chebyshev (First Kind)    | $(-1,1)$  | `GaussChebyshev1`   |
+| Gauss-Chebyshev (Second Kind)   | $[-1,1]$  | `GaussChebyshev2`   |
+| Gauss-Chebyshev (Third Kind)    | $(0,1)$   | `GaussChebyshev3`   |
+| Gauss-Legendre                  | $[-1,1]$  | `GaussLegendre`     |
+| Gauss-Lobatto                   | $[-1,1]$  | `GaussLobatto`      |
+| Trapezoid Rule                  | $[0,1]$   | `UniformTrapezoid`  |
+
+### Radial Quadratures
+
+Radial quadratures are convolutions of primitive quadrature rules with a radial
+transformation scheme (mapping the natural domain of the primitive quadrature
+to positive semi-indefinite). The jacobian of the transformation *is* included
+while the radial component of the spherical jacobian ($r^2$) is *not*.
+
+| Quadrature Name                 | Domain       | C++ Class           |
+|---------------------------------|--------------|---------------------|
+| Becke                           | $(0,\infty)$ | `Becke`             |
+| Murray-Handy-Laming (MHL)       | $(0,\infty)$ | `MurrayHandyLaming` |
+| Mura-Knowles (MK)               | $(0,\infty)$ | `MuraKnowles`       |
+| Treutler-Ahlrichs (TA, M3 + M4) | $(0,\infty)$ | `TreutlerAhlrichs`  |
+
+
+### Angular Quadratures
+
+Angular quadratures integrate over $S^2$ (solid angle). It is typically the
+case that these are manually constructed to integrate spherical harmonics up to
+a specific order, and are thus only compatible witch *specific* grid orders (see
+note below).
+
+| Quadrature Name                 | Domain  | C++ Class           |
+|---------------------------------|---------|---------------------|
+| Ahrens-Beylkin                  | $S^2$   | `AhrensBeylkin`     |
+| Delley                          | $S^2$   | `Delley`            |
+| Lebedev-Laikov                  | $S^2$   | `LebedevLaikov`     |
+| Womersley                       | $S^2$   | `Womersley`         |
+
+#### A Note on Angular Quadratures
+
+All of the currently implemented angular quadrature schemes are only compatible
+with *specific* grid orders corresponding to *specific* algebraic orders of
+spherical harmonics they integrate exactly.  The construction of the angular
+grids takes the number of points as argument, and will fail if the grid order
+is incompatible. As these *magic numbers* are different for each of the
+quadratures, we provide a set of look-up functions which can safely produce
+compatible grid orders:
 
 ```
 using angular_type = LebedevLaikov<double>; // FP64 LL grid, similar for other implementations
@@ -78,10 +96,25 @@ auto order = traits::algebraic_order_by_npts(npts);  // Return the algebratic or
 auto next_order = traits::next_algebraic_order(order); // Return the next largest (inclusive) algebratic order compatible with `angular_type` 
 ```
 
+### Radial Pruning Schemes
+
+For the generation of spherical quadratures, IntegratorXX additionally supports
+the following radial pruning schemes:
+
+| Name      | Description                          | C++ Specifier             |
+|-----------|--------------------------------------|---------------------------|
+| Unpruned  | Do not perform pruning               | `PruningScheme::Unpruned` |
+| Robust    | The Psi4 "robust" pruning scheme     | `PruningScheme::Robust`   |
+| Treutler  | The Treutler-Ahlrichs pruning scheme | `PruntinScheme::Treutler` |
+
+
 
 ## Example Usage
 
-Many example usages for 1-d quadratures (i.e. primitive and radial) can be found in `test/1d_quadratures.cxx` and `test/spherical_generator.cxx`. Below is a simple invocation example for the generation of an atomic sphere via the runtime generator:
+Many example usages for 1-d quadratures (i.e. primitive and radial) can be
+found in `test/1d_quadratures.cxx` and `test/spherical_generator.cxx`. Below is
+a simple invocation example for the generation of an atomic sphere via the
+runtime generator:
 ```
 using namespace IntegratorXX;               // Import namespace
 auto rad_spec = RadialQuad::MuraKnowles;    // MK Radial scheme
