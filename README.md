@@ -94,7 +94,7 @@ double rscal  = 2.0;
 UnprunedSphericalGridSpecification unp{
   rad_spec, nrad, rscal, ang_spec, nang
 };
-auto pruning_spec = create_pruned_spec(PruningScheme::Robust, unp 
+auto pruning_spec = create_pruned_spec(PruningScheme::Robust, unp); 
 
 // Generate Quadrature
 auto sph_quad = SphericalGridFactory::generate_grid(pruning_spec);
