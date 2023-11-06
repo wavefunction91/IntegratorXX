@@ -117,9 +117,9 @@ found in `test/1d_quadratures.cxx` and `test/spherical_generator.cxx`. Below is
 a simple invocation example for the generation of an atomic sphere via the
 runtime generator:
 ```
-using namespace IntegratorXX;               // Import namespace
-auto rad_spec = RadialQuad::MuraKnowles;    // MK Radial scheme
-auto ang_spec = AngularQuad::AhrensBeylkin; // AH Angular scheme
+using namespace IntegratorXX;                         // Import namespace
+auto rad_spec = radial_from_string("MuraKnowles");    // MK Radial scheme
+auto ang_spec = angular_from_string("AhrensBeylkin"); // AH Angular scheme
 size_t nrad   = 99;
 size_t nang   = 372;
 double rscal  = 2.0;
