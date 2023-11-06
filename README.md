@@ -9,7 +9,7 @@ there combination into spherical grids.
 
 ## Design Goals 
 
-* Provide a stable and reproducible implementation of the various atomic and
+* Provide stable, reusable, and reproducible implementations of the various atomic and
 molecular grids commonly encountered in quantum chemistry calculations
 * Develop a modern, modular, extensible C++ API to allow for the implementation
 and validation new atomic and molecular quadrature schemes.
