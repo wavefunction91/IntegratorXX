@@ -18,7 +18,7 @@ enum class RadialQuad : uint32_t {
 };
 
 template <typename RadQuadType>
-RadialQuad rad_from_type() {
+RadialQuad radial_from_type() {
   if constexpr (detail::is_becke_v<RadQuadType>) return RadialQuad::Becke;
   if constexpr (detail::is_mk_v<RadQuadType>   ) return RadialQuad::MuraKnowles;
   if constexpr (detail::is_mhl_v<RadQuadType>)   return RadialQuad::MurrayHandyLaming;
@@ -26,6 +26,8 @@ RadialQuad rad_from_type() {
 
   throw std::runtime_error("Unrecognized Radial Quadrature");
 };
+
+RadialQuad radial_from_string(std::string name);
 
 /// High-level specification of angular quadratures
 enum class AngularQuad : uint32_t {
@@ -36,7 +38,7 @@ enum class AngularQuad : uint32_t {
 };
 
 template <typename AngQuadType>
-AngularQuad ang_from_type() {
+AngularQuad angular_from_type() {
   if constexpr (detail::is_ahrens_beyklin_v<AngQuadType>) return AngularQuad::AhrensBeylkin;
   if constexpr (detail::is_delley_v<AngQuadType>   ) return AngularQuad::Delley;
   if constexpr (detail::is_lebedev_laikov_v<AngQuadType>)   return AngularQuad::LebedevLaikov;
@@ -44,6 +46,8 @@ AngularQuad ang_from_type() {
 
   throw std::runtime_error("Unrecognized Angular Quadrature");
 };
+
+AngularQuad angular_from_string(std::string name);
 
 /// High-level specification of pruning schemes for spherical quadratures
 enum class PruningScheme {

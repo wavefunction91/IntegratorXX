@@ -2,8 +2,37 @@
 #include <integratorxx/quadratures/radial.hpp>
 #include <integratorxx/quadratures/s2.hpp>
 
+#include <algorithm>
 
 namespace IntegratorXX {
+
+
+RadialQuad radial_from_string(std::string name) {
+  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+  if(name == "BECKE")             return RadialQuad::Becke;
+  if(name == "MURAKNOWLES")       return RadialQuad::MuraKnowles;
+  if(name == "MK")                return RadialQuad::MuraKnowles;
+  if(name == "MURRAYHANDYLAMING") return RadialQuad::MurrayHandyLaming;
+  if(name == "MHL")               return RadialQuad::MurrayHandyLaming;
+  if(name == "TREUTLERAHLRICHS")  return RadialQuad::TreutlerAhlrichs;
+  if(name == "TA")                return RadialQuad::TreutlerAhlrichs;
+
+  throw std::runtime_error("Unrecognized Radial Quadrature");
+}
+
+AngularQuad angular_from_string(std::string name) {
+  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+  if(name == "AHRENSBEYLKIN") return AngularQuad::AhrensBeylkin;
+  if(name == "AB")            return AngularQuad::AhrensBeylkin;
+  if(name == "DELLEY")        return AngularQuad::Delley;
+  if(name == "LEBEDEVLAIKOV") return AngularQuad::LebedevLaikov;
+  if(name == "LEBEDEV")       return AngularQuad::LebedevLaikov;
+  if(name == "LL")            return AngularQuad::LebedevLaikov;
+  if(name == "WOMERSLEY")     return AngularQuad::Womersley;
+
+  throw std::runtime_error("Unrecognized Angular Quadrature");
+}
+
 
 using spherical_grid_ptr = SphericalGridFactory::spherical_grid_ptr;
 

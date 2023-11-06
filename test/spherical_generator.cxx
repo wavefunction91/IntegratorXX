@@ -7,6 +7,16 @@
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 #include <integratorxx/generators/spherical_factory.hpp>
 
+using bk_type  = IntegratorXX::Becke<double,double>;
+using mk_type  = IntegratorXX::MuraKnowles<double,double>;
+using mhl_type = IntegratorXX::MurrayHandyLaming<double,double>;
+using ta_type  = IntegratorXX::TreutlerAhlrichs<double,double>;
+
+using ah_type = IntegratorXX::AhrensBeylkin<double>;
+using de_type = IntegratorXX::Delley<double>;
+using ll_type = IntegratorXX::LebedevLaikov<double>;
+using wo_type = IntegratorXX::Womersley<double>;
+
 std::ostream& operator<<( std::ostream& out, IntegratorXX::PruningRegion p) {
 
   using namespace IntegratorXX;
@@ -41,6 +51,29 @@ std::ostream& operator<<( std::ostream& out,
 
   
   return out;
+}
+
+TEST_CASE( "String Getter", "[sph-gen]" ) {
+  using namespace IntegratorXX;
+  SECTION("Radial") {
+    REQUIRE(radial_from_type<bk_type>()  == radial_from_string("Becke"));
+    REQUIRE(radial_from_type<mk_type>()  == radial_from_string("MuraKnowles"));
+    REQUIRE(radial_from_type<mk_type>()  == radial_from_string("MK"));
+    REQUIRE(radial_from_type<mhl_type>() == radial_from_string("MurrayHandyLaming"));
+    REQUIRE(radial_from_type<mhl_type>() == radial_from_string("MHL"));
+    REQUIRE(radial_from_type<ta_type>() == radial_from_string("TreutlerAhlrichs"));
+    REQUIRE(radial_from_type<ta_type>() == radial_from_string("TA"));
+  }
+
+  SECTION("Angular") {
+    REQUIRE(angular_from_type<ah_type>()  == angular_from_string("AhrensBeylkin"));
+    REQUIRE(angular_from_type<ah_type>()  == angular_from_string("AB"));
+    REQUIRE(angular_from_type<de_type>()  == angular_from_string("Delley"));
+    REQUIRE(angular_from_type<ll_type>()  == angular_from_string("LebedevLaikov"));
+    REQUIRE(angular_from_type<ll_type>()  == angular_from_string("Lebedev"));
+    REQUIRE(angular_from_type<ll_type>()  == angular_from_string("LL"));
+    REQUIRE(angular_from_type<wo_type>()  == angular_from_string("Womersley"));
+  }
 }
 
 TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
@@ -193,16 +226,6 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
 
 }
 
-using bk_type  = IntegratorXX::Becke<double,double>;
-using mk_type  = IntegratorXX::MuraKnowles<double,double>;
-using mhl_type = IntegratorXX::MurrayHandyLaming<double,double>;
-using ta_type  = IntegratorXX::TreutlerAhlrichs<double,double>;
-
-using ah_type = IntegratorXX::AhrensBeylkin<double>;
-using de_type = IntegratorXX::Delley<double>;
-using ll_type = IntegratorXX::LebedevLaikov<double>;
-using wo_type = IntegratorXX::Womersley<double>;
-
 using sph_test_types = std::tuple<
   std::tuple<bk_type, ah_type>,
   std::tuple<bk_type, de_type>,
@@ -247,8 +270,8 @@ TEMPLATE_LIST_TEST_CASE("Unpruned", "[sph-gen]", sph_test_types) {
 
   // Generate via runtime API
   UnprunedSphericalGridSpecification unp{
-    rad_from_type<radial_type>(), nrad, 1.0,
-    ang_from_type<angular_type>(), nang
+    radial_from_type<radial_type>(), nrad, 1.0,
+    angular_from_type<angular_type>(), nang
   };
 
   auto sph = SphericalGridFactory::generate_grid(unp);
@@ -285,8 +308,8 @@ TEMPLATE_LIST_TEST_CASE("Pruned", "[sph-gen]", sph_test_types) {
 
   // Generate pruning scheme
   UnprunedSphericalGridSpecification unp{
-    rad_from_type<radial_type>(), nrad, 1.0,
-    ang_from_type<angular_type>(), nang
+    radial_from_type<radial_type>(), nrad, 1.0,
+    angular_from_type<angular_type>(), nang
   };
 
   auto pruning_spec = robust_psi4_pruning_scheme(unp);
