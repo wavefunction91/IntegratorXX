@@ -13,6 +13,7 @@ there combination into spherical grids.
 molecular grids commonly encountered in quantum chemistry calculations
 * Develop a modern, modular, extensible C++ API to allow for the implementation
 and validation new atomic and molecular quadrature schemes.
+* Provide complete C and Python interfaces to allow reusing the implementation in projects written in these languages
 
 ## Dependencies
 
