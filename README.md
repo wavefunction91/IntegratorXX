@@ -53,7 +53,8 @@ these primitive quadratures.
 Radial quadratures are convolutions of primitive quadrature rules with a radial
 transformation scheme (mapping the natural domain of the primitive quadrature
 to positive semi-indefinite). The jacobian of the transformation *is* included
-while the radial component of the spherical jacobian ($r^2$) is *not*.
+in the radial weights while the radial component of the spherical jacobian
+($r^2$) is *not*.
 
 | Quadrature Name                 | Domain       | C++ Class           |
 |---------------------------------|--------------|---------------------|
