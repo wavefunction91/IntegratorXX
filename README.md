@@ -66,10 +66,9 @@ in the radial weights while the radial component of the spherical jacobian
 
 ### Angular Quadratures
 
-Angular quadratures integrate over $S^2$ (solid angle). It is typically the
-case that these are manually constructed to integrate spherical harmonics up to
-a specific order, and are thus only compatible witch *specific* grid orders (see
-note below).
+Angular quadratures integrate over $S^2$ (solid angle). These have typically been
+manually constructed to integrate spherical harmonics up to a specific order, and
+are thus only compatible witch *specific* grid orders (see note below).
 
 | Quadrature Name                 | Domain  | C++ Class           |
 |---------------------------------|---------|---------------------|
