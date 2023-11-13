@@ -4,7 +4,7 @@
 
 IntegratorXX is a modern C++ library for the generation of atomic and molecular
 grids for quantum chemistry calculations. Among the most important applications
-of these grids is the evaluation of exchange--correlation (XC) related quantites
+of these grids is the evaluation of exchange--correlation (XC) related quantities
 (energies, potentials, etc) required for density functional theory calculations.
 
 IntegratorXX provides a uniform interface for the generation of primitive,
@@ -57,7 +57,7 @@ these primitive quadratures.
 Radial quadratures are convolutions of primitive quadrature rules with a radial
 transformation scheme (mapping the natural domain of the primitive quadrature
 to positive semi-indefinite). The jacobian of the transformation *is* included
-in the radial weights while the radial component of the spherical jacobian
+in the radial weights while the radial component of the spherical volume element 
 ($r^2$) is *not*.
 
 | Quadrature Name                 | Domain       | C++ Class           |
