@@ -3,9 +3,13 @@
 ## Synopsis
 
 IntegratorXX is a modern C++ library for the generation of atomic and molecular
-grids for quantum chemistry calculations. It provides a uniform interface for
-the generation of primitive, radial and solid angle quadratures, as well as
-there combination into spherical grids.
+grids for quantum chemistry calculations. Among the most important applications
+of these grids is the evaluation of exchange--correlation (XC) related quantites
+(energies, potentials, etc) required for density functional theory calculations.
+
+IntegratorXX provides a uniform interface for the generation of primitive,
+radial and solid angle quadratures, as well as there combination into spherical
+grids.
 
 ## Design Goals 
 
