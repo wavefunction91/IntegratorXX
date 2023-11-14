@@ -27,8 +27,289 @@ namespace IntegratorXX {
  *  @tparam PointContainer  Quadrature points
  *  @tparam WeightContainer Quadrature weights
  */
+template <typename RealType>
+class Womersley : public Quadrature<Womersley<RealType>> {
+  using base_type = Quadrature<Womersley<RealType>>;
 
-namespace detail::womersley {
+ public:
+  using point_type = typename base_type::point_type;
+  using weight_type = typename base_type::weight_type;
+  using point_container = typename base_type::point_container;
+  using weight_container = typename base_type::weight_container;
+
+  Womersley(size_t npts) : base_type(npts) {}
+
+  Womersley(const Womersley &) = default;
+  Womersley(Womersley &&) noexcept = default;
+};
+
+template <typename RealType>
+struct quadrature_traits<Womersley<RealType>> {
+  using point_type = cartesian_pt_t<RealType>;
+  using weight_type = RealType;
+
+  using point_container = std::vector<point_type>;
+  using weight_container = std::vector<weight_type>;
+
+  inline static std::tuple<point_container, weight_container> generate(
+      size_t npts) {
+    point_container points(npts);
+    weight_container weights(npts);
+
+    using namespace WomersleyGrids;
+
+    if(npts == 3)
+      detail::copy_grid<womersley_3<RealType>>(points, weights);
+    else if(npts == 6)
+      detail::copy_grid<womersley_6<RealType>>(points, weights);
+    else if(npts == 8)
+      detail::copy_grid<womersley_8<RealType>>(points, weights);
+    else if(npts == 14)
+      detail::copy_grid<womersley_14<RealType>>(points, weights);
+    else if(npts == 18)
+      detail::copy_grid<womersley_18<RealType>>(points, weights);
+    else if(npts == 26)
+      detail::copy_grid<womersley_26<RealType>>(points, weights);
+    else if(npts == 32)
+      detail::copy_grid<womersley_32<RealType>>(points, weights);
+    else if(npts == 42)
+      detail::copy_grid<womersley_42<RealType>>(points, weights);
+    else if(npts == 50)
+      detail::copy_grid<womersley_50<RealType>>(points, weights);
+    else if(npts == 62)
+      detail::copy_grid<womersley_62<RealType>>(points, weights);
+    else if(npts == 72)
+      detail::copy_grid<womersley_72<RealType>>(points, weights);
+    else if(npts == 86)
+      detail::copy_grid<womersley_86<RealType>>(points, weights);
+    else if(npts == 98)
+      detail::copy_grid<womersley_98<RealType>>(points, weights);
+    else if(npts == 114)
+      detail::copy_grid<womersley_114<RealType>>(points, weights);
+    else if(npts == 128)
+      detail::copy_grid<womersley_128<RealType>>(points, weights);
+    else if(npts == 146)
+      detail::copy_grid<womersley_146<RealType>>(points, weights);
+    else if(npts == 163)
+      detail::copy_grid<womersley_163<RealType>>(points, weights);
+    else if(npts == 182)
+      detail::copy_grid<womersley_182<RealType>>(points, weights);
+    else if(npts == 201)
+      detail::copy_grid<womersley_201<RealType>>(points, weights);
+    else if(npts == 222)
+      detail::copy_grid<womersley_222<RealType>>(points, weights);
+    else if(npts == 243)
+      detail::copy_grid<womersley_243<RealType>>(points, weights);
+    else if(npts == 266)
+      detail::copy_grid<womersley_266<RealType>>(points, weights);
+    else if(npts == 289)
+      detail::copy_grid<womersley_289<RealType>>(points, weights);
+    else if(npts == 314)
+      detail::copy_grid<womersley_314<RealType>>(points, weights);
+    else if(npts == 339)
+      detail::copy_grid<womersley_339<RealType>>(points, weights);
+    else if(npts == 366)
+      detail::copy_grid<womersley_366<RealType>>(points, weights);
+    else if(npts == 393)
+      detail::copy_grid<womersley_393<RealType>>(points, weights);
+    else if(npts == 422)
+      detail::copy_grid<womersley_422<RealType>>(points, weights);
+    else if(npts == 451)
+      detail::copy_grid<womersley_451<RealType>>(points, weights);
+    else if(npts == 482)
+      detail::copy_grid<womersley_482<RealType>>(points, weights);
+    else if(npts == 513)
+      detail::copy_grid<womersley_513<RealType>>(points, weights);
+    else if(npts == 546)
+      detail::copy_grid<womersley_546<RealType>>(points, weights);
+    else if(npts == 579)
+      detail::copy_grid<womersley_579<RealType>>(points, weights);
+    else if(npts == 614)
+      detail::copy_grid<womersley_614<RealType>>(points, weights);
+    else if(npts == 649)
+      detail::copy_grid<womersley_649<RealType>>(points, weights);
+    else if(npts == 686)
+      detail::copy_grid<womersley_686<RealType>>(points, weights);
+    else if(npts == 723)
+      detail::copy_grid<womersley_723<RealType>>(points, weights);
+    else if(npts == 762)
+      detail::copy_grid<womersley_762<RealType>>(points, weights);
+    else if(npts == 801)
+      detail::copy_grid<womersley_801<RealType>>(points, weights);
+    else if(npts == 842)
+      detail::copy_grid<womersley_842<RealType>>(points, weights);
+    else if(npts == 883)
+      detail::copy_grid<womersley_883<RealType>>(points, weights);
+    else if(npts == 926)
+      detail::copy_grid<womersley_926<RealType>>(points, weights);
+    else if(npts == 969)
+      detail::copy_grid<womersley_969<RealType>>(points, weights);
+    else if(npts == 1014)
+      detail::copy_grid<womersley_1014<RealType>>(points, weights);
+    else if(npts == 1059)
+      detail::copy_grid<womersley_1059<RealType>>(points, weights);
+    else if(npts == 1106)
+      detail::copy_grid<womersley_1106<RealType>>(points, weights);
+    else if(npts == 1153)
+      detail::copy_grid<womersley_1153<RealType>>(points, weights);
+    else if(npts == 1202)
+      detail::copy_grid<womersley_1202<RealType>>(points, weights);
+    else if(npts == 1251)
+      detail::copy_grid<womersley_1251<RealType>>(points, weights);
+    else if(npts == 1302)
+      detail::copy_grid<womersley_1302<RealType>>(points, weights);
+    else if(npts == 1353)
+      detail::copy_grid<womersley_1353<RealType>>(points, weights);
+    else if(npts == 1406)
+      detail::copy_grid<womersley_1406<RealType>>(points, weights);
+    else if(npts == 1459)
+      detail::copy_grid<womersley_1459<RealType>>(points, weights);
+    else if(npts == 1514)
+      detail::copy_grid<womersley_1514<RealType>>(points, weights);
+    else if(npts == 1569)
+      detail::copy_grid<womersley_1569<RealType>>(points, weights);
+    else if(npts == 1626)
+      detail::copy_grid<womersley_1626<RealType>>(points, weights);
+    else if(npts == 1683)
+      detail::copy_grid<womersley_1683<RealType>>(points, weights);
+    else if(npts == 1742)
+      detail::copy_grid<womersley_1742<RealType>>(points, weights);
+    else if(npts == 1801)
+      detail::copy_grid<womersley_1801<RealType>>(points, weights);
+    else if(npts == 1862)
+      detail::copy_grid<womersley_1862<RealType>>(points, weights);
+    else if(npts == 1923)
+      detail::copy_grid<womersley_1923<RealType>>(points, weights);
+    else if(npts == 1986)
+      detail::copy_grid<womersley_1986<RealType>>(points, weights);
+    else if(npts == 2049)
+      detail::copy_grid<womersley_2049<RealType>>(points, weights);
+    else if(npts == 2114)
+      detail::copy_grid<womersley_2114<RealType>>(points, weights);
+    else if(npts == 2179)
+      detail::copy_grid<womersley_2179<RealType>>(points, weights);
+    else if(npts == 2246)
+      detail::copy_grid<womersley_2246<RealType>>(points, weights);
+    else if(npts == 2313)
+      detail::copy_grid<womersley_2313<RealType>>(points, weights);
+    else if(npts == 2382)
+      detail::copy_grid<womersley_2382<RealType>>(points, weights);
+    else if(npts == 2451)
+      detail::copy_grid<womersley_2451<RealType>>(points, weights);
+    else if(npts == 2522)
+      detail::copy_grid<womersley_2522<RealType>>(points, weights);
+    else if(npts == 2593)
+      detail::copy_grid<womersley_2593<RealType>>(points, weights);
+    else if(npts == 2666)
+      detail::copy_grid<womersley_2666<RealType>>(points, weights);
+    else if(npts == 2739)
+      detail::copy_grid<womersley_2739<RealType>>(points, weights);
+    else if(npts == 2814)
+      detail::copy_grid<womersley_2814<RealType>>(points, weights);
+    else if(npts == 2889)
+      detail::copy_grid<womersley_2889<RealType>>(points, weights);
+    else if(npts == 2966)
+      detail::copy_grid<womersley_2966<RealType>>(points, weights);
+    else if(npts == 3043)
+      detail::copy_grid<womersley_3043<RealType>>(points, weights);
+    else if(npts == 3122)
+      detail::copy_grid<womersley_3122<RealType>>(points, weights);
+    else if(npts == 3201)
+      detail::copy_grid<womersley_3201<RealType>>(points, weights);
+    else if(npts == 3282)
+      detail::copy_grid<womersley_3282<RealType>>(points, weights);
+    else if(npts == 3363)
+      detail::copy_grid<womersley_3363<RealType>>(points, weights);
+    else if(npts == 3446)
+      detail::copy_grid<womersley_3446<RealType>>(points, weights);
+    else if(npts == 3529)
+      detail::copy_grid<womersley_3529<RealType>>(points, weights);
+    else if(npts == 3614)
+      detail::copy_grid<womersley_3614<RealType>>(points, weights);
+    else if(npts == 3699)
+      detail::copy_grid<womersley_3699<RealType>>(points, weights);
+    else if(npts == 3786)
+      detail::copy_grid<womersley_3786<RealType>>(points, weights);
+    else if(npts == 3873)
+      detail::copy_grid<womersley_3873<RealType>>(points, weights);
+    else if(npts == 3962)
+      detail::copy_grid<womersley_3962<RealType>>(points, weights);
+    else if(npts == 4051)
+      detail::copy_grid<womersley_4051<RealType>>(points, weights);
+    else if(npts == 4142)
+      detail::copy_grid<womersley_4142<RealType>>(points, weights);
+    else if(npts == 4233)
+      detail::copy_grid<womersley_4233<RealType>>(points, weights);
+    else if(npts == 4326)
+      detail::copy_grid<womersley_4326<RealType>>(points, weights);
+    else if(npts == 4419)
+      detail::copy_grid<womersley_4419<RealType>>(points, weights);
+    else if(npts == 4514)
+      detail::copy_grid<womersley_4514<RealType>>(points, weights);
+    else if(npts == 4609)
+      detail::copy_grid<womersley_4609<RealType>>(points, weights);
+    else if(npts == 4706)
+      detail::copy_grid<womersley_4706<RealType>>(points, weights);
+    else if(npts == 4803)
+      detail::copy_grid<womersley_4803<RealType>>(points, weights);
+    else if(npts == 4902)
+      detail::copy_grid<womersley_4902<RealType>>(points, weights);
+    else if(npts == 5001)
+      detail::copy_grid<womersley_5001<RealType>>(points, weights);
+    else if(npts == 5102)
+      detail::copy_grid<womersley_5102<RealType>>(points, weights);
+    else if(npts == 5203)
+      detail::copy_grid<womersley_5203<RealType>>(points, weights);
+    else if(npts == 5306)
+      detail::copy_grid<womersley_5306<RealType>>(points, weights);
+    else if(npts == 5409)
+      detail::copy_grid<womersley_5409<RealType>>(points, weights);
+    else if(npts == 5514)
+      detail::copy_grid<womersley_5514<RealType>>(points, weights);
+    else if(npts == 5619)
+      detail::copy_grid<womersley_5619<RealType>>(points, weights);
+    else if(npts == 5726)
+      detail::copy_grid<womersley_5726<RealType>>(points, weights);
+    else if(npts == 5833)
+      detail::copy_grid<womersley_5833<RealType>>(points, weights);
+    else if(npts == 5942)
+      detail::copy_grid<womersley_5942<RealType>>(points, weights);
+    else if(npts == 6051)
+      detail::copy_grid<womersley_6051<RealType>>(points, weights);
+    else if(npts == 6162)
+      detail::copy_grid<womersley_6162<RealType>>(points, weights);
+    else if(npts == 6273)
+      detail::copy_grid<womersley_6273<RealType>>(points, weights);
+    else if(npts == 6386)
+      detail::copy_grid<womersley_6386<RealType>>(points, weights);
+    else if(npts == 6499)
+      detail::copy_grid<womersley_6499<RealType>>(points, weights);
+    else if(npts == 6614)
+      detail::copy_grid<womersley_6614<RealType>>(points, weights);
+    else if(npts == 6729)
+      detail::copy_grid<womersley_6729<RealType>>(points, weights);
+    else if(npts == 6846)
+      detail::copy_grid<womersley_6846<RealType>>(points, weights);
+    else if(npts == 6963)
+      detail::copy_grid<womersley_6963<RealType>>(points, weights);
+    else if(npts == 7082)
+      detail::copy_grid<womersley_7082<RealType>>(points, weights);
+    else if(npts == 7201)
+      detail::copy_grid<womersley_7201<RealType>>(points, weights);
+    else if(npts == 7322)
+      detail::copy_grid<womersley_7322<RealType>>(points, weights);
+    else if(npts == 7443)
+      detail::copy_grid<womersley_7443<RealType>>(points, weights);
+    else if(npts == 7566)
+      detail::copy_grid<womersley_7566<RealType>>(points, weights);
+    else if(npts == 7689)
+      detail::copy_grid<womersley_7689<RealType>>(points, weights);
+    else if(npts == 7814)
+      detail::copy_grid<womersley_7814<RealType>>(points, weights);
+    else if(npts == 7939)
+      detail::copy_grid<womersley_7939<RealType>>(points, weights);
+    return std::make_tuple(points, weights);
+  }
 
 inline static int64_t npts_by_algebraic_order(int64_t order) {
   switch(order) {
@@ -796,290 +1077,14 @@ inline static int64_t next_algebraic_order(int64_t order) {
   else
     return 125;
 }
-}  // namespace detail::womersley
-
-template <typename RealType>
-class Womersley : public Quadrature<Womersley<RealType>> {
-  using base_type = Quadrature<Womersley<RealType>>;
-
- public:
-  using point_type = typename base_type::point_type;
-  using weight_type = typename base_type::weight_type;
-  using point_container = typename base_type::point_container;
-  using weight_container = typename base_type::weight_container;
-
-  Womersley(size_t npts) : base_type(npts) {}
-
-  Womersley(const Womersley &) = default;
-  Womersley(Womersley &&) noexcept = default;
 };
+namespace detail {
 
-template <typename RealType>
-struct quadrature_traits<Womersley<RealType>> {
-  using point_type = cartesian_pt_t<RealType>;
-  using weight_type = RealType;
+template <typename QuadType>
+static constexpr bool is_womersley_v = std::is_same_v<
+  QuadType, 
+  Womersley<typename QuadType::weight_type>
+>;
 
-  using point_container = std::vector<point_type>;
-  using weight_container = std::vector<weight_type>;
-
-  inline static std::tuple<point_container, weight_container> generate(
-      size_t npts) {
-    point_container points(npts);
-    weight_container weights(npts);
-
-    using namespace WomersleyGrids;
-
-    if(npts == 3)
-      detail::copy_grid<womersley_3<RealType>>(points, weights);
-    else if(npts == 6)
-      detail::copy_grid<womersley_6<RealType>>(points, weights);
-    else if(npts == 8)
-      detail::copy_grid<womersley_8<RealType>>(points, weights);
-    else if(npts == 14)
-      detail::copy_grid<womersley_14<RealType>>(points, weights);
-    else if(npts == 18)
-      detail::copy_grid<womersley_18<RealType>>(points, weights);
-    else if(npts == 26)
-      detail::copy_grid<womersley_26<RealType>>(points, weights);
-    else if(npts == 32)
-      detail::copy_grid<womersley_32<RealType>>(points, weights);
-    else if(npts == 42)
-      detail::copy_grid<womersley_42<RealType>>(points, weights);
-    else if(npts == 50)
-      detail::copy_grid<womersley_50<RealType>>(points, weights);
-    else if(npts == 62)
-      detail::copy_grid<womersley_62<RealType>>(points, weights);
-    else if(npts == 72)
-      detail::copy_grid<womersley_72<RealType>>(points, weights);
-    else if(npts == 86)
-      detail::copy_grid<womersley_86<RealType>>(points, weights);
-    else if(npts == 98)
-      detail::copy_grid<womersley_98<RealType>>(points, weights);
-    else if(npts == 114)
-      detail::copy_grid<womersley_114<RealType>>(points, weights);
-    else if(npts == 128)
-      detail::copy_grid<womersley_128<RealType>>(points, weights);
-    else if(npts == 146)
-      detail::copy_grid<womersley_146<RealType>>(points, weights);
-    else if(npts == 163)
-      detail::copy_grid<womersley_163<RealType>>(points, weights);
-    else if(npts == 182)
-      detail::copy_grid<womersley_182<RealType>>(points, weights);
-    else if(npts == 201)
-      detail::copy_grid<womersley_201<RealType>>(points, weights);
-    else if(npts == 222)
-      detail::copy_grid<womersley_222<RealType>>(points, weights);
-    else if(npts == 243)
-      detail::copy_grid<womersley_243<RealType>>(points, weights);
-    else if(npts == 266)
-      detail::copy_grid<womersley_266<RealType>>(points, weights);
-    else if(npts == 289)
-      detail::copy_grid<womersley_289<RealType>>(points, weights);
-    else if(npts == 314)
-      detail::copy_grid<womersley_314<RealType>>(points, weights);
-    else if(npts == 339)
-      detail::copy_grid<womersley_339<RealType>>(points, weights);
-    else if(npts == 366)
-      detail::copy_grid<womersley_366<RealType>>(points, weights);
-    else if(npts == 393)
-      detail::copy_grid<womersley_393<RealType>>(points, weights);
-    else if(npts == 422)
-      detail::copy_grid<womersley_422<RealType>>(points, weights);
-    else if(npts == 451)
-      detail::copy_grid<womersley_451<RealType>>(points, weights);
-    else if(npts == 482)
-      detail::copy_grid<womersley_482<RealType>>(points, weights);
-    else if(npts == 513)
-      detail::copy_grid<womersley_513<RealType>>(points, weights);
-    else if(npts == 546)
-      detail::copy_grid<womersley_546<RealType>>(points, weights);
-    else if(npts == 579)
-      detail::copy_grid<womersley_579<RealType>>(points, weights);
-    else if(npts == 614)
-      detail::copy_grid<womersley_614<RealType>>(points, weights);
-    else if(npts == 649)
-      detail::copy_grid<womersley_649<RealType>>(points, weights);
-    else if(npts == 686)
-      detail::copy_grid<womersley_686<RealType>>(points, weights);
-    else if(npts == 723)
-      detail::copy_grid<womersley_723<RealType>>(points, weights);
-    else if(npts == 762)
-      detail::copy_grid<womersley_762<RealType>>(points, weights);
-    else if(npts == 801)
-      detail::copy_grid<womersley_801<RealType>>(points, weights);
-    else if(npts == 842)
-      detail::copy_grid<womersley_842<RealType>>(points, weights);
-    else if(npts == 883)
-      detail::copy_grid<womersley_883<RealType>>(points, weights);
-    else if(npts == 926)
-      detail::copy_grid<womersley_926<RealType>>(points, weights);
-    else if(npts == 969)
-      detail::copy_grid<womersley_969<RealType>>(points, weights);
-    else if(npts == 1014)
-      detail::copy_grid<womersley_1014<RealType>>(points, weights);
-    else if(npts == 1059)
-      detail::copy_grid<womersley_1059<RealType>>(points, weights);
-    else if(npts == 1106)
-      detail::copy_grid<womersley_1106<RealType>>(points, weights);
-    else if(npts == 1153)
-      detail::copy_grid<womersley_1153<RealType>>(points, weights);
-    else if(npts == 1202)
-      detail::copy_grid<womersley_1202<RealType>>(points, weights);
-    else if(npts == 1251)
-      detail::copy_grid<womersley_1251<RealType>>(points, weights);
-    else if(npts == 1302)
-      detail::copy_grid<womersley_1302<RealType>>(points, weights);
-    else if(npts == 1353)
-      detail::copy_grid<womersley_1353<RealType>>(points, weights);
-    else if(npts == 1406)
-      detail::copy_grid<womersley_1406<RealType>>(points, weights);
-    else if(npts == 1459)
-      detail::copy_grid<womersley_1459<RealType>>(points, weights);
-    else if(npts == 1514)
-      detail::copy_grid<womersley_1514<RealType>>(points, weights);
-    else if(npts == 1569)
-      detail::copy_grid<womersley_1569<RealType>>(points, weights);
-    else if(npts == 1626)
-      detail::copy_grid<womersley_1626<RealType>>(points, weights);
-    else if(npts == 1683)
-      detail::copy_grid<womersley_1683<RealType>>(points, weights);
-    else if(npts == 1742)
-      detail::copy_grid<womersley_1742<RealType>>(points, weights);
-    else if(npts == 1801)
-      detail::copy_grid<womersley_1801<RealType>>(points, weights);
-    else if(npts == 1862)
-      detail::copy_grid<womersley_1862<RealType>>(points, weights);
-    else if(npts == 1923)
-      detail::copy_grid<womersley_1923<RealType>>(points, weights);
-    else if(npts == 1986)
-      detail::copy_grid<womersley_1986<RealType>>(points, weights);
-    else if(npts == 2049)
-      detail::copy_grid<womersley_2049<RealType>>(points, weights);
-    else if(npts == 2114)
-      detail::copy_grid<womersley_2114<RealType>>(points, weights);
-    else if(npts == 2179)
-      detail::copy_grid<womersley_2179<RealType>>(points, weights);
-    else if(npts == 2246)
-      detail::copy_grid<womersley_2246<RealType>>(points, weights);
-    else if(npts == 2313)
-      detail::copy_grid<womersley_2313<RealType>>(points, weights);
-    else if(npts == 2382)
-      detail::copy_grid<womersley_2382<RealType>>(points, weights);
-    else if(npts == 2451)
-      detail::copy_grid<womersley_2451<RealType>>(points, weights);
-    else if(npts == 2522)
-      detail::copy_grid<womersley_2522<RealType>>(points, weights);
-    else if(npts == 2593)
-      detail::copy_grid<womersley_2593<RealType>>(points, weights);
-    else if(npts == 2666)
-      detail::copy_grid<womersley_2666<RealType>>(points, weights);
-    else if(npts == 2739)
-      detail::copy_grid<womersley_2739<RealType>>(points, weights);
-    else if(npts == 2814)
-      detail::copy_grid<womersley_2814<RealType>>(points, weights);
-    else if(npts == 2889)
-      detail::copy_grid<womersley_2889<RealType>>(points, weights);
-    else if(npts == 2966)
-      detail::copy_grid<womersley_2966<RealType>>(points, weights);
-    else if(npts == 3043)
-      detail::copy_grid<womersley_3043<RealType>>(points, weights);
-    else if(npts == 3122)
-      detail::copy_grid<womersley_3122<RealType>>(points, weights);
-    else if(npts == 3201)
-      detail::copy_grid<womersley_3201<RealType>>(points, weights);
-    else if(npts == 3282)
-      detail::copy_grid<womersley_3282<RealType>>(points, weights);
-    else if(npts == 3363)
-      detail::copy_grid<womersley_3363<RealType>>(points, weights);
-    else if(npts == 3446)
-      detail::copy_grid<womersley_3446<RealType>>(points, weights);
-    else if(npts == 3529)
-      detail::copy_grid<womersley_3529<RealType>>(points, weights);
-    else if(npts == 3614)
-      detail::copy_grid<womersley_3614<RealType>>(points, weights);
-    else if(npts == 3699)
-      detail::copy_grid<womersley_3699<RealType>>(points, weights);
-    else if(npts == 3786)
-      detail::copy_grid<womersley_3786<RealType>>(points, weights);
-    else if(npts == 3873)
-      detail::copy_grid<womersley_3873<RealType>>(points, weights);
-    else if(npts == 3962)
-      detail::copy_grid<womersley_3962<RealType>>(points, weights);
-    else if(npts == 4051)
-      detail::copy_grid<womersley_4051<RealType>>(points, weights);
-    else if(npts == 4142)
-      detail::copy_grid<womersley_4142<RealType>>(points, weights);
-    else if(npts == 4233)
-      detail::copy_grid<womersley_4233<RealType>>(points, weights);
-    else if(npts == 4326)
-      detail::copy_grid<womersley_4326<RealType>>(points, weights);
-    else if(npts == 4419)
-      detail::copy_grid<womersley_4419<RealType>>(points, weights);
-    else if(npts == 4514)
-      detail::copy_grid<womersley_4514<RealType>>(points, weights);
-    else if(npts == 4609)
-      detail::copy_grid<womersley_4609<RealType>>(points, weights);
-    else if(npts == 4706)
-      detail::copy_grid<womersley_4706<RealType>>(points, weights);
-    else if(npts == 4803)
-      detail::copy_grid<womersley_4803<RealType>>(points, weights);
-    else if(npts == 4902)
-      detail::copy_grid<womersley_4902<RealType>>(points, weights);
-    else if(npts == 5001)
-      detail::copy_grid<womersley_5001<RealType>>(points, weights);
-    else if(npts == 5102)
-      detail::copy_grid<womersley_5102<RealType>>(points, weights);
-    else if(npts == 5203)
-      detail::copy_grid<womersley_5203<RealType>>(points, weights);
-    else if(npts == 5306)
-      detail::copy_grid<womersley_5306<RealType>>(points, weights);
-    else if(npts == 5409)
-      detail::copy_grid<womersley_5409<RealType>>(points, weights);
-    else if(npts == 5514)
-      detail::copy_grid<womersley_5514<RealType>>(points, weights);
-    else if(npts == 5619)
-      detail::copy_grid<womersley_5619<RealType>>(points, weights);
-    else if(npts == 5726)
-      detail::copy_grid<womersley_5726<RealType>>(points, weights);
-    else if(npts == 5833)
-      detail::copy_grid<womersley_5833<RealType>>(points, weights);
-    else if(npts == 5942)
-      detail::copy_grid<womersley_5942<RealType>>(points, weights);
-    else if(npts == 6051)
-      detail::copy_grid<womersley_6051<RealType>>(points, weights);
-    else if(npts == 6162)
-      detail::copy_grid<womersley_6162<RealType>>(points, weights);
-    else if(npts == 6273)
-      detail::copy_grid<womersley_6273<RealType>>(points, weights);
-    else if(npts == 6386)
-      detail::copy_grid<womersley_6386<RealType>>(points, weights);
-    else if(npts == 6499)
-      detail::copy_grid<womersley_6499<RealType>>(points, weights);
-    else if(npts == 6614)
-      detail::copy_grid<womersley_6614<RealType>>(points, weights);
-    else if(npts == 6729)
-      detail::copy_grid<womersley_6729<RealType>>(points, weights);
-    else if(npts == 6846)
-      detail::copy_grid<womersley_6846<RealType>>(points, weights);
-    else if(npts == 6963)
-      detail::copy_grid<womersley_6963<RealType>>(points, weights);
-    else if(npts == 7082)
-      detail::copy_grid<womersley_7082<RealType>>(points, weights);
-    else if(npts == 7201)
-      detail::copy_grid<womersley_7201<RealType>>(points, weights);
-    else if(npts == 7322)
-      detail::copy_grid<womersley_7322<RealType>>(points, weights);
-    else if(npts == 7443)
-      detail::copy_grid<womersley_7443<RealType>>(points, weights);
-    else if(npts == 7566)
-      detail::copy_grid<womersley_7566<RealType>>(points, weights);
-    else if(npts == 7689)
-      detail::copy_grid<womersley_7689<RealType>>(points, weights);
-    else if(npts == 7814)
-      detail::copy_grid<womersley_7814<RealType>>(points, weights);
-    else if(npts == 7939)
-      detail::copy_grid<womersley_7939<RealType>>(points, weights);
-    return std::make_tuple(points, weights);
-  }
-};
+}
 }  // namespace IntegratorXX

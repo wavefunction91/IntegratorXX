@@ -24,6 +24,9 @@ target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain inte
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
 target_link_libraries( quadrature_manipulation PUBLIC integratorxx_common_ut )
 
+add_executable( spherical_generator spherical_generator.cxx )
+target_link_libraries( spherical_generator PUBLIC integratorxx_common_ut )
+
 add_executable( 1d_quadratures 1d_quadratures.cxx )
 target_link_libraries( 1d_quadratures PUBLIC integratorxx_common_ut )
 
@@ -47,6 +50,7 @@ target_link_libraries( composite_quadratures PUBLIC integratorxx_common_ut )
 add_test( NAME QUADRATURE_MANIP         COMMAND quadrature_manipulation )
 add_test( NAME QUADRATURES_1D           COMMAND 1d_quadratures          )
 add_test( NAME QUADRATURES_COMPOSITE    COMMAND composite_quadratures   )
+add_test( NAME QUADRATURES_SPH_GEN      COMMAND spherical_generator     )
 add_test( NAME QUADRATURES_LEGENDRE     COMMAND gausslegendre           )
 add_test( NAME QUADRATURES_LOBATTO      COMMAND gausslobatto            )
 add_test( NAME QUADRATURES_CHEBYSHEV1   COMMAND gausschebyshev1         )

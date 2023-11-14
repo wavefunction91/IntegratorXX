@@ -74,5 +74,14 @@ using MurrayHandyLaming = RadialTransformQuadrature<
   MurrayHandyLamingRadialTraits<2>
 >;
 
+namespace detail {
+
+template <typename QuadType>
+static constexpr bool is_mhl_v = std::is_same_v<
+  QuadType, 
+  MurrayHandyLaming<typename QuadType::point_type, typename QuadType::weight_type>
+>;
+
+}
 }
 

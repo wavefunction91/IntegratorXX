@@ -70,4 +70,14 @@ template <typename PointType, typename WeightType>
 using Becke = RadialTransformQuadrature<GaussChebyshev2<PointType, WeightType>,
                                         BeckeRadialTraits>;
 
+
+namespace detail {
+
+template <typename QuadType>
+static constexpr bool is_becke_v = std::is_same_v<
+  QuadType, 
+  Becke<typename QuadType::point_type, typename QuadType::weight_type>
+>;
+
+}
 }  // namespace IntegratorXX

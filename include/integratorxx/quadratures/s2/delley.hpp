@@ -18,8 +18,80 @@ namespace IntegratorXX {
  *  @tparam PointContainer  Quadrature points
  *  @tparam WeightContainer Quadrature weights
  */
+template <typename RealType>
+class Delley : public Quadrature<Delley<RealType>> {
+  using base_type = Quadrature<Delley<RealType>>;
 
-namespace detail::delley {
+ public:
+  using point_type = typename base_type::point_type;
+  using weight_type = typename base_type::weight_type;
+  using point_container = typename base_type::point_container;
+  using weight_container = typename base_type::weight_container;
+
+  Delley(size_t npts) : base_type(npts) {}
+
+  Delley(const Delley &) = default;
+  Delley(Delley &&) noexcept = default;
+};
+
+template <typename RealType>
+struct quadrature_traits<Delley<RealType>> {
+  using point_type = cartesian_pt_t<RealType>;
+  using weight_type = RealType;
+
+  using point_container = std::vector<point_type>;
+  using weight_container = std::vector<weight_type>;
+
+  inline static std::tuple<point_container, weight_container> generate(
+      size_t npts) {
+    point_container points(npts);
+    weight_container weights(npts);
+
+    using namespace DelleyGrids;
+
+    if(npts == 14)
+      detail::copy_grid<delley_14<RealType>>(points, weights);
+    else if(npts == 26)
+      detail::copy_grid<delley_26<RealType>>(points, weights);
+    else if(npts == 50)
+      detail::copy_grid<delley_50<RealType>>(points, weights);
+    else if(npts == 110)
+      detail::copy_grid<delley_110<RealType>>(points, weights);
+    else if(npts == 194)
+      detail::copy_grid<delley_194<RealType>>(points, weights);
+    else if(npts == 302)
+      detail::copy_grid<delley_302<RealType>>(points, weights);
+    else if(npts == 434)
+      detail::copy_grid<delley_434<RealType>>(points, weights);
+    else if(npts == 590)
+      detail::copy_grid<delley_590<RealType>>(points, weights);
+    else if(npts == 770)
+      detail::copy_grid<delley_770<RealType>>(points, weights);
+    else if(npts == 974)
+      detail::copy_grid<delley_974<RealType>>(points, weights);
+    else if(npts == 1202)
+      detail::copy_grid<delley_1202<RealType>>(points, weights);
+    else if(npts == 1454)
+      detail::copy_grid<delley_1454<RealType>>(points, weights);
+    else if(npts == 1730)
+      detail::copy_grid<delley_1730<RealType>>(points, weights);
+    else if(npts == 2030)
+      detail::copy_grid<delley_2030<RealType>>(points, weights);
+    else if(npts == 2354)
+      detail::copy_grid<delley_2354<RealType>>(points, weights);
+    else if(npts == 2702)
+      detail::copy_grid<delley_2702<RealType>>(points, weights);
+    else if(npts == 3074)
+      detail::copy_grid<delley_3074<RealType>>(points, weights);
+    else if(npts == 3470)
+      detail::copy_grid<delley_3470<RealType>>(points, weights);
+
+    // Pretabulated weights are missing 4 pi
+    for(auto i=0; i < npts; i++)
+      weights[i] *= 4.0*M_PI;
+
+    return std::make_tuple(points, weights);
+  }
 
 inline static int64_t npts_by_algebraic_order(int64_t order) {
   switch(order) {
@@ -145,81 +217,14 @@ inline static int64_t next_algebraic_order(int64_t order) {
   else
     return 101;
 }
-}  // namespace detail::delley
-
-template <typename RealType>
-class Delley : public Quadrature<Delley<RealType>> {
-  using base_type = Quadrature<Delley<RealType>>;
-
- public:
-  using point_type = typename base_type::point_type;
-  using weight_type = typename base_type::weight_type;
-  using point_container = typename base_type::point_container;
-  using weight_container = typename base_type::weight_container;
-
-  Delley(size_t npts) : base_type(npts) {}
-
-  Delley(const Delley &) = default;
-  Delley(Delley &&) noexcept = default;
 };
+namespace detail {
 
-template <typename RealType>
-struct quadrature_traits<Delley<RealType>> {
-  using point_type = cartesian_pt_t<RealType>;
-  using weight_type = RealType;
+template <typename QuadType>
+static constexpr bool is_delley_v = std::is_same_v<
+  QuadType, 
+  Delley<typename QuadType::weight_type>
+>;
 
-  using point_container = std::vector<point_type>;
-  using weight_container = std::vector<weight_type>;
-
-  inline static std::tuple<point_container, weight_container> generate(
-      size_t npts) {
-    point_container points(npts);
-    weight_container weights(npts);
-
-    using namespace DelleyGrids;
-
-    if(npts == 14)
-      detail::copy_grid<delley_14<RealType>>(points, weights);
-    else if(npts == 26)
-      detail::copy_grid<delley_26<RealType>>(points, weights);
-    else if(npts == 50)
-      detail::copy_grid<delley_50<RealType>>(points, weights);
-    else if(npts == 110)
-      detail::copy_grid<delley_110<RealType>>(points, weights);
-    else if(npts == 194)
-      detail::copy_grid<delley_194<RealType>>(points, weights);
-    else if(npts == 302)
-      detail::copy_grid<delley_302<RealType>>(points, weights);
-    else if(npts == 434)
-      detail::copy_grid<delley_434<RealType>>(points, weights);
-    else if(npts == 590)
-      detail::copy_grid<delley_590<RealType>>(points, weights);
-    else if(npts == 770)
-      detail::copy_grid<delley_770<RealType>>(points, weights);
-    else if(npts == 974)
-      detail::copy_grid<delley_974<RealType>>(points, weights);
-    else if(npts == 1202)
-      detail::copy_grid<delley_1202<RealType>>(points, weights);
-    else if(npts == 1454)
-      detail::copy_grid<delley_1454<RealType>>(points, weights);
-    else if(npts == 1730)
-      detail::copy_grid<delley_1730<RealType>>(points, weights);
-    else if(npts == 2030)
-      detail::copy_grid<delley_2030<RealType>>(points, weights);
-    else if(npts == 2354)
-      detail::copy_grid<delley_2354<RealType>>(points, weights);
-    else if(npts == 2702)
-      detail::copy_grid<delley_2702<RealType>>(points, weights);
-    else if(npts == 3074)
-      detail::copy_grid<delley_3074<RealType>>(points, weights);
-    else if(npts == 3470)
-      detail::copy_grid<delley_3470<RealType>>(points, weights);
-
-    // Pretabulated weights are missing 4 pi
-    for(auto i=0; i < npts; i++)
-      weights[i] *= 4.0*M_PI;
-
-    return std::make_tuple(points, weights);
-  }
-};
+}
 }  // namespace IntegratorXX
