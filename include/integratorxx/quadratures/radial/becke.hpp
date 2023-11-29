@@ -13,8 +13,10 @@ namespace IntegratorXX {
  *  J. Chem. Phys. 88, 2547 (1988)
  *  DOI: https://doi.org/10.1063/1.454033
  */
-class BeckeRadialTraits {
-  double R_;
+class BeckeRadialTraits : public RadialTraits {
+
+  size_t npts_; ///< Number of grid points
+  double R_; ///< Radial scaling factor
 
  public:
   /**
@@ -24,7 +26,9 @@ class BeckeRadialTraits {
    *
    *  @param[in] R     Radial scaling factor
    */
-  BeckeRadialTraits(double R = 1.0) : R_(R) {}
+  BeckeRadialTraits(size_t npts, double R = 1.0) : npts_(npts), R_(R) {}
+
+  size_t npts() const noexcept { return npts_; }
 
   /**
    *  @brief Transformation rule for the Becke radial quadratures

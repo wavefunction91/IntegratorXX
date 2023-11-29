@@ -13,9 +13,10 @@ namespace IntegratorXX {
  *  J. Chem. Phys. 102, 346 (1995)
  *  DOI: https://doi.org/10.1063/1.469408
  */
-class TreutlerAhlrichsRadialTraits {
+class TreutlerAhlrichsRadialTraits : public RadialTraits {
 
-  double R_;
+  size_t npts_; ///< Number of grid points
+  double R_; ///< Radial scaling factor
   double alpha_;
 
 public:
@@ -34,8 +35,10 @@ public:
    *  @param[in] R     Radial scaling factor
    *  @param[in] alpha TA exponential factor
    */
-  TreutlerAhlrichsRadialTraits(double R = 1.0, double alpha = 0.6) :
-    R_(R), alpha_(alpha) { }
+  TreutlerAhlrichsRadialTraits(size_t npts, double R = 1.0, double alpha = 0.6) :
+    npts_(npts), R_(R), alpha_(alpha) { }
+
+  size_t npts() const noexcept { return npts_; }
 
   /**
    *  @brief Transformation rule for the TA M3+M4 radial quadratures

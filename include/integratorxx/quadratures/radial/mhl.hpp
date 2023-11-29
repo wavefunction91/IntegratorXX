@@ -17,13 +17,17 @@ namespace IntegratorXX {
  *            Typically taken to be 2.
  */
 template <size_t M>
-class MurrayHandyLamingRadialTraits {
+class MurrayHandyLamingRadialTraits : public RadialTraits {
 
+  size_t npts_; ///< Number of grid points
   double R_; ///< Radial scaling factor
+  
 
 public:
 
-  MurrayHandyLamingRadialTraits(double R = 1.0) : R_(R) {}
+  MurrayHandyLamingRadialTraits(size_t npts, double R = 1.0) : npts_(npts), R_(R) {}
+
+  size_t npts() const noexcept { return npts_; }
 
   /**
    *  @brief Transformation rule for the MHL radial quadrature
