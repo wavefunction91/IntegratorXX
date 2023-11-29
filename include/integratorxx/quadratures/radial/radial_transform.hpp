@@ -4,11 +4,11 @@
 
 namespace IntegratorXX {
 
-template <typename BaseQuad, typename RadialTraits>
+template <typename BaseQuad, typename RadialTraitsType>
 struct RadialTransformQuadrature :
-  public Quadrature<RadialTransformQuadrature<BaseQuad, RadialTraits>> {
+  public Quadrature<RadialTransformQuadrature<BaseQuad, RadialTraitsType>> {
 
-  using base_type = Quadrature<RadialTransformQuadrature<BaseQuad, RadialTraits>>;
+  using base_type = Quadrature<RadialTransformQuadrature<BaseQuad, RadialTraitsType>>;
 
 public:
 
@@ -17,7 +17,7 @@ public:
   using point_container  = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
 
-  RadialTransformQuadrature(size_t npts, const RadialTraits& traits = RadialTraits()) :
+  RadialTransformQuadrature(size_t npts, const RadialTraitsType& traits = RadialTraitsType()) :
     base_type( npts, traits ) { }
 
   RadialTransformQuadrature( const RadialTransformQuadrature& )     = default;
@@ -25,16 +25,17 @@ public:
 
 };
 
-template <typename BaseQuad, typename RadialTraits>
-struct quadrature_traits<RadialTransformQuadrature<BaseQuad, RadialTraits>> {
+template <typename BaseQuad, typename RadialTraitsType>
+struct quadrature_traits<RadialTransformQuadrature<BaseQuad, RadialTraitsType>> {
 
   using point_type       = typename BaseQuad::point_type;
   using weight_type      = typename BaseQuad::weight_type;
+  using traits_type      = RadialTraitsType;
   using point_container  = typename BaseQuad::point_container;
   using weight_container = typename BaseQuad::weight_container;
 
   inline static std::tuple<point_container,weight_container>
-    generate( size_t npts, const RadialTraits& traits ) {
+    generate( size_t npts, const RadialTraitsType& traits ) {
 
     using base_quad_traits = quadrature_traits<BaseQuad>;
 
