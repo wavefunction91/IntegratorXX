@@ -29,6 +29,19 @@ public:
 
   size_t npts() const noexcept { return npts_; }
 
+  std::unique_ptr<RadialTraits> clone() const {
+    return std::make_unique<MurrayHandyLamingRadialTraits>(*this);
+  }
+
+  bool compare(const RadialTraits& other) const noexcept {
+    auto ptr = dynamic_cast<const MurrayHandyLamingRadialTraits*>(&other);
+    return ptr ? *this == *ptr : false;
+  }
+
+  bool operator==(const MurrayHandyLamingRadialTraits& other) const noexcept {
+    return npts_ == other.npts_ and R_ == other.R_;
+  }
+
   /**
    *  @brief Transformation rule for the MHL radial quadrature
    *  

@@ -30,6 +30,19 @@ class BeckeRadialTraits : public RadialTraits {
 
   size_t npts() const noexcept { return npts_; }
 
+  std::unique_ptr<RadialTraits> clone() const {
+    return std::make_unique<BeckeRadialTraits>(*this);
+  }
+
+  bool compare(const RadialTraits& other) const noexcept {
+    auto ptr = dynamic_cast<const BeckeRadialTraits*>(&other);
+    return ptr ? *this == *ptr : false;
+  }
+
+  bool operator==(const BeckeRadialTraits& other) const noexcept {
+    return npts_ == other.npts_ and R_ == other.R_;
+  }
+
   /**
    *  @brief Transformation rule for the Becke radial quadratures
    *

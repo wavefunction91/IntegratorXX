@@ -147,6 +147,19 @@ public:
 
   size_t npts() const noexcept { return npts_; }
 
+  std::unique_ptr<RadialTraits> clone() const {
+    return std::make_unique<MuraKnowlesRadialTraits>(*this);
+  }
+
+  bool compare(const RadialTraits& other) const noexcept {
+    auto ptr = dynamic_cast<const MuraKnowlesRadialTraits*>(&other);
+    return ptr ? *this == *ptr : false;
+  }
+
+  bool operator==(const MuraKnowlesRadialTraits& other) const noexcept {
+    return npts_ == other.npts_ and R_ == other.R_;
+  }
+
   template <typename PointType>
   inline auto radial_transform(PointType x) const noexcept {
     return -R_ * std::log(1.0 - x*x*x);

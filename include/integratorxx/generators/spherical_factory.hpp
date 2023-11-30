@@ -17,20 +17,27 @@ enum class PruningScheme {
 };
 
 // TODO: Make these strong (non-convertible) types
-using RadialScale = double;
-using RadialSize  = size_t;
+//using RadialScale = double;
+//using RadialSize  = size_t;
 using AngularSize = size_t;
-
+using radial_traits_ptr = std::unique_ptr<RadialTraits>;
 
 /// Generic specification of an unpruned spherical quadrature
 struct UnprunedSphericalGridSpecification {
-  RadialQuad  radial_quad;  ///< Radial quadrature specification
-  RadialSize  radial_size;  ///< Number of radial quadrature points
-  RadialScale radial_scale; ///< Radial scaling factor
+  RadialQuad   radial_quad;   ///< Radial quadrature specification
+  radial_traits_ptr radial_traits; ///< Radial traits (order, scaling factors, etc)
 
   AngularQuad angular_quad; /// Angular quadrature specification
   AngularSize angular_size; /// Number of angular quadrature points
+
+  UnprunedSphericalGridSpecification(RadialQuad, const RadialTraits&, AngularQuad,
+    AngularSize);
+
+  UnprunedSphericalGridSpecification(const UnprunedSphericalGridSpecification& other) :
+    radial_quad(other.radial_quad), radial_traits(other.radial_traits ? other.radial_traits->clone() : nullptr),
+    angular_quad(other.angular_quad), angular_size(other.angular_size) {};
 };
+
 
 
 /// Specification of a pruned region of an spherical quadrature
@@ -51,15 +58,34 @@ struct PruningRegion {
 
 struct PrunedSphericalGridSpecification {
   RadialQuad  radial_quad;  ///< Radial quadrature specification
-  RadialSize  radial_size;  ///< Number of radial quadrature points
-  RadialScale radial_scale; ///< Radial scaling factor
+  radial_traits_ptr radial_traits; ///< Radial traits (order, scaling factors, etc)
 
   std::vector<PruningRegion> pruning_regions; ///< List of pruning regions over the radial quadrature
+  
+  PrunedSphericalGridSpecification() = default;
+
+  template <typename... Arg>
+  PrunedSphericalGridSpecification(RadialQuad rq, radial_traits_ptr&& traits, Arg&&... arg) :
+    radial_quad(rq), radial_traits(std::move(traits)), pruning_regions(std::forward<Arg>(arg)...) { }
+  template <typename... Arg>
+  PrunedSphericalGridSpecification(RadialQuad rq, const RadialTraits& traits, Arg&&... arg) :
+    PrunedSphericalGridSpecification(rq, traits.clone(), std::forward<Arg>(arg)...) { }
+  
+  PrunedSphericalGridSpecification(const PrunedSphericalGridSpecification& other) :
+    PrunedSphericalGridSpecification(other.radial_quad,
+      other.radial_traits ? other.radial_traits->clone() : nullptr,
+      other.pruning_regions) { }
+
+  PrunedSphericalGridSpecification& operator=(const PrunedSphericalGridSpecification& other) {
+    radial_quad = other.radial_quad;
+    radial_traits = other.radial_traits ? other.radial_traits->clone() : nullptr;
+    pruning_regions = other.pruning_regions;
+    return *this;
+  }
 
   inline bool operator==(const PrunedSphericalGridSpecification& other) const noexcept {
     return radial_quad == other.radial_quad and
-           radial_size == other.radial_size and
-           radial_scale == other.radial_scale and 
+           (radial_traits ? (other.radial_traits and radial_traits->compare(*other.radial_traits)) : !other.radial_traits) and 
            pruning_regions == other.pruning_regions;
   }
 };
@@ -136,10 +162,10 @@ struct SphericalGridFactory {
   }
 
 
-  static spherical_grid_ptr generate_unpruned_grid( RadialQuad, RadialSize, 
-    RadialScale, AngularQuad, AngularSize );
-  static spherical_grid_ptr generate_pruned_grid( RadialQuad, RadialSize, 
-    RadialScale, const std::vector<PruningRegion>&);
+  static spherical_grid_ptr generate_unpruned_grid( RadialQuad, const RadialTraits&, 
+    AngularQuad, AngularSize );
+  static spherical_grid_ptr generate_pruned_grid( RadialQuad, const RadialTraits&,
+    const std::vector<PruningRegion>&);
 
 
   static spherical_grid_ptr generate_grid(UnprunedSphericalGridSpecification gs);

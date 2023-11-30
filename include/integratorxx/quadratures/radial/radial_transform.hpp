@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <integratorxx/quadrature.hpp>
 
 namespace IntegratorXX {
@@ -7,6 +9,9 @@ namespace IntegratorXX {
 // Base type for all radial traits
 struct RadialTraits {
   virtual ~RadialTraits() noexcept = default;
+  virtual std::unique_ptr<RadialTraits> clone() const = 0;
+  virtual size_t npts() const = 0;
+  virtual bool compare( const RadialTraits& ) const noexcept = 0;
 };
 
 template <typename RadialTraitsType>

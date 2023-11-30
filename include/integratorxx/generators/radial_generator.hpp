@@ -23,6 +23,45 @@ RadialQuad radial_from_type() {
 
 RadialQuad radial_from_string(std::string name);
 
+namespace detail {
+
+template <typename RadialTraitsType, typename... Args>
+std::unique_ptr<RadialTraits> make_radial_traits(Args&&... args) {
+  using traits_type = RadialTraitsType;
+  if constexpr (std::is_constructible_v<traits_type,Args...>)
+    return std::make_unique<traits_type>(std::forward<Args>(args)...);
+  else return nullptr;
+}
+
+}
+
+template <typename... Args>
+std::unique_ptr<RadialTraits> make_radial_traits(RadialQuad rq, Args&&... args) {
+  std::unique_ptr<RadialTraits> ptr;
+  switch(rq) {
+    case RadialQuad::Becke:
+      ptr = 
+        detail::make_radial_traits<BeckeRadialTraits>(std::forward<Args>(args)...);
+      break;
+    case RadialQuad::MurrayHandyLaming:
+      ptr = 
+        detail::make_radial_traits<MurrayHandyLamingRadialTraits<2>>(std::forward<Args>(args)...);
+      break;
+    case RadialQuad::MuraKnowles:
+      ptr = 
+        detail::make_radial_traits<MuraKnowlesRadialTraits>(std::forward<Args>(args)...);
+      break;
+    case RadialQuad::TreutlerAhlrichs:
+      ptr = 
+        detail::make_radial_traits<TreutlerAhlrichsRadialTraits>(std::forward<Args>(args)...);
+      break;
+  }
+
+  if(!ptr) throw std::runtime_error("RadialTraits Construction Failed");
+  return ptr;
+}
+
+
 #if 0
 struct RadialFactory {
 
