@@ -1,9 +1,7 @@
 #include <integratorxx/generators/spherical_factory.hpp>
-#include <integratorxx/quadratures/s2.hpp>
 
 #include "radial_types.hpp"
-
-#include <algorithm>
+#include "s2_types.hpp"
 
 namespace IntegratorXX {
 
@@ -13,27 +11,11 @@ UnprunedSphericalGridSpecification::UnprunedSphericalGridSpecification(
   radial_quad(rq), radial_traits(traits.clone()), angular_quad(aq), angular_size(as) { }
 
 
-AngularQuad angular_from_string(std::string name) {
-  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
-  if(name == "AHRENSBEYLKIN") return AngularQuad::AhrensBeylkin;
-  if(name == "AB")            return AngularQuad::AhrensBeylkin;
-  if(name == "DELLEY")        return AngularQuad::Delley;
-  if(name == "LEBEDEVLAIKOV") return AngularQuad::LebedevLaikov;
-  if(name == "LEBEDEV")       return AngularQuad::LebedevLaikov;
-  if(name == "LL")            return AngularQuad::LebedevLaikov;
-  if(name == "WOMERSLEY")     return AngularQuad::Womersley;
-
-  throw std::runtime_error("Unrecognized Angular Quadrature");
-}
 
 
 using spherical_grid_ptr = SphericalGridFactory::spherical_grid_ptr;
 
 
-using ah_type = AhrensBeylkin<double>;
-using de_type = Delley<double>;
-using ll_type = LebedevLaikov<double>;
-using wo_type = Womersley<double>;
 
 /************************/
 /**** Unpruned Grids ****/

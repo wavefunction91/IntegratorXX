@@ -1,6 +1,8 @@
 #pragma once
 #include <integratorxx/quadratures/s2.hpp>
 
+#include <memory>
+
 namespace IntegratorXX {
 
 /// High-level specification of angular quadratures
@@ -22,5 +24,18 @@ AngularQuad angular_from_type() {
 };
 
 AngularQuad angular_from_string(std::string name);
+
+struct S2Factory {
+
+  using s2_grid_ptr = std::shared_ptr<
+    QuadratureBase<
+      std::vector<std::array<double,3>>,
+      std::vector<double>
+    >
+  >;
+
+  static s2_grid_ptr generate(AngularQuad aq, size_t npts);
+  
+};
 
 }

@@ -259,6 +259,37 @@ TEMPLATE_LIST_TEST_CASE("Radial Generator", "[sph-gen]", radial_test_types) {
   }
 }
 
+using s2_test_types = std::tuple<
+  ah_type, de_type, ll_type, wo_type
+>;
+
+TEMPLATE_LIST_TEST_CASE("S2 Generator", "[sph-gen]", s2_test_types) {
+  using namespace IntegratorXX;
+  using angular_type = TestType;
+  using angular_traits = quadrature_traits<angular_type>;
+
+  size_t npts = angular_traits::npts_by_algebraic_order(
+    angular_traits::next_algebraic_order(1)); // Smallest possible angular grid
+
+  angular_type aq(npts);
+  
+  auto ang_spec = angular_from_type<angular_type>();
+  auto ang_grid = S2Factory::generate(ang_spec, npts);
+  REQUIRE(ang_grid->npts() == npts);
+  for(auto i = 0; i < npts; ++i) {
+    auto pt = ang_grid->points()[i];
+    auto pt_ref = aq.points()[i];
+    REQUIRE_THAT(pt[0], Catch::Matchers::WithinAbs(pt_ref[0],1e-15));
+    REQUIRE_THAT(pt[1], Catch::Matchers::WithinAbs(pt_ref[1],1e-15));
+    REQUIRE_THAT(pt[2], Catch::Matchers::WithinAbs(pt_ref[2],1e-15));
+  
+    auto w = ang_grid->weights()[i];
+    auto w_ref = aq.weights()[i];
+    REQUIRE_THAT(w, Catch::Matchers::WithinAbs(w_ref,1e-15));
+  }
+
+}
+
 using sph_test_types = std::tuple<
   std::tuple<bk_type, ah_type>,
   std::tuple<bk_type, de_type>,
