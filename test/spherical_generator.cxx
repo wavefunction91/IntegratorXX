@@ -6,6 +6,7 @@
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 #include <integratorxx/generators/spherical_factory.hpp>
+#include <integratorxx/generators/radial_factory.hpp>
 
 using bk_type  = IntegratorXX::Becke<double,double>;
 using mk_type  = IntegratorXX::MuraKnowles<double,double>;
@@ -230,6 +231,32 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
     REQUIRE(pruning_spec == ref_pruning_spec);
   }
 
+}
+
+using radial_test_types = std::tuple<
+  bk_type, mk_type, mhl_type, ta_type
+>;
+
+TEMPLATE_LIST_TEST_CASE("Radial Generator", "[sph-gen]", radial_test_types) {
+  using namespace IntegratorXX;
+  using radial_type = TestType;
+
+  size_t npts = 10;
+  radial_type rq(npts, 1.0);
+  auto rad_spec = radial_from_type<radial_type>();
+  auto rad_traits = make_radial_traits(rad_spec, npts, 1.0);
+  auto rad_grid = RadialFactory::generate(rad_spec, *rad_traits);
+
+  REQUIRE(rad_grid->npts() == npts);
+  for(auto i = 0; i < npts; ++i) {
+    auto pt = rad_grid->points()[i];
+    auto pt_ref = rq.points()[i];
+    REQUIRE_THAT(pt, Catch::Matchers::WithinAbs(pt_ref,1e-15));
+  
+    auto w = rad_grid->weights()[i];
+    auto w_ref = rq.weights()[i];
+    REQUIRE_THAT(w, Catch::Matchers::WithinAbs(w_ref,1e-15));
+  }
 }
 
 using sph_test_types = std::tuple<

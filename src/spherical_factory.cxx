@@ -1,6 +1,7 @@
 #include <integratorxx/generators/spherical_factory.hpp>
-#include <integratorxx/quadratures/radial.hpp>
 #include <integratorxx/quadratures/s2.hpp>
+
+#include "radial_types.hpp"
 
 #include <algorithm>
 
@@ -11,19 +12,6 @@ UnprunedSphericalGridSpecification::UnprunedSphericalGridSpecification(
   RadialQuad rq, const RadialTraits& traits, AngularQuad aq, AngularSize as) :
   radial_quad(rq), radial_traits(traits.clone()), angular_quad(aq), angular_size(as) { }
 
-
-RadialQuad radial_from_string(std::string name) {
-  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
-  if(name == "BECKE")             return RadialQuad::Becke;
-  if(name == "MURAKNOWLES")       return RadialQuad::MuraKnowles;
-  if(name == "MK")                return RadialQuad::MuraKnowles;
-  if(name == "MURRAYHANDYLAMING") return RadialQuad::MurrayHandyLaming;
-  if(name == "MHL")               return RadialQuad::MurrayHandyLaming;
-  if(name == "TREUTLERAHLRICHS")  return RadialQuad::TreutlerAhlrichs;
-  if(name == "TA")                return RadialQuad::TreutlerAhlrichs;
-
-  throw std::runtime_error("Unrecognized Radial Quadrature");
-}
 
 AngularQuad angular_from_string(std::string name) {
   std::transform(name.begin(), name.end(), name.begin(), ::toupper);
@@ -41,10 +29,6 @@ AngularQuad angular_from_string(std::string name) {
 
 using spherical_grid_ptr = SphericalGridFactory::spherical_grid_ptr;
 
-using bk_type  = Becke<double,double>;
-using mk_type  = MuraKnowles<double,double>;
-using mhl_type = MurrayHandyLaming<double,double>;
-using ta_type  = TreutlerAhlrichs<double,double>;
 
 using ah_type = AhrensBeylkin<double>;
 using de_type = Delley<double>;

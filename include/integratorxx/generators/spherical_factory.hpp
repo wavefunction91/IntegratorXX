@@ -2,8 +2,8 @@
 #include <memory>
 #include <vector>
 #include <array>
-#include <integratorxx/generators/radial_generator.hpp>
-#include <integratorxx/generators/s2_generator.hpp>
+#include <integratorxx/generators/radial_factory.hpp>
+#include <integratorxx/generators/s2_factory.hpp>
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 

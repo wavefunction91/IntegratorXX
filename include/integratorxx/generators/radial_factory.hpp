@@ -62,18 +62,17 @@ std::unique_ptr<RadialTraits> make_radial_traits(RadialQuad rq, Args&&... args) 
 }
 
 
-#if 0
 struct RadialFactory {
 
   using radial_grid_ptr = std::shared_ptr<
     QuadratureBase<
       std::vector<double>,
       std::vector<double>
-    >;
+    >
+  >;
 
-  //radial_grid_ptr generate(RadialTraits traits);
+  static radial_grid_ptr generate(RadialQuad rq, const RadialTraits& traits);
   
 };
-#endif
 
 }
