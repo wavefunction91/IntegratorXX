@@ -6,6 +6,7 @@
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 #include <integratorxx/generators/spherical_factory.hpp>
+#include <integratorxx/generators/radial_factory.hpp>
 
 using bk_type  = IntegratorXX::Becke<double,double>;
 using mk_type  = IntegratorXX::MuraKnowles<double,double>;
@@ -80,37 +81,43 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
 
   using namespace IntegratorXX;
 
+  auto rad_traits = make_radial_traits(RadialQuad::MuraKnowles, 99, 1.0);
+
   SECTION("Ahrens-Beylkin") {
 
-    UnprunedSphericalGridSpecification unp{
-      RadialQuad::MuraKnowles, 99, 1.0,
+    //UnprunedSphericalGridSpecification unp = make_unpruned_spec(
+    //  AngularQuad::AhrensBeylkin, 372,
+    //  RadialQuad::MuraKnowles, 99, 1.0
+    //);
+    UnprunedSphericalGridSpecification unp(
+      RadialQuad::MuraKnowles, *rad_traits,
       AngularQuad::AhrensBeylkin, 372
-    };
+    );
 
     PrunedSphericalGridSpecification pruning_spec, ref_pruning_spec;
 
     SECTION("Robust") {
       pruning_spec = robust_psi4_pruning_scheme(unp);
-      ref_pruning_spec = PrunedSphericalGridSpecification{
-        RadialQuad::MuraKnowles, 99, 1.0,
-        {
+      ref_pruning_spec = PrunedSphericalGridSpecification(
+        RadialQuad::MuraKnowles, *rad_traits,
+        std::vector<PruningRegion>{
           {0 , 25, AngularQuad::AhrensBeylkin, 72},
           {25, 50, AngularQuad::AhrensBeylkin, 312},
           {50, 99, AngularQuad::AhrensBeylkin, 372},
         }
-      };
+      );
     }
 
     SECTION("Treutler") {
       pruning_spec = treutler_pruning_scheme(unp);
-      ref_pruning_spec = PrunedSphericalGridSpecification{
-        RadialQuad::MuraKnowles, 99, 1.0,
-        {
+      ref_pruning_spec = PrunedSphericalGridSpecification(
+        RadialQuad::MuraKnowles, *rad_traits,
+        std::vector<PruningRegion>{
           {0 , 34, AngularQuad::AhrensBeylkin, 72},
           {34, 50, AngularQuad::AhrensBeylkin, 72},
           {50, 99, AngularQuad::AhrensBeylkin, 372},
         }
-      };
+      );
     }
 
     REQUIRE(pruning_spec == ref_pruning_spec);
@@ -119,7 +126,7 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
   SECTION("Delley") {
 
     UnprunedSphericalGridSpecification unp{
-      RadialQuad::MuraKnowles, 99, 1.0,
+      RadialQuad::MuraKnowles, *rad_traits,
       AngularQuad::Delley, 302
     };
 
@@ -127,26 +134,26 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
 
     SECTION("Robust") {
       pruning_spec = robust_psi4_pruning_scheme(unp);
-      ref_pruning_spec = PrunedSphericalGridSpecification{
-        RadialQuad::MuraKnowles, 99, 1.0,
-        {
+      ref_pruning_spec = PrunedSphericalGridSpecification(
+        RadialQuad::MuraKnowles,  *rad_traits,
+        std::vector<PruningRegion>{
           {0 , 25, AngularQuad::Delley, 26},
           {25, 50, AngularQuad::Delley, 194},
           {50, 99, AngularQuad::Delley, 302},
         }
-      };
+      );
     }
 
     SECTION("Treutler") {
       pruning_spec = treutler_pruning_scheme(unp);
-      ref_pruning_spec = PrunedSphericalGridSpecification{
-        RadialQuad::MuraKnowles, 99, 1.0,
-        {
+      ref_pruning_spec = PrunedSphericalGridSpecification(
+        RadialQuad::MuraKnowles, *rad_traits,
+        std::vector<PruningRegion>{
           {0 , 34, AngularQuad::Delley, 26},
           {34, 50, AngularQuad::Delley, 50},
           {50, 99, AngularQuad::Delley, 302},
         }
-      };
+      );
     }
 
     REQUIRE(pruning_spec == ref_pruning_spec);
@@ -155,7 +162,7 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
   SECTION("Lebedev-Laikov") {
 
     UnprunedSphericalGridSpecification unp{
-      RadialQuad::MuraKnowles, 99, 1.0,
+      RadialQuad::MuraKnowles, *rad_traits,
       AngularQuad::LebedevLaikov, 302
     };
 
@@ -163,26 +170,26 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
 
     SECTION("Robust") {
       pruning_spec = robust_psi4_pruning_scheme(unp);
-      ref_pruning_spec = PrunedSphericalGridSpecification{
-        RadialQuad::MuraKnowles, 99, 1.0,
-        {
+      ref_pruning_spec = PrunedSphericalGridSpecification(
+        RadialQuad::MuraKnowles, *rad_traits,
+        std::vector<PruningRegion>{
           {0 , 25, AngularQuad::LebedevLaikov, 26},
           {25, 50, AngularQuad::LebedevLaikov, 194},
           {50, 99, AngularQuad::LebedevLaikov, 302},
         }
-      };
+      );
     }
 
     SECTION("Treutler") {
       pruning_spec = treutler_pruning_scheme(unp);
-      ref_pruning_spec = PrunedSphericalGridSpecification{
-        RadialQuad::MuraKnowles, 99, 1.0,
-        {
+      ref_pruning_spec = PrunedSphericalGridSpecification(
+        RadialQuad::MuraKnowles, *rad_traits,
+        std::vector<PruningRegion>{
           {0 , 34, AngularQuad::LebedevLaikov, 26},
           {34, 50, AngularQuad::LebedevLaikov, 50},
           {50, 99, AngularQuad::LebedevLaikov, 302},
         }
-      };
+      );
     }
 
     REQUIRE(pruning_spec == ref_pruning_spec);
@@ -191,7 +198,7 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
   SECTION("Womersley") {
 
     UnprunedSphericalGridSpecification unp{
-      RadialQuad::MuraKnowles, 99, 1.0,
+      RadialQuad::MuraKnowles, *rad_traits,
       AngularQuad::Womersley, 339
     };
 
@@ -199,29 +206,86 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
 
     SECTION("Robust") {
       pruning_spec = robust_psi4_pruning_scheme(unp);
-      ref_pruning_spec = PrunedSphericalGridSpecification{
-        RadialQuad::MuraKnowles, 99, 1.0,
-        {
+      ref_pruning_spec = PrunedSphericalGridSpecification(
+        RadialQuad::MuraKnowles, *rad_traits,
+        std::vector<PruningRegion>{
           {0 , 25, AngularQuad::Womersley, 32},
           {25, 50, AngularQuad::Womersley, 201},
           {50, 99, AngularQuad::Womersley, 339},
         }
-      };
+      );
     }
 
     SECTION("Treutler") {
       pruning_spec = treutler_pruning_scheme(unp);
-      ref_pruning_spec = PrunedSphericalGridSpecification{
-        RadialQuad::MuraKnowles, 99, 1.0,
-        {
+      ref_pruning_spec = PrunedSphericalGridSpecification(
+        RadialQuad::MuraKnowles, *rad_traits,
+        std::vector<PruningRegion>{
           {0 , 34, AngularQuad::Womersley, 32},
           {34, 50, AngularQuad::Womersley, 72},
           {50, 99, AngularQuad::Womersley, 339},
         }
-      };
+      );
     }
 
     REQUIRE(pruning_spec == ref_pruning_spec);
+  }
+
+}
+
+using radial_test_types = std::tuple<
+  bk_type, mk_type, mhl_type, ta_type
+>;
+
+TEMPLATE_LIST_TEST_CASE("Radial Generator", "[sph-gen]", radial_test_types) {
+  using namespace IntegratorXX;
+  using radial_type = TestType;
+
+  size_t npts = 10;
+  radial_type rq(npts, 1.0);
+  auto rad_spec = radial_from_type<radial_type>();
+  auto rad_traits = make_radial_traits(rad_spec, npts, 1.0);
+  auto rad_grid = RadialFactory::generate(rad_spec, *rad_traits);
+
+  REQUIRE(rad_grid->npts() == npts);
+  for(auto i = 0; i < npts; ++i) {
+    auto pt = rad_grid->points()[i];
+    auto pt_ref = rq.points()[i];
+    REQUIRE_THAT(pt, Catch::Matchers::WithinAbs(pt_ref,1e-15));
+  
+    auto w = rad_grid->weights()[i];
+    auto w_ref = rq.weights()[i];
+    REQUIRE_THAT(w, Catch::Matchers::WithinAbs(w_ref,1e-15));
+  }
+}
+
+using s2_test_types = std::tuple<
+  ah_type, de_type, ll_type, wo_type
+>;
+
+TEMPLATE_LIST_TEST_CASE("S2 Generator", "[sph-gen]", s2_test_types) {
+  using namespace IntegratorXX;
+  using angular_type = TestType;
+  using angular_traits = quadrature_traits<angular_type>;
+
+  size_t npts = angular_traits::npts_by_algebraic_order(
+    angular_traits::next_algebraic_order(1)); // Smallest possible angular grid
+
+  angular_type aq(npts);
+  
+  auto ang_spec = angular_from_type<angular_type>();
+  auto ang_grid = S2Factory::generate(ang_spec, npts);
+  REQUIRE(ang_grid->npts() == npts);
+  for(auto i = 0; i < npts; ++i) {
+    auto pt = ang_grid->points()[i];
+    auto pt_ref = aq.points()[i];
+    REQUIRE_THAT(pt[0], Catch::Matchers::WithinAbs(pt_ref[0],1e-15));
+    REQUIRE_THAT(pt[1], Catch::Matchers::WithinAbs(pt_ref[1],1e-15));
+    REQUIRE_THAT(pt[2], Catch::Matchers::WithinAbs(pt_ref[2],1e-15));
+  
+    auto w = ang_grid->weights()[i];
+    auto w_ref = aq.weights()[i];
+    REQUIRE_THAT(w, Catch::Matchers::WithinAbs(w_ref,1e-15));
   }
 
 }
@@ -269,10 +333,12 @@ TEMPLATE_LIST_TEST_CASE("Unpruned", "[sph-gen]", sph_test_types) {
 
 
   // Generate via runtime API
-  UnprunedSphericalGridSpecification unp{
-    radial_from_type<radial_type>(), nrad, 1.0,
+  auto rad_spec = radial_from_type<radial_type>();
+  auto rad_traits = make_radial_traits(rad_spec, nrad, 1.0);
+  UnprunedSphericalGridSpecification unp(
+    rad_spec, *rad_traits,
     angular_from_type<angular_type>(), nang
-  };
+  );
 
   auto sph = SphericalGridFactory::generate_grid(unp);
 
@@ -307,10 +373,12 @@ TEMPLATE_LIST_TEST_CASE("Pruned", "[sph-gen]", sph_test_types) {
     angular_traits::next_algebraic_order(29)); // Smallest possible angular grid
 
   // Generate pruning scheme
-  UnprunedSphericalGridSpecification unp{
-    radial_from_type<radial_type>(), nrad, 1.0,
+  auto rad_spec = radial_from_type<radial_type>();
+  auto rad_traits = make_radial_traits(rad_spec, nrad, 1.0);
+  UnprunedSphericalGridSpecification unp(
+    rad_spec, *rad_traits,
     angular_from_type<angular_type>(), nang
-  };
+  );
 
   auto pruning_spec = robust_psi4_pruning_scheme(unp);
 
