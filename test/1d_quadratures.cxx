@@ -261,8 +261,8 @@ TEST_CASE("LMG", "[1d-quad]") {
   using namespace Catch::Matchers;
 
   SECTION("HALF INTEGRAL GAMMA") {
-    REQUIRE_THAT(half_integral_tgamma<double>(1), WithinAbs(std::sqrt(M_PI),  1e-15));
-    REQUIRE_THAT(half_integral_tgamma<double>(3), WithinAbs(std::sqrt(M_PI)/2,1e-15));
+    REQUIRE_THAT(half_integer_tgamma<double>(1), WithinAbs(std::sqrt(M_PI),  1e-15));
+    REQUIRE_THAT(half_integer_tgamma<double>(3), WithinAbs(std::sqrt(M_PI)/2,1e-15));
   }
 
   SECTION("Lambert W") {
@@ -488,6 +488,8 @@ TEST_CASE("LMG", "[1d-quad]") {
       double r = c * (std::exp(x) - 1.0);
       double w = h*(r + c);
       //printf("%d R = %.16e W = %.16e \n", i, r - quad.points()[i], w-quad.weights()[i]);
+      REQUIRE_THAT(quad.points()[i], Catch::Matchers::WithinRel(r));
+      REQUIRE_THAT(quad.weights()[i], Catch::Matchers::WithinRel(w));
     }
 
 
