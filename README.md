@@ -142,6 +142,26 @@ const auto& weights = sph_quad->weights(); // std::vector<double>
 
 ```
 
+### Header-only builds
+
+With the exception of the runtime grid generator, the entirety
+of the grid specification in IntegratorXX is header-only and can operate
+without pre-compiled components. By default, the runtime generator is 
+pre-compiled to improve the efficiency of the compilation process and to
+avoid excessive build times in complex projects with aggressive compiler
+optimization. **N.B. it is highly recommend that users maintain this default
+behavior to avoid excessive compilation sizes and build times**.
+
+IntegratorXX also allows for header-only use of the runtime generator by 
+setting `INTEGRATORXX_HEADER_ONLY=ON`. 
+This feature also allows for circumvention of
+the CMake build system by simply including the requisite implementation
+header.
+
+To use the runtime generator header-only, one needs to include 
+`<integratorxx/generators/impl/impl.hpp>` **exactly once** per project,
+otherwise duplicate / incompatible symbols will occur.
+
 ## Contributing and Bug Reports
 
 We welcome any and all contributions and encourage bug reports. Please use the
