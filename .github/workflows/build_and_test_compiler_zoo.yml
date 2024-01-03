@@ -49,6 +49,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
         image: dbwy/chemistry
+    strategy:
+      matrix:
+        header_only: [ON,OFF]
 
     steps:
     - uses: actions/checkout@v3
@@ -64,6 +67,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       run: cmake -S $GITHUB_WORKSPACE -B ${{runner.workspace}}/build
+                 -DINTEGRATORXX_HEADER_ONLY=${{matrix.header_only}}
                  -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/install 
                  -DCMAKE_PREFIX_PATH=${ENV_PREFIX_PATH}
                  -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
