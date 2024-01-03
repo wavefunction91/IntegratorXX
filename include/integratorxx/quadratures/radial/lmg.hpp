@@ -73,19 +73,35 @@ inline double step_size(int m, double prec) {
 }
 
 
-class LindhMalmqvistGagliardiRadialTraits {
+class LindhMalmqvistGagliardiRadialTraits : public RadialTraits {
+
   using self_type = LindhMalmqvistGagliardiRadialTraits;
 
-  double step_size_;
+  size_t npts_;
   double c_;
+  double step_size_;
 
 public:
 
-  LindhMalmqvistGagliardiRadialTraits(double c, double step_size) :
-    step_size_(step_size), c_(c) { }
+  LindhMalmqvistGagliardiRadialTraits(size_t npts, double c, double step_size) :
+    npts_(npts), step_size_(step_size), c_(c) { }
 
   LindhMalmqvistGagliardiRadialTraits(const self_type&) = default;
-  self_type& operator=(const self_type&) = default;
+
+  size_t npts() const noexcept { return npts_; }
+
+  std::unique_ptr<RadialTraits> clone() const {
+    return std::make_unique<self_type>(*this);
+  }
+
+  bool compare(const RadialTraits& other) const noexcept {
+    auto ptr = dynamic_cast<const self_type*>(&other);
+    return ptr ? *this == *ptr : false;
+  }
+
+  bool operator==(const self_type& other) const noexcept {
+    return npts_ == other.npts_ and c_ == other.c_ and step_size_ == other.step_size_;
+  }
   
 
   template <typename PointType>
@@ -110,12 +126,11 @@ public:
 		         typename BaseQuad::weight_container& weights) const {
 
     using point_type = typename BaseQuad::point_type;
-    assert(points.size() > 2);
-    const auto npts = points.size() - 2;
-    point_type up = npts * step_size_;
+    assert(points.size() - 2 == npts());
+    point_type up = npts() * step_size_;
 
     // Scale points and weights
-    for(auto& x : points ) x *= step_size_ * (npts + 1);
+    for(auto& x : points ) x *= step_size_ * (npts() + 1);
     for(auto& w : weights) w  = step_size_;
   }
   

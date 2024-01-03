@@ -481,13 +481,13 @@ TEST_CASE("LMG", "[1d-quad]") {
     //  alpha_min, alpha_max, h, c, n);
 
 
-    LindhMalmqvistGagliardiRadialTraits traits(c, h);
-    LindhMalmqvistGagliardi<double, double> quad(n, traits);
+    LindhMalmqvistGagliardiRadialTraits traits(n, c, h);
+    LindhMalmqvistGagliardi<double, double> quad(traits);
     for(int i = 0; i < n; ++i) {
       double x = (i+1) * h;
       double r = c * (std::exp(x) - 1.0);
       double w = h*(r + c);
-      //printf("%d R = %.16e W = %.16e \n", i, r - quad.points()[i], w-quad.weights()[i]);
+      printf("%d R = %.16e W = %.16e \n", i, r - quad.points()[i], w-quad.weights()[i]);
       REQUIRE_THAT(quad.points()[i], Catch::Matchers::WithinRel(r));
       REQUIRE_THAT(quad.weights()[i], Catch::Matchers::WithinRel(w));
     }
