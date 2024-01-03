@@ -141,4 +141,14 @@ using LindhMalmqvistGagliardi = RadialTransformQuadrature<
   UniformTrapezoid<PointType, WeightType>, LindhMalmqvistGagliardiRadialTraits
 >;
 
+namespace detail {
+
+template <typename QuadType>
+static constexpr bool is_lmg_v = std::is_same_v<
+  QuadType, 
+  LindhMalmqvistGagliardi<typename QuadType::point_type, typename QuadType::weight_type>
+>;
+
+}
+
 }

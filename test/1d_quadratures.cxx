@@ -477,7 +477,7 @@ TEST_CASE("LMG", "[1d-quad]") {
 
     double c = r_lower / (std::exp(h) - 1);
     int    n = std::log(1.0 + r_upper/c) / h + 1.0;
-    //printf("ALPHA_MIN = %.4e ALPHA_MAX = %.4e H = %.4e C = %.6e N = %d\n",
+    //printf("ALPHA_MIN = %.4e ALPHA_MAX = %.4e H = %.4e C = %.16e N = %d\n",
     //  alpha_min, alpha_max, h, c, n);
 
 
@@ -487,7 +487,7 @@ TEST_CASE("LMG", "[1d-quad]") {
       double x = (i+1) * h;
       double r = c * (std::exp(x) - 1.0);
       double w = h*(r + c);
-      printf("%d R = %.16e W = %.16e \n", i, r - quad.points()[i], w-quad.weights()[i]);
+      //printf("%d R = %.16e W = %.16e \n", i, r - quad.points()[i], w-quad.weights()[i]);
       REQUIRE_THAT(quad.points()[i], Catch::Matchers::WithinRel(r));
       REQUIRE_THAT(quad.weights()[i], Catch::Matchers::WithinRel(w));
     }
