@@ -1,63 +1,72 @@
 #pragma once
+#include <array>
+#include <limits>
+
+#include <integratorxx/util/type_traits.hpp>
 
 namespace IntegratorXX {
 
 namespace detail {
 
-constexpr static std::array<size_t, 20> factorials = {
-  1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800,
-  39916800, 479001600, 6227020800, 87178291200, 1307674368000,
-  20922789888000, 355687428096000, 6402373705728000, 121645100408832000
+// Factorials for [0,20]
+static constexpr std::array<uint64_t,21> cached_factorials = {
+  1ul, 1ul, 2ul, 6ul, 24ul, 120ul, 720ul, 5040ul, 40320ul, 362880ul, 3628800ul, 39916800ul,
+  479001600ul, 6227020800ul, 87178291200ul, 1307674368000ul, 20922789888000ul,
+  355687428096000ul, 6402373705728000ul, 121645100408832000ul, 2432902008176640000ul
 };
 
-constexpr static std::array<size_t,20> double_factorials = {
-  0, 1, 1, 3, 6, 15, 38, 105, 306, 945, 3063, 10395,
-  36766, 135135, 514731, 2027025, 8235700, 34459425,
-  148242610, 654729075
+// Double factorials for [0,32]
+static constexpr std::array<uint64_t,33> cached_double_factorials = {
+  1ul, 1ul, 2ul, 3ul, 8ul, 15ul, 48ul, 105ul, 384ul, 945ul, 3840ul, 10395ul, 46080ul, 135135ul,
+  645120ul, 2027025ul, 10321920ul, 34459425ul, 185794560ul, 654729075ul, 3715891200ul,
+  13749310575ul, 81749606400ul, 316234143225ul, 1961990553600ul, 7905853580625ul,
+  51011754393600ul, 213458046676875ul, 1428329123020800ul, 6190283353629375ul,
+  42849873690624000ul, 191898783962510625ul, 1371195958099968000ul
 };
 
-
-
 }
 
-template <typename T>
-T factorial(unsigned n) {
-  if( n < 20 ) {
-    return detail::factorials[n];
+template <typename IntegralType>
+detail::enable_if_integral_t<IntegralType, IntegralType> 
+  factorial(IntegralType n) {
+
+  assert(n >= 0);
+  if( n < detail::cached_factorials.size() ) {
+    auto val = detail::cached_factorials[n];
+    assert(val <= std::numeric_limits<IntegralType>::max());
+    return val;
   } else {
-    return n * factorial<T>(n-1);
+    auto val = n * factorial(n-1);
+    assert(val <= std::numeric_limits<IntegralType>::max());
+    return val;
   }
+
 }
 
-template <typename T>
-T double_factorial(int n) {
-  if(n == -3)      return -1;
-  else if(n == -1) return  1;
-  else if( n < 20 ) {
-    return detail::double_factorials[size_t(n)];
+template <typename IntegralType>
+detail::enable_if_integral_t<IntegralType, IntegralType> 
+  double_factorial(IntegralType n) {
+
+  // If we're signed, check negative arguments
+  if(std::is_signed_v<IntegralType>) {
+    // Only provide values for which n!! is integral
+    if(n == -1) return 1;
+    if(n == -3) return -1;
+  }
+
+  // This also handles the case when n < 0 is undefied or non-integral
+  assert(n >= 0);
+
+  if( n < detail::cached_double_factorials.size() ) {
+    auto val = detail::cached_double_factorials[n];
+    assert(val <= std::numeric_limits<IntegralType>::max());
+    return val;
   } else {
-    return n * double_factorial<T>(n-2);
+    auto val = n * double_factorial(n-2);
+    assert(val <= std::numeric_limits<IntegralType>::max());
+    return val;
   }
-}
 
-inline double pow_2(int n) {
-  return 1ul << n;
 }
-
-// GAMMA(n/2)
-template <typename T>
-T half_integral_tgamma(int n) {
-  assert(n%2);
-  if(n == 1) return std::sqrt(M_PI);
-  if(n == 3) return 0.5 * std::sqrt(M_PI);
-  return double_factorial<T>(n-2) / pow_2(n-3) / M_2_SQRTPI;
-}
-
-template <typename T>
-T integral_tgamma(T n) {
-  std::cout << n << std::endl;
-  return factorial<T>(n-1);
-}
-
 
 }

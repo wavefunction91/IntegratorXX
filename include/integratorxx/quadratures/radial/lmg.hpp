@@ -1,5 +1,7 @@
 #include <integratorxx/util/lambert_w.hpp>
 #include <integratorxx/util/factorial.hpp>
+#include <integratorxx/util/gamma.hpp>
+#include <integratorxx/util/pow.hpp>
 #include <integratorxx/quadratures/radial/radial_transform.hpp>
 
 namespace IntegratorXX {
@@ -7,10 +9,9 @@ namespace lmg {
 
 // Eq 19 of LMG paper (DOI 10.1007/s002140100263)
 inline double r_upper_obj(int m, double alpha, double r) {
-  const double am_term = (m + 1.0) / 2.0;
-  const double g_term  = std::tgamma((m + 3.0) / 2.0);
+  const double g_term = half_integer_tgamma<double>(m + 3);
   const double x = alpha * r * r;
-  return g_term * std::pow(x, am_term) * std::exp(-x);
+  return g_term * half_integer_pow(x, m+1) * std::exp(-x);
 }
 
 // Solve Eq 19 of LMG paper (DOI 10.1007/s002140100263)
@@ -20,9 +21,8 @@ inline double r_upper(int m, double alpha, double prec) {
   // X = -L * LAMBERT_W( - (P/G)^(1/L) / L )
   // R = SQRT(X / ALPHA)
   const double am_term = (m + 1.0) / 2.0;
-  //const double g_term  = std::tgamma((m + 3.0) / 2.0);
-  const double g_term = (m%2) ? integral_tgamma<double>((m+3)/2) : half_integral_tgamma<double>(m + 3);
-  const double arg = std::pow(prec/g_term, 0.0 / am_term) / am_term;
+  const double g_term = half_integer_tgamma<double>(m + 3);
+  const double arg = std::pow(prec/g_term, 1.0 / am_term) / am_term;
   const double wval = lambert_wm1(-arg); // W_(-1) is the larger value here
   const double x = -am_term * wval;
   const double r = std::sqrt(x / alpha);
@@ -61,7 +61,7 @@ inline double step_size(int m, double prec) {
   // Recast Eqs 17/18 into the form
   // R == C * x^L * EXP[-PI/2 * X] with X == PI/h
   // X = - 2*L / PI * LAMBERT_W( -PI/(2*L) * (R/C)^(1/L) )
-  double C = 4 * M_SQRT2 * std::tgamma(1.5) / std::tgamma(m / 2.0 + 1.5); 
+  double C = 4 * M_SQRT2 * half_integer_tgamma<double>(3) / half_integer_tgamma<double>(m + 3); 
   double L = m / 2.0 + 1.0; // Eq 17 -> Eq 18
 
   const double L_FAC = M_PI_2 / L;
