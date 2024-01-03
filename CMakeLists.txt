@@ -3,20 +3,20 @@ cmake_minimum_required( VERSION 3.17 ) # Require CMake 3.17+
 # Set up project definition + version information
 project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 
+option(INTEGRATORXX_HEADER_ONLY "Force header-only build" OFF)
 
-add_library( integratorxx INTERFACE )
-add_library( IntegratorXX::IntegratorXX ALIAS integratorxx )
-
-#option( INTEGRATORXX_ENABLE_TESTS "Enable Tets" ON )
-
-
-
-
+if(INTEGRATORXX_HEADER_ONLY)
+  add_library( integratorxx INTERFACE )
+  set(INTEGRATORXX_TARGET_TYPE INTERFACE)
+else()
+  add_subdirectory(src)
+  set(INTEGRATORXX_TARGET_TYPE PUBLIC)
+endif()
 
 # Target features
-target_compile_features( integratorxx INTERFACE cxx_std_17 )
+target_compile_features( integratorxx ${INTEGRATORXX_TARGET_TYPE} cxx_std_17 )
 target_include_directories( integratorxx
-  INTERFACE
+  ${INTEGRATORXX_TARGET_TYPE} 
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
@@ -30,26 +30,8 @@ endif()
 
 
 
-
-
-
-
-# Testing
-if( NOT DEFINED INTEGRATORXX_ENABLE_TESTS )
-  set( INTEGRATORXX_ENABLE_TESTS ON )
-endif()
-
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-  include(CTest)
-endif()
-
-if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND INTEGRATORXX_ENABLE_TESTS AND BUILD_TESTING )
-  add_subdirectory( test )
-endif()
-
-
-
 # INSTALL rules
+add_library( IntegratorXX::IntegratorXX ALIAS integratorxx )
 include( GNUInstallDirs )
 set( INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/IntegratorXX )
 
@@ -107,4 +89,20 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/IntegratorXXConfigVersion.cmake
     DESTINATION ${INSTALL_CONFIGDIR}
 )
+
+# Testing
+if( NOT DEFINED INTEGRATORXX_ENABLE_TESTS )
+  set( INTEGRATORXX_ENABLE_TESTS ON )
+endif()
+
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  include(CTest)
+endif()
+
+if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND INTEGRATORXX_ENABLE_TESTS AND BUILD_TESTING )
+  add_subdirectory( test )
+endif()
+
+
 

@@ -115,9 +115,6 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
     return std::make_tuple( points, weights );
 
   }
-};
-
-namespace detail::lebedev {
 
   inline static int64_t npts_by_algebraic_order(int64_t order) {
   
@@ -234,6 +231,18 @@ namespace detail::lebedev {
 
   }
 
+};
+
+
+namespace detail {
+
+template <typename QuadType>
+static constexpr bool is_lebedev_laikov_v = std::is_same_v<
+  QuadType, 
+  LebedevLaikov<typename QuadType::weight_type>
+>;
+
 }
 
 }
+
