@@ -30,12 +30,13 @@ struct UnprunedSphericalGridSpecification {
   AngularQuad angular_quad; /// Angular quadrature specification
   AngularSize angular_size; /// Number of angular quadrature points
 
-  UnprunedSphericalGridSpecification(RadialQuad, const RadialTraits&, AngularQuad,
-    AngularSize);
+  UnprunedSphericalGridSpecification( RadialQuad rq, const RadialTraits& traits, 
+    AngularQuad aq, AngularSize as) : radial_quad(rq), radial_traits(traits.clone()), 
+    angular_quad(aq), angular_size(as) {}
 
   UnprunedSphericalGridSpecification(const UnprunedSphericalGridSpecification& other) :
     radial_quad(other.radial_quad), radial_traits(other.radial_traits ? other.radial_traits->clone() : nullptr),
-    angular_quad(other.angular_quad), angular_size(other.angular_size) {};
+    angular_quad(other.angular_quad), angular_size(other.angular_size) {}
 };
 
 
@@ -168,8 +169,20 @@ struct SphericalGridFactory {
     const std::vector<PruningRegion>&);
 
 
-  static spherical_grid_ptr generate_grid(UnprunedSphericalGridSpecification gs);
-  static spherical_grid_ptr generate_grid(PrunedSphericalGridSpecification gs); 
+  static inline spherical_grid_ptr generate_grid(
+    UnprunedSphericalGridSpecification gs) {
+    if(!gs.radial_traits) throw std::runtime_error("RadialTraits Not Set");
+    return generate_unpruned_grid(gs.radial_quad, *gs.radial_traits, 
+      gs.angular_quad, gs.angular_size);
+  }
+
+
+  static inline spherical_grid_ptr generate_grid(
+    PrunedSphericalGridSpecification gs) {
+    if(!gs.radial_traits) throw std::runtime_error("RadialTraits Not Set");
+    return generate_pruned_grid( gs.radial_quad, *gs.radial_traits, 
+      gs.pruning_regions );
+  } 
 
 };
 
