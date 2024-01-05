@@ -1,5 +1,5 @@
+#pragma once
 #include <integratorxx/quadratures/s2.hpp>
-
 
 namespace IntegratorXX {
 

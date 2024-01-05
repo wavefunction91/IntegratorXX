@@ -19,6 +19,9 @@ else()
 endif()
 
 add_library(integratorxx_common_ut quad_matcher.cxx)
+if(INTEGRATORXX_HEADER_ONLY)
+  target_sources(integratorxx_common_ut PRIVATE lib_impl.cxx)
+endif()
 target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain integratorxx )
 
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
