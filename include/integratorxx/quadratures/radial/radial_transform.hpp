@@ -5,7 +5,7 @@
 #include <integratorxx/quadrature.hpp>
 
 namespace IntegratorXX {
-
+ 
 // Base type for all radial traits
 struct RadialTraits {
   virtual ~RadialTraits() noexcept = default;
@@ -17,6 +17,32 @@ struct RadialTraits {
 template <typename RadialTraitsType>
 const RadialTraitsType& radial_traits_cast( const RadialTraits& traits ) {
   return dynamic_cast<const RadialTraitsType&>(traits);
+}
+
+namespace detail {
+
+template <typename TraitsType, typename BaseQuad>
+class has_preprocess_base_quad {
+
+using point_container_ref  = typename BaseQuad::point_container&;
+using weight_container_ref = typename BaseQuad::weight_container&;
+
+template <typename C, typename = 
+  decltype(std::declval<C>().
+    template preprocess_base_quad<BaseQuad>(
+      std::declval<point_container_ref>(), 
+      std::declval<weight_container_ref>()
+    ))>
+static std::true_type test(int);
+
+template<typename C> static std::false_type test(...);
+
+public:
+
+static constexpr bool value = decltype(test<TraitsType>(0))::value;
+
+};
+
 }
 
 template <typename BaseQuad, typename RadialTraitsType>
@@ -70,6 +96,9 @@ struct quadrature_traits<RadialTransformQuadrature<BaseQuad, RadialTraitsType>> 
 
     const auto npts_base = base_quad_traits::bound_inclusive ? npts+2 : npts;
     auto [base_x, base_w] = base_quad_traits::generate(npts_base);
+
+    if constexpr (detail::has_preprocess_base_quad<RadialTraitsType,BaseQuad>::value) 
+      traits.template preprocess_base_quad<BaseQuad>(base_x, base_w);
 
     const auto ipts_offset = !!base_quad_traits::bound_inclusive;
     for(size_t i = 0; i < npts; ++i) {

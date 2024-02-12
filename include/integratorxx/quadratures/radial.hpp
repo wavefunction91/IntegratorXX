@@ -5,3 +5,4 @@
 #include <integratorxx/quadratures/radial/mhl.hpp>
 #include <integratorxx/quadratures/radial/muraknowles.hpp>
 #include <integratorxx/quadratures/radial/treutlerahlrichs.hpp>
+#include <integratorxx/quadratures/radial/lmg.hpp>
