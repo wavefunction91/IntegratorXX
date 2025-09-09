@@ -5,6 +5,9 @@ export CVER=$2
 
 if [[ "${CSUITE}" == "llvm" ]]
 then
+  # register the specific clang version as an alternative (needed once per version)
+  update-alternatives --install /usr/bin/clang   clang   /usr/bin/clang-${CVER}   50
+  update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${CVER} 50
   update-alternatives --set clang   /usr/bin/clang-${CVER}
   update-alternatives --set clang++ /usr/bin/clang++-${CVER}
   update-alternatives --install /usr/bin/cc  cc  /usr/bin/clang   30
