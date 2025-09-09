@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 export CSUITE=$1
 export CVER=$2
@@ -20,3 +20,6 @@ else
   exit 125
 fi
 
+echo "Selected compilers:"
+echo "  cc  -> $(command -v cc)  | $(cc --version | head -1)"
+echo "  c++ -> $(command -v c++) | $(c++ --version | head -1)"
