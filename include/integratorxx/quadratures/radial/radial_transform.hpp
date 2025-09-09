@@ -32,8 +32,13 @@ public:
   using point_container  = typename base_type::point_container;
   using weight_container = typename base_type::weight_container;
 
-  RadialTransformQuadrature(const RadialTraitsType& traits = RadialTraitsType()) :
-    base_type(traits) { }
+  RadialTransformQuadrature(const RadialTraitsType& traits)
+    : base_type(traits) {}
+
+  template<class T = RadialTraitsType,
+           class = std::enable_if_t<std::is_default_constructible<T>::value>>
+  RadialTransformQuadrature() : base_type(T{}) {}
+
   RadialTransformQuadrature(const RadialTraits& traits) :
     RadialTransformQuadrature(radial_traits_cast<RadialTraitsType>(traits)) { }
 
