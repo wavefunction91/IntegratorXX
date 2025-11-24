@@ -5,10 +5,11 @@ namespace IntegratorXX {
 
 /// High-level specification of radial quadratures
 enum class RadialQuad : uint32_t {
-  Becke             = 0x0010, 
-  MurrayHandyLaming = 0x0020,
-  MuraKnowles       = 0x0030, 
-  TreutlerAhlrichs  = 0x0040
+  Becke                   = 0x0010, 
+  MurrayHandyLaming       = 0x0020,
+  MuraKnowles             = 0x0030, 
+  TreutlerAhlrichs        = 0x0040,
+  LindhMalmqvistGagliardi = 0x0050
 };
 
 template <typename RadQuadType>
@@ -17,6 +18,7 @@ RadialQuad radial_from_type() {
   if constexpr (detail::is_mk_v<RadQuadType>   ) return RadialQuad::MuraKnowles;
   if constexpr (detail::is_mhl_v<RadQuadType>)   return RadialQuad::MurrayHandyLaming;
   if constexpr (detail::is_ta_v<RadQuadType>)    return RadialQuad::TreutlerAhlrichs;
+  if constexpr (detail::is_lmg_v<RadQuadType>)   return RadialQuad::LindhMalmqvistGagliardi;
 
   throw std::runtime_error("Unrecognized Radial Quadrature");
 };
@@ -54,6 +56,10 @@ std::unique_ptr<RadialTraits> make_radial_traits(RadialQuad rq, Args&&... args) 
     case RadialQuad::TreutlerAhlrichs:
       ptr = 
         detail::make_radial_traits<TreutlerAhlrichsRadialTraits>(std::forward<Args>(args)...);
+      break;
+    case RadialQuad::LindhMalmqvistGagliardi:
+      ptr = 
+        detail::make_radial_traits<LindhMalmqvistGagliardiRadialTraits>(std::forward<Args>(args)...);
       break;
   }
 

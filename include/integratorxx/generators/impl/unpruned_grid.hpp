@@ -27,6 +27,9 @@ auto generate_unpruned_grid_impl(RadialQuad rq, const RadialTraits& traits,
     case RadialQuad::TreutlerAhlrichs:
       return SphericalGridFactory::generate_unpruned_grid( ta_type(traits), std::forward<AngularQuadType>(ang_quad) );
 
+    case RadialQuad::LindhMalmqvistGagliardi:
+      return SphericalGridFactory::generate_unpruned_grid( lmg_type(traits), std::forward<AngularQuadType>(ang_quad) );
+
     default:
       throw std::runtime_error("Unsupported Radial Quadrature");
       abort();

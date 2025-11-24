@@ -24,6 +24,9 @@ if(INTEGRATORXX_HEADER_ONLY)
 endif()
 target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain integratorxx )
 
+add_executable( util_test util.cxx )
+target_link_libraries( util_test PUBLIC integratorxx_common_ut )
+
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
 target_link_libraries( quadrature_manipulation PUBLIC integratorxx_common_ut )
 
@@ -50,6 +53,7 @@ target_link_libraries( gausschebyshev2 PUBLIC integratorxx_common_ut )
 add_executable( composite_quadratures composite_quadratures.cxx )
 target_link_libraries( composite_quadratures PUBLIC integratorxx_common_ut )
 
+add_test( NAME QUADRATURE_UTIL          COMMAND util_test               )
 add_test( NAME QUADRATURE_MANIP         COMMAND quadrature_manipulation )
 add_test( NAME QUADRATURES_1D           COMMAND 1d_quadratures          )
 add_test( NAME QUADRATURES_COMPOSITE    COMMAND composite_quadratures   )
