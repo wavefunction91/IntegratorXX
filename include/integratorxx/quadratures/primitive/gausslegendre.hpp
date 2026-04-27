@@ -80,7 +80,7 @@ struct quadrature_traits<
           }
         } // end while
 
-        if(not converged) {
+        if(!converged) {
           throw std::runtime_error(
             "Gauss-Legendre Newton Iterations Failed to Converge"
           );

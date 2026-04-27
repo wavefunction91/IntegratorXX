@@ -40,7 +40,7 @@ class BeckeRadialTraits : public RadialTraits {
   }
 
   bool operator==(const BeckeRadialTraits& other) const noexcept {
-    return npts_ == other.npts_ and R_ == other.R_;
+    return npts_ == other.npts_ && R_ == other.R_;
   }
 
   /**

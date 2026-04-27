@@ -20,9 +20,9 @@ bool point_in_box(
   const cartesian_pt_t<T>& pt
 ) {
 
-  if( pt[0] > up[0] or pt[0] < lo[0] )      return false;
-  else if( pt[1] > up[1] or pt[1] < lo[1] ) return false;
-  else if( pt[2] > up[2] or pt[2] < lo[2] ) return false;
+  if( pt[0] > up[0] || pt[0] < lo[0] )      return false;
+  else if( pt[1] > up[1] || pt[1] < lo[1] ) return false;
+  else if( pt[2] > up[2] || pt[2] < lo[2] ) return false;
   else                                      return true;
 
 }
@@ -281,7 +281,7 @@ class SphericalMicroBatcher {
     } 
 
     bool operator==( iterator other ){ return idx_it == other.idx_it; }
-    bool operator!=( iterator other ){ return not (*this == other);   }
+    bool operator!=( iterator other ){ return !(*this == other);   }
 
 
 
@@ -352,7 +352,7 @@ class SphericalMicroBatcher {
     } 
 
     bool operator==( iterator other ){ return idx_it == other.idx_it; }
-    bool operator!=( iterator other ){ return not (*this == other);   }
+    bool operator!=( iterator other ){ return !(*this == other);   }
 
 
 

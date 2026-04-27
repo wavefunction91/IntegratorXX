@@ -17,7 +17,7 @@ constexpr inline auto transform_minus_one_to_one(
   
 
   // Both upper and lower bounds are finite: Map (-1,1) -> (lo,up)
-  if( not up_is_inf and not lo_is_minf ) {
+  if( !up_is_inf && !lo_is_minf ) {
 
     // Factor jacobian into the weights
     // dx' = ((b-a)/2) * dx
@@ -28,7 +28,7 @@ constexpr inline auto transform_minus_one_to_one(
     pt = (up - lo) * pt / 2. + (up + lo) / 2.;
 
   // Lower bound is finite, upper is infinite: Map (-1,1) -> (lo,inf)
-  } else if( not lo_is_minf ) {
+  } else if( !lo_is_minf ) {
 
     // Factor jacobian into the weights
     // dx' = \frac{2}{(1-x)^2} dx
@@ -39,7 +39,7 @@ constexpr inline auto transform_minus_one_to_one(
     pt   = lo  + (1 + pt) / (1 - pt);
 
   // Upper bound is finite, low is infinite: Map (-1,1) -> (inf,up)
-  } else if( not up_is_inf ) {
+  } else if( !up_is_inf ) {
 
     // Factor jacobian into the weights
     // dx' = - \frac{2}{(1+x)^2} dx

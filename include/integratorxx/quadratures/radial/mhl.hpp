@@ -39,7 +39,7 @@ public:
   }
 
   bool operator==(const MurrayHandyLamingRadialTraits& other) const noexcept {
-    return npts_ == other.npts_ and R_ == other.R_;
+    return npts_ == other.npts_ && R_ == other.R_;
   }
 
   /**

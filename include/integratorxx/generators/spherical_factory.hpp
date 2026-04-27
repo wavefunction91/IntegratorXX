@@ -51,8 +51,8 @@ struct PruningRegion {
 
   /// Check equality of `PruningRegion` instances
   inline bool operator==(const PruningRegion& other) const noexcept {
-    return other.idx_st == idx_st and 
-           other.idx_en == idx_en and
+    return other.idx_st == idx_st &&
+           other.idx_en == idx_en &&
            other.angular_size == angular_size;
   }
 };
@@ -85,8 +85,8 @@ struct PrunedSphericalGridSpecification {
   }
 
   inline bool operator==(const PrunedSphericalGridSpecification& other) const noexcept {
-    return radial_quad == other.radial_quad and
-           (radial_traits ? (other.radial_traits and radial_traits->compare(*other.radial_traits)) : !other.radial_traits) and 
+    return radial_quad == other.radial_quad &&
+           (radial_traits ? (other.radial_traits && radial_traits->compare(*other.radial_traits)) : !other.radial_traits) &&
            pruning_regions == other.pruning_regions;
   }
 };

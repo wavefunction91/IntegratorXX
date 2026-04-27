@@ -222,7 +222,7 @@ public:
   template <typename... Args,
     typename = std::enable_if_t<
       // Disable generic construction for copy/move to and from base type
-      detail::all_are_not< Quadrature<Derived>, std::decay_t<Args>... >::value and
+      detail::all_are_not< Quadrature<Derived>, std::decay_t<Args>... >::value &&
       detail::all_are_not<            Derived , std::decay_t<Args>... >::value
     >
   >

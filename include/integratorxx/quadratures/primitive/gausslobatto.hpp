@@ -76,7 +76,7 @@ struct quadrature_traits<GaussLobatto<PointType, WeightType>> {
         }
       }  // end while
 
-      if(not converged) {
+      if(!converged) {
         throw std::runtime_error(
             "Gauss-Lobatto Newton Iterations Failed to Converge");
       }
