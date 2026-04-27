@@ -51,138 +51,14 @@ struct quadrature_traits<Womersley<RealType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  inline static std::tuple<point_container, weight_container> generate(
-      size_t npts) {
-    point_container points(npts);
-    weight_container weights(npts);
-
+  // Helper: dispatch for large npts values (>= 2049).
+  // Split out from generate() to avoid MSVC C1061 "blocks nested too deeply"
+  // (MSVC has a hard limit of ~128 nesting levels for if-else chains).
+  inline static void generate_large_npts_(
+      size_t npts, point_container& points, weight_container& weights) {
     using namespace WomersleyGrids;
 
-    if(npts == 3)
-      detail::copy_grid<womersley_3<RealType>>(points, weights);
-    else if(npts == 6)
-      detail::copy_grid<womersley_6<RealType>>(points, weights);
-    else if(npts == 8)
-      detail::copy_grid<womersley_8<RealType>>(points, weights);
-    else if(npts == 14)
-      detail::copy_grid<womersley_14<RealType>>(points, weights);
-    else if(npts == 18)
-      detail::copy_grid<womersley_18<RealType>>(points, weights);
-    else if(npts == 26)
-      detail::copy_grid<womersley_26<RealType>>(points, weights);
-    else if(npts == 32)
-      detail::copy_grid<womersley_32<RealType>>(points, weights);
-    else if(npts == 42)
-      detail::copy_grid<womersley_42<RealType>>(points, weights);
-    else if(npts == 50)
-      detail::copy_grid<womersley_50<RealType>>(points, weights);
-    else if(npts == 62)
-      detail::copy_grid<womersley_62<RealType>>(points, weights);
-    else if(npts == 72)
-      detail::copy_grid<womersley_72<RealType>>(points, weights);
-    else if(npts == 86)
-      detail::copy_grid<womersley_86<RealType>>(points, weights);
-    else if(npts == 98)
-      detail::copy_grid<womersley_98<RealType>>(points, weights);
-    else if(npts == 114)
-      detail::copy_grid<womersley_114<RealType>>(points, weights);
-    else if(npts == 128)
-      detail::copy_grid<womersley_128<RealType>>(points, weights);
-    else if(npts == 146)
-      detail::copy_grid<womersley_146<RealType>>(points, weights);
-    else if(npts == 163)
-      detail::copy_grid<womersley_163<RealType>>(points, weights);
-    else if(npts == 182)
-      detail::copy_grid<womersley_182<RealType>>(points, weights);
-    else if(npts == 201)
-      detail::copy_grid<womersley_201<RealType>>(points, weights);
-    else if(npts == 222)
-      detail::copy_grid<womersley_222<RealType>>(points, weights);
-    else if(npts == 243)
-      detail::copy_grid<womersley_243<RealType>>(points, weights);
-    else if(npts == 266)
-      detail::copy_grid<womersley_266<RealType>>(points, weights);
-    else if(npts == 289)
-      detail::copy_grid<womersley_289<RealType>>(points, weights);
-    else if(npts == 314)
-      detail::copy_grid<womersley_314<RealType>>(points, weights);
-    else if(npts == 339)
-      detail::copy_grid<womersley_339<RealType>>(points, weights);
-    else if(npts == 366)
-      detail::copy_grid<womersley_366<RealType>>(points, weights);
-    else if(npts == 393)
-      detail::copy_grid<womersley_393<RealType>>(points, weights);
-    else if(npts == 422)
-      detail::copy_grid<womersley_422<RealType>>(points, weights);
-    else if(npts == 451)
-      detail::copy_grid<womersley_451<RealType>>(points, weights);
-    else if(npts == 482)
-      detail::copy_grid<womersley_482<RealType>>(points, weights);
-    else if(npts == 513)
-      detail::copy_grid<womersley_513<RealType>>(points, weights);
-    else if(npts == 546)
-      detail::copy_grid<womersley_546<RealType>>(points, weights);
-    else if(npts == 579)
-      detail::copy_grid<womersley_579<RealType>>(points, weights);
-    else if(npts == 614)
-      detail::copy_grid<womersley_614<RealType>>(points, weights);
-    else if(npts == 649)
-      detail::copy_grid<womersley_649<RealType>>(points, weights);
-    else if(npts == 686)
-      detail::copy_grid<womersley_686<RealType>>(points, weights);
-    else if(npts == 723)
-      detail::copy_grid<womersley_723<RealType>>(points, weights);
-    else if(npts == 762)
-      detail::copy_grid<womersley_762<RealType>>(points, weights);
-    else if(npts == 801)
-      detail::copy_grid<womersley_801<RealType>>(points, weights);
-    else if(npts == 842)
-      detail::copy_grid<womersley_842<RealType>>(points, weights);
-    else if(npts == 883)
-      detail::copy_grid<womersley_883<RealType>>(points, weights);
-    else if(npts == 926)
-      detail::copy_grid<womersley_926<RealType>>(points, weights);
-    else if(npts == 969)
-      detail::copy_grid<womersley_969<RealType>>(points, weights);
-    else if(npts == 1014)
-      detail::copy_grid<womersley_1014<RealType>>(points, weights);
-    else if(npts == 1059)
-      detail::copy_grid<womersley_1059<RealType>>(points, weights);
-    else if(npts == 1106)
-      detail::copy_grid<womersley_1106<RealType>>(points, weights);
-    else if(npts == 1153)
-      detail::copy_grid<womersley_1153<RealType>>(points, weights);
-    else if(npts == 1202)
-      detail::copy_grid<womersley_1202<RealType>>(points, weights);
-    else if(npts == 1251)
-      detail::copy_grid<womersley_1251<RealType>>(points, weights);
-    else if(npts == 1302)
-      detail::copy_grid<womersley_1302<RealType>>(points, weights);
-    else if(npts == 1353)
-      detail::copy_grid<womersley_1353<RealType>>(points, weights);
-    else if(npts == 1406)
-      detail::copy_grid<womersley_1406<RealType>>(points, weights);
-    else if(npts == 1459)
-      detail::copy_grid<womersley_1459<RealType>>(points, weights);
-    else if(npts == 1514)
-      detail::copy_grid<womersley_1514<RealType>>(points, weights);
-    else if(npts == 1569)
-      detail::copy_grid<womersley_1569<RealType>>(points, weights);
-    else if(npts == 1626)
-      detail::copy_grid<womersley_1626<RealType>>(points, weights);
-    else if(npts == 1683)
-      detail::copy_grid<womersley_1683<RealType>>(points, weights);
-    else if(npts == 1742)
-      detail::copy_grid<womersley_1742<RealType>>(points, weights);
-    else if(npts == 1801)
-      detail::copy_grid<womersley_1801<RealType>>(points, weights);
-    else if(npts == 1862)
-      detail::copy_grid<womersley_1862<RealType>>(points, weights);
-    else if(npts == 1923)
-      detail::copy_grid<womersley_1923<RealType>>(points, weights);
-    else if(npts == 1986)
-      detail::copy_grid<womersley_1986<RealType>>(points, weights);
-    else if(npts == 2049)
+    if(npts == 2049)
       detail::copy_grid<womersley_2049<RealType>>(points, weights);
     else if(npts == 2114)
       detail::copy_grid<womersley_2114<RealType>>(points, weights);
@@ -308,6 +184,141 @@ struct quadrature_traits<Womersley<RealType>> {
       detail::copy_grid<womersley_7814<RealType>>(points, weights);
     else if(npts == 7939)
       detail::copy_grid<womersley_7939<RealType>>(points, weights);
+  }
+
+  inline static std::tuple<point_container, weight_container> generate(
+      size_t npts) {
+    point_container points(npts);
+    weight_container weights(npts);
+
+    using namespace WomersleyGrids;
+
+    if(npts >= 2049)
+      generate_large_npts_(npts, points, weights);
+    else if(npts == 3)
+      detail::copy_grid<womersley_3<RealType>>(points, weights);
+    else if(npts == 6)
+      detail::copy_grid<womersley_6<RealType>>(points, weights);
+    else if(npts == 8)
+      detail::copy_grid<womersley_8<RealType>>(points, weights);
+    else if(npts == 14)
+      detail::copy_grid<womersley_14<RealType>>(points, weights);
+    else if(npts == 18)
+      detail::copy_grid<womersley_18<RealType>>(points, weights);
+    else if(npts == 26)
+      detail::copy_grid<womersley_26<RealType>>(points, weights);
+    else if(npts == 32)
+      detail::copy_grid<womersley_32<RealType>>(points, weights);
+    else if(npts == 42)
+      detail::copy_grid<womersley_42<RealType>>(points, weights);
+    else if(npts == 50)
+      detail::copy_grid<womersley_50<RealType>>(points, weights);
+    else if(npts == 62)
+      detail::copy_grid<womersley_62<RealType>>(points, weights);
+    else if(npts == 72)
+      detail::copy_grid<womersley_72<RealType>>(points, weights);
+    else if(npts == 86)
+      detail::copy_grid<womersley_86<RealType>>(points, weights);
+    else if(npts == 98)
+      detail::copy_grid<womersley_98<RealType>>(points, weights);
+    else if(npts == 114)
+      detail::copy_grid<womersley_114<RealType>>(points, weights);
+    else if(npts == 128)
+      detail::copy_grid<womersley_128<RealType>>(points, weights);
+    else if(npts == 146)
+      detail::copy_grid<womersley_146<RealType>>(points, weights);
+    else if(npts == 163)
+      detail::copy_grid<womersley_163<RealType>>(points, weights);
+    else if(npts == 182)
+      detail::copy_grid<womersley_182<RealType>>(points, weights);
+    else if(npts == 201)
+      detail::copy_grid<womersley_201<RealType>>(points, weights);
+    else if(npts == 222)
+      detail::copy_grid<womersley_222<RealType>>(points, weights);
+    else if(npts == 243)
+      detail::copy_grid<womersley_243<RealType>>(points, weights);
+    else if(npts == 266)
+      detail::copy_grid<womersley_266<RealType>>(points, weights);
+    else if(npts == 289)
+      detail::copy_grid<womersley_289<RealType>>(points, weights);
+    else if(npts == 314)
+      detail::copy_grid<womersley_314<RealType>>(points, weights);
+    else if(npts == 339)
+      detail::copy_grid<womersley_339<RealType>>(points, weights);
+    else if(npts == 366)
+      detail::copy_grid<womersley_366<RealType>>(points, weights);
+    else if(npts == 393)
+      detail::copy_grid<womersley_393<RealType>>(points, weights);
+    else if(npts == 422)
+      detail::copy_grid<womersley_422<RealType>>(points, weights);
+    else if(npts == 451)
+      detail::copy_grid<womersley_451<RealType>>(points, weights);
+    else if(npts == 482)
+      detail::copy_grid<womersley_482<RealType>>(points, weights);
+    else if(npts == 513)
+      detail::copy_grid<womersley_513<RealType>>(points, weights);
+    else if(npts == 546)
+      detail::copy_grid<womersley_546<RealType>>(points, weights);
+    else if(npts == 579)
+      detail::copy_grid<womersley_579<RealType>>(points, weights);
+    else if(npts == 614)
+      detail::copy_grid<womersley_614<RealType>>(points, weights);
+    else if(npts == 649)
+      detail::copy_grid<womersley_649<RealType>>(points, weights);
+    else if(npts == 686)
+      detail::copy_grid<womersley_686<RealType>>(points, weights);
+    else if(npts == 723)
+      detail::copy_grid<womersley_723<RealType>>(points, weights);
+    else if(npts == 762)
+      detail::copy_grid<womersley_762<RealType>>(points, weights);
+    else if(npts == 801)
+      detail::copy_grid<womersley_801<RealType>>(points, weights);
+    else if(npts == 842)
+      detail::copy_grid<womersley_842<RealType>>(points, weights);
+    else if(npts == 883)
+      detail::copy_grid<womersley_883<RealType>>(points, weights);
+    else if(npts == 926)
+      detail::copy_grid<womersley_926<RealType>>(points, weights);
+    else if(npts == 969)
+      detail::copy_grid<womersley_969<RealType>>(points, weights);
+    else if(npts == 1014)
+      detail::copy_grid<womersley_1014<RealType>>(points, weights);
+    else if(npts == 1059)
+      detail::copy_grid<womersley_1059<RealType>>(points, weights);
+    else if(npts == 1106)
+      detail::copy_grid<womersley_1106<RealType>>(points, weights);
+    else if(npts == 1153)
+      detail::copy_grid<womersley_1153<RealType>>(points, weights);
+    else if(npts == 1202)
+      detail::copy_grid<womersley_1202<RealType>>(points, weights);
+    else if(npts == 1251)
+      detail::copy_grid<womersley_1251<RealType>>(points, weights);
+    else if(npts == 1302)
+      detail::copy_grid<womersley_1302<RealType>>(points, weights);
+    else if(npts == 1353)
+      detail::copy_grid<womersley_1353<RealType>>(points, weights);
+    else if(npts == 1406)
+      detail::copy_grid<womersley_1406<RealType>>(points, weights);
+    else if(npts == 1459)
+      detail::copy_grid<womersley_1459<RealType>>(points, weights);
+    else if(npts == 1514)
+      detail::copy_grid<womersley_1514<RealType>>(points, weights);
+    else if(npts == 1569)
+      detail::copy_grid<womersley_1569<RealType>>(points, weights);
+    else if(npts == 1626)
+      detail::copy_grid<womersley_1626<RealType>>(points, weights);
+    else if(npts == 1683)
+      detail::copy_grid<womersley_1683<RealType>>(points, weights);
+    else if(npts == 1742)
+      detail::copy_grid<womersley_1742<RealType>>(points, weights);
+    else if(npts == 1801)
+      detail::copy_grid<womersley_1801<RealType>>(points, weights);
+    else if(npts == 1862)
+      detail::copy_grid<womersley_1862<RealType>>(points, weights);
+    else if(npts == 1923)
+      detail::copy_grid<womersley_1923<RealType>>(points, weights);
+    else if(npts == 1986)
+      detail::copy_grid<womersley_1986<RealType>>(points, weights);
     return std::make_tuple(points, weights);
   }
 
@@ -826,256 +837,12 @@ inline static int64_t algebraic_order_by_npts(int64_t npts) {
 }
 
 inline static int64_t next_algebraic_order(int64_t order) {
-  if(order <= 1)
-    return 1;
-  else if(order <= 2)
-    return 2;
-  else if(order <= 3)
-    return 3;
-  else if(order <= 4)
-    return 4;
-  else if(order <= 5)
-    return 5;
-  else if(order <= 6)
-    return 6;
-  else if(order <= 7)
-    return 7;
-  else if(order <= 8)
-    return 8;
-  else if(order <= 9)
-    return 9;
-  else if(order <= 10)
-    return 10;
-  else if(order <= 11)
-    return 11;
-  else if(order <= 12)
-    return 12;
-  else if(order <= 13)
-    return 13;
-  else if(order <= 14)
-    return 14;
-  else if(order <= 15)
-    return 15;
-  else if(order <= 16)
-    return 16;
-  else if(order <= 17)
-    return 17;
-  else if(order <= 18)
-    return 18;
-  else if(order <= 19)
-    return 19;
-  else if(order <= 20)
-    return 20;
-  else if(order <= 21)
-    return 21;
-  else if(order <= 22)
-    return 22;
-  else if(order <= 23)
-    return 23;
-  else if(order <= 24)
-    return 24;
-  else if(order <= 25)
-    return 25;
-  else if(order <= 26)
-    return 26;
-  else if(order <= 27)
-    return 27;
-  else if(order <= 28)
-    return 28;
-  else if(order <= 29)
-    return 29;
-  else if(order <= 30)
-    return 30;
-  else if(order <= 31)
-    return 31;
-  else if(order <= 32)
-    return 32;
-  else if(order <= 33)
-    return 33;
-  else if(order <= 34)
-    return 34;
-  else if(order <= 35)
-    return 35;
-  else if(order <= 36)
-    return 36;
-  else if(order <= 37)
-    return 37;
-  else if(order <= 38)
-    return 38;
-  else if(order <= 39)
-    return 39;
-  else if(order <= 40)
-    return 40;
-  else if(order <= 41)
-    return 41;
-  else if(order <= 42)
-    return 42;
-  else if(order <= 43)
-    return 43;
-  else if(order <= 44)
-    return 44;
-  else if(order <= 45)
-    return 45;
-  else if(order <= 46)
-    return 46;
-  else if(order <= 47)
-    return 47;
-  else if(order <= 48)
-    return 48;
-  else if(order <= 49)
-    return 49;
-  else if(order <= 50)
-    return 50;
-  else if(order <= 51)
-    return 51;
-  else if(order <= 52)
-    return 52;
-  else if(order <= 53)
-    return 53;
-  else if(order <= 54)
-    return 54;
-  else if(order <= 55)
-    return 55;
-  else if(order <= 56)
-    return 56;
-  else if(order <= 57)
-    return 57;
-  else if(order <= 58)
-    return 58;
-  else if(order <= 59)
-    return 59;
-  else if(order <= 60)
-    return 60;
-  else if(order <= 61)
-    return 61;
-  else if(order <= 62)
-    return 62;
-  else if(order <= 63)
-    return 63;
-  else if(order <= 64)
-    return 64;
-  else if(order <= 65)
-    return 65;
-  else if(order <= 66)
-    return 66;
-  else if(order <= 67)
-    return 67;
-  else if(order <= 68)
-    return 68;
-  else if(order <= 69)
-    return 69;
-  else if(order <= 70)
-    return 70;
-  else if(order <= 71)
-    return 71;
-  else if(order <= 72)
-    return 72;
-  else if(order <= 73)
-    return 73;
-  else if(order <= 74)
-    return 74;
-  else if(order <= 75)
-    return 75;
-  else if(order <= 76)
-    return 76;
-  else if(order <= 77)
-    return 77;
-  else if(order <= 78)
-    return 78;
-  else if(order <= 79)
-    return 79;
-  else if(order <= 80)
-    return 80;
-  else if(order <= 81)
-    return 81;
-  else if(order <= 82)
-    return 82;
-  else if(order <= 83)
-    return 83;
-  else if(order <= 84)
-    return 84;
-  else if(order <= 85)
-    return 85;
-  else if(order <= 86)
-    return 86;
-  else if(order <= 87)
-    return 87;
-  else if(order <= 88)
-    return 88;
-  else if(order <= 89)
-    return 89;
-  else if(order <= 90)
-    return 90;
-  else if(order <= 91)
-    return 91;
-  else if(order <= 92)
-    return 92;
-  else if(order <= 93)
-    return 93;
-  else if(order <= 94)
-    return 94;
-  else if(order <= 95)
-    return 95;
-  else if(order <= 96)
-    return 96;
-  else if(order <= 97)
-    return 97;
-  else if(order <= 98)
-    return 98;
-  else if(order <= 99)
-    return 99;
-  else if(order <= 100)
-    return 100;
-  else if(order <= 101)
-    return 101;
-  else if(order <= 102)
-    return 102;
-  else if(order <= 103)
-    return 103;
-  else if(order <= 104)
-    return 104;
-  else if(order <= 105)
-    return 105;
-  else if(order <= 106)
-    return 106;
-  else if(order <= 107)
-    return 107;
-  else if(order <= 108)
-    return 108;
-  else if(order <= 109)
-    return 109;
-  else if(order <= 110)
-    return 110;
-  else if(order <= 111)
-    return 111;
-  else if(order <= 112)
-    return 112;
-  else if(order <= 113)
-    return 113;
-  else if(order <= 114)
-    return 114;
-  else if(order <= 115)
-    return 115;
-  else if(order <= 116)
-    return 116;
-  else if(order <= 117)
-    return 117;
-  else if(order <= 118)
-    return 118;
-  else if(order <= 119)
-    return 119;
-  else if(order <= 120)
-    return 120;
-  else if(order <= 121)
-    return 121;
-  else if(order <= 122)
-    return 122;
-  else if(order <= 123)
-    return 123;
-  else if(order <= 124)
-    return 124;
-  else
-    return 125;
+  // Clamp to the supported range [1, 125].
+  // (The original if-else chain returned order for 1 <= order <= 124, else 125.
+  //  Replaced to avoid MSVC C1061 "blocks nested too deeply" with ~125 branches.)
+  if(order < 1)  return 1;
+  if(order > 125) return 125;
+  return order;
 }
 };
 namespace detail {
