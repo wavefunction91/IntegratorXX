@@ -24,7 +24,7 @@ target_include_directories( integratorxx
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-Wno-missing-braces" INTEGRATORXX_HAS_NO_MISSING_BRACES )
 if( INTEGRATORXX_HAS_NO_MISSING_BRACES )
-	target_compile_options( integratorxx INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wno-missing-braces> )
+	target_compile_options( integratorxx ${INTEGRATORXX_TARGET_TYPE} $<$<COMPILE_LANGUAGE:CXX>: -Wno-missing-braces> )
 endif()
 
 # MSVC: define _USE_MATH_DEFINES for M_PI etc., and /bigobj for large TUs
