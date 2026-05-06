@@ -5,6 +5,7 @@
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
 #include <integratorxx/batch/spherical_micro_batcher.hpp>
+#include <numeric>
 
 //#include <integratorxx/deprecated/batch.hpp>
 //#include <integratorxx/deprecated/quadrature.hpp>
