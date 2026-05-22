@@ -53,6 +53,7 @@ struct PruningRegion {
   inline bool operator==(const PruningRegion& other) const noexcept {
     return other.idx_st == idx_st &&
            other.idx_en == idx_en &&
+           other.angular_quad == angular_quad &&
            other.angular_size == angular_size;
   }
 };
