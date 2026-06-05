@@ -31,6 +31,7 @@ endif()
 if(MSVC)
   target_compile_definitions( integratorxx ${INTEGRATORXX_TARGET_TYPE} _USE_MATH_DEFINES )
   target_compile_options( integratorxx ${INTEGRATORXX_TARGET_TYPE} /bigobj )
+  add_compile_options(/EHsc)  # standard C++ exception-handling model; fixes C4530 from STL headers
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     target_compile_options( integratorxx ${INTEGRATORXX_TARGET_TYPE}
       -Wno-unused-but-set-variable
