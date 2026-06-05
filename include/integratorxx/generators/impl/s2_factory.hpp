@@ -8,7 +8,8 @@
 namespace IntegratorXX {
 
 AngularQuad angular_from_string(std::string name) {
-  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+  std::transform(name.begin(), name.end(), name.begin(),
+    [](unsigned char c){ return static_cast<char>(std::toupper(c)); });
   if(name == "AHRENSBEYLKIN") return AngularQuad::AhrensBeylkin;
   if(name == "AB")            return AngularQuad::AhrensBeylkin;
   if(name == "DELLEY")        return AngularQuad::Delley;
