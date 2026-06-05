@@ -53,7 +53,7 @@ struct quadrature_traits<
     const size_t mid = (npts + 1) / 2;
     for( size_t idx = 0; idx < mid; ++idx ) {
         // Index
-        const point_type i = idx+1;
+        const point_type i = static_cast<point_type>(idx+1);
 
         // Standard initial guess for location of i:th root in [-1, 1]
         point_type z = std::cos( M_PI * (i - 0.25) / (npts + 0.5));
