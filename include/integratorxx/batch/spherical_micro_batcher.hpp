@@ -469,14 +469,14 @@ public:
     if( i >= nbatches() )
       throw std::runtime_error("Index out of bounds");
 
-    return *(begin() + static_cast<std::ptrdiff_t>(i));
+    return *(begin() + static_cast<int>(i));
   }
 
   typename const_iterator::value_type at( size_t i ) const {
     if( i >= nbatches() )
       throw std::runtime_error("Index out of bounds");
 
-    return *(cbegin() + static_cast<std::ptrdiff_t>(i));
+    return *(cbegin() + static_cast<int>(i));
   }
 
 
