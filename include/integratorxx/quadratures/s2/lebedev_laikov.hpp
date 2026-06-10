@@ -109,7 +109,7 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
       detail::copy_grid<lebedev_laikov_5810<RealType>>( points, weights );
 
     // Pretabulated weights are missing 4 pi
-    for(auto i=0; i < npts; i++)
+    for(size_t i=0; i < npts; i++)
       weights[i] *= 4.0*M_PI;
         
     return std::make_tuple( points, weights );
