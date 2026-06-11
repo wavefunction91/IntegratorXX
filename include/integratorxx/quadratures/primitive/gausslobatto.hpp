@@ -46,7 +46,7 @@ struct quadrature_traits<GaussLobatto<PointType, WeightType>> {
     const size_t mid = (npts+1) / 2;
     for(size_t idx = 1; idx < mid; ++idx) {
       // Initial guess
-      const point_type i = npts - 1 - idx;
+      const point_type i = static_cast<point_type>(npts - 1 - idx);
       point_type z = cos (i * M_PI / ( npts - 1.0));
 
       // Old value of root
@@ -76,7 +76,7 @@ struct quadrature_traits<GaussLobatto<PointType, WeightType>> {
         }
       }  // end while
 
-      if(not converged) {
+      if(!converged) {
         throw std::runtime_error(
             "Gauss-Lobatto Newton Iterations Failed to Converge");
       }

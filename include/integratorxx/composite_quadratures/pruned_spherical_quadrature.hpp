@@ -110,9 +110,9 @@ public:
     }
 
     bool operator==(rgp_iterator other) const { 
-      return idx_it == other.idx_it and quad_it == other.quad_it; 
+      return idx_it == other.idx_it && quad_it == other.quad_it; 
     }
-    bool operator!=(rgp_iterator other) const { return not (*this == other);   }
+    bool operator!=(rgp_iterator other) const { return !(*this == other);   }
 
     value_type operator*() {
       return std::make_pair( std::make_pair(*idx_it, *(idx_it+1)), *quad_it );

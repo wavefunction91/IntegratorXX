@@ -50,7 +50,7 @@ public:
   }
 
   bool operator==(const TreutlerAhlrichsRadialTraits& other) const noexcept {
-    return npts_ == other.npts_ and R_ == other.R_ and alpha_ == other.alpha_;
+    return npts_ == other.npts_ && R_ == other.R_ && alpha_ == other.alpha_;
   }
 
   /**

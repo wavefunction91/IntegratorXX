@@ -54,7 +54,7 @@ TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
   // Reference integral for polynomial evaluated over [-1,1]
   auto ref_value = [](const std::vector<double>& c) {
-    const auto p = c.size();
+    const int p = static_cast<int>(c.size());
     std::vector<double> cp(p+1, 0.0); 
     for(int i = 0; i < p; ++i) {
       cp[i] = c[i] / (p-i);
@@ -74,7 +74,7 @@ TEST_CASE( "Gauss-Lobatto Quadratures", "[1d-quad]" ) {
 
   // Reference integral for polynomial evaluated over [-1,1]
   auto ref_value = [](const std::vector<double>& c) {
-    const auto p = c.size();
+    const int p = static_cast<int>(c.size());
     std::vector<double> cp(p+1, 0.0); 
     for(int i = 0; i < p; ++i) {
       cp[i] = c[i] / (p-i);
@@ -95,7 +95,7 @@ TEST_CASE( "Gauss-Chebyshev T1 Quadratures", "[1d-quad]" ) {
 
   // Reference integral for polynomial * T1 evaluated over [-1,1]
   auto ref_value = [](const std::vector<double>& c) {
-    const auto p = c.size();
+    const int p = static_cast<int>(c.size());
     double ref = 0.0;
     for(int i = 0; i < p; ++i) {
       int k = p - i - 1;
@@ -121,7 +121,7 @@ TEST_CASE( "Gauss-Chebyshev T2 Quadratures", "[1d-quad]" ) {
 
   // Reference integral for polynomial * T2 evaluated over [-1,1]
   auto ref_value = [](const std::vector<double>& c) {
-    const auto p = c.size();
+    const int p = static_cast<int>(c.size());
     double ref = 0.0;
     for(int i = 0; i < p; ++i) {
       int k = p - i - 1;
@@ -147,7 +147,7 @@ TEST_CASE( "Gauss-Chebyshev T3 Quadratures", "[1d-quad]" ) {
 
   // Reference integral for polynomial * T3 evaluated over [0,1]
   auto ref_value = [](const std::vector<double>& c) {
-    const auto p = c.size();
+    const int p = static_cast<int>(c.size());
     double ref = 0.0;
       for(int i = 0; i < p; ++i) {
         int k = p - i - 1;

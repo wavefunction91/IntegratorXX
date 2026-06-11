@@ -8,7 +8,8 @@
 namespace IntegratorXX {
 
 RadialQuad radial_from_string(std::string name) {
-  std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+  std::transform(name.begin(), name.end(), name.begin(),
+    [](unsigned char c){ return static_cast<char>(std::toupper(c)); });
   if(name == "BECKE")             return RadialQuad::Becke;
   if(name == "MURAKNOWLES")       return RadialQuad::MuraKnowles;
   if(name == "MK")                return RadialQuad::MuraKnowles;

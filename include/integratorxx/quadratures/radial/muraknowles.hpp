@@ -64,7 +64,7 @@ template <typename PointType, typename WeightType>
 struct quadrature_traits<
   MuraKnowles<PointType,WeightType>,
   std::enable_if_t<
-    std::is_floating_point_v<PointType> and
+    std::is_floating_point_v<PointType> &&
     std::is_floating_point_v<WeightType>
   >
 > {
@@ -157,7 +157,7 @@ public:
   }
 
   bool operator==(const MuraKnowlesRadialTraits& other) const noexcept {
-    return npts_ == other.npts_ and R_ == other.R_;
+    return npts_ == other.npts_ && R_ == other.R_;
   }
 
   template <typename PointType>
