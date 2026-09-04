@@ -162,6 +162,26 @@ To use the runtime generator header-only, one needs to include
 `<integratorxx/generators/impl/impl.hpp>` **exactly once** per project,
 otherwise duplicate / incompatible symbols will occur.
 
+### High-precision literals
+
+The tabulated solid-angle grids (Lebedev-Laikov, Delley, Ahrens-Beylkin,
+Womersley) are stored as `IntegratorXX::ixx_real`, which is `double` by default.
+A `double` literal has already been rounded by the time any code can inspect it,
+so a type more precise than `double` -- or one that must bound its own error --
+cannot recover the value the table intended.
+
+Setting `INTEGRATORXX_ENABLE_STRING_REALS=ON` makes `ixx_real` a
+`std::string_view` instead, so the tables carry the exact decimal source text of
+each entry and the conversion to the quadrature's value type happens on read.
+The default `IntegratorXX::fp_traits::from_real` still parses that text via
+`double`, so this option changes nothing on its own; it exists so that a type
+which specializes `from_real` can parse the decimal directly. Unless you have
+such a type, leave it `OFF`.
+
+**N.B.** the setting changes the type of a table entry, so it is not ABI-neutral:
+IntegratorXX and everything that includes its headers must be built with the same
+value.
+
 ## Contributing and Bug Reports
 
 We welcome any and all contributions and encourage bug reports. Please use the

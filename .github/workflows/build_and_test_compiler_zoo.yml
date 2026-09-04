@@ -95,6 +95,44 @@ jobs:
       shell: bash
       run: cmake --build ${{runner.workspace}}/build --target test
 
+  string_reals_build:
+    name: String Reals Build and Test
+    runs-on: ubuntu-latest
+    container:
+        image: dbwy/chemistry
+    strategy:
+      matrix:
+        header_only: [ON,OFF]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Compiler
+      shell: bash
+      run: $GITHUB_WORKSPACE/.github/workflows/scripts/compiler_setup.sh gnu 12
+
+    - name: Setup Build Type
+      shell: bash
+      run: echo "set(CMAKE_BUILD_TYPE Release CACHE BOOL \"\" FORCE)" >>
+             ${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
+
+    - name: Configure CMake
+      shell: bash
+      run: cmake -S $GITHUB_WORKSPACE -B ${{runner.workspace}}/build
+                 -DINTEGRATORXX_ENABLE_STRING_REALS=ON
+                 -DINTEGRATORXX_HEADER_ONLY=${{matrix.header_only}}
+                 -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/install
+                 -DCMAKE_PREFIX_PATH=${ENV_PREFIX_PATH}
+                 -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/${GH_ACTIONS_TOOLCHAIN}
+
+    - name: Build
+      shell: bash
+      run: cmake --build ${{runner.workspace}}/build -j2
+
+    - name: Test
+      shell: bash
+      run: cmake --build ${{runner.workspace}}/build --target test
+
   subproject_build:
     name: Build as Subproject
     needs: release_build

@@ -4,6 +4,8 @@ cmake_minimum_required( VERSION 3.17 ) # Require CMake 3.17+
 project( IntegratorXX VERSION 1.2.0 LANGUAGES CXX )
 
 option(INTEGRATORXX_HEADER_ONLY "Force header-only build" OFF)
+option(INTEGRATORXX_ENABLE_STRING_REALS
+       "Carry non-integral literals as their decimal source text" OFF)
 
 if(INTEGRATORXX_HEADER_ONLY)
   add_library( integratorxx INTERFACE )
@@ -20,6 +22,14 @@ target_include_directories( integratorxx
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
+
+# Non-integral literals carried as text rather than as a pre-rounded double.
+# Applied to the target rather than to a directory so that, in the non
+# header-only build, the library's own TUs in src/ and its consumers agree on
+# what `ixx_real` is; they would otherwise disagree across the ABI.
+if(INTEGRATORXX_ENABLE_STRING_REALS)
+  target_compile_definitions( integratorxx ${INTEGRATORXX_TARGET_TYPE} ENABLE_STRING_REALS )
+endif()
 
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-Wno-missing-braces" INTEGRATORXX_HAS_NO_MISSING_BRACES )

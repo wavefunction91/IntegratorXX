@@ -10,14 +10,16 @@ namespace WomersleyGrids {
 template <typename T>
 struct womersley_3 {
 
-  static constexpr std::array<cartesian_pt_t<T>,3> points = {
-     0.0000000000000000e+00,      0.0000000000000000e+00,      1.0000000000000000e+00,
-     8.6602540378443871e-01,      0.0000000000000000e+00,     -4.9999999999999978e-01,
-    -8.6602540378443871e-01,     -2.7853501340422215e-16,     -4.9999999999999978e-01
+  static constexpr std::array<cartesian_pt_t<ixx_real>,3> points = {
+     IXX_REAL(0.0000000000000000e+00),      IXX_REAL(0.0000000000000000e+00),      IXX_REAL(1.0000000000000000e+00),
+     IXX_REAL(8.6602540378443871e-01),      IXX_REAL(0.0000000000000000e+00),     IXX_REAL(-4.9999999999999978e-01),
+    IXX_REAL(-8.6602540378443871e-01),     IXX_REAL(-2.7853501340422215e-16),     IXX_REAL(-4.9999999999999978e-01)
 };
 
 
-static constexpr auto weights = detail::create_array<3, T>(4.0 * M_PI / 3.0);
+  /// Equal-weight grid: every weight is 4*pi/3 (sphere area / npts).
+  /// copy_grid forms it exactly; see util/copy_grid.hpp.
+  static constexpr ixx_int uniform_weight_npts = 3;
 };
 }  // namespace WomersleyGrids
 }  // namespace IntegratorXX
