@@ -12,6 +12,7 @@ using bk_type  = IntegratorXX::Becke<double,double>;
 using mk_type  = IntegratorXX::MuraKnowles<double,double>;
 using mhl_type = IntegratorXX::MurrayHandyLaming<double,double>;
 using ta_type  = IntegratorXX::TreutlerAhlrichs<double,double>;
+using lmg_type  = IntegratorXX::LindhMalmqvistGagliardi<double,double>;
 
 using ah_type = IntegratorXX::AhrensBeylkin<double>;
 using de_type = IntegratorXX::Delley<double>;
@@ -39,10 +40,11 @@ std::ostream& operator<<( std::ostream& out,
   using namespace IntegratorXX;
   out << "RADIAL QUAD: ";
   switch(p.radial_quad) {
-    case RadialQuad::Becke:             out << "Becke"; break;
-    case RadialQuad::MuraKnowles:       out << "MK";    break;
-    case RadialQuad::MurrayHandyLaming: out << "MHL";   break;
-    case RadialQuad::TreutlerAhlrichs:  out << "TA";    break;
+    case RadialQuad::Becke:                    out << "Becke"; break;
+    case RadialQuad::MuraKnowles:              out << "MK";    break;
+    case RadialQuad::MurrayHandyLaming:        out << "MHL";   break;
+    case RadialQuad::TreutlerAhlrichs:         out << "TA";    break;
+    case RadialQuad::LindhMalmqvistGagliardi:  out << "LMG";   break;
   } 
 
   out << std::endl;
@@ -64,6 +66,8 @@ TEST_CASE( "String Getter", "[sph-gen]" ) {
     REQUIRE(radial_from_type<mhl_type>() == radial_from_string("MHL"));
     REQUIRE(radial_from_type<ta_type>() == radial_from_string("TreutlerAhlrichs"));
     REQUIRE(radial_from_type<ta_type>() == radial_from_string("TA"));
+    REQUIRE(radial_from_type<lmg_type>() == radial_from_string("LMG"));
+    REQUIRE(radial_from_type<lmg_type>() == radial_from_string("LindhMalmqvistGagliardi"));
   }
 
   SECTION("Angular") {
@@ -234,17 +238,29 @@ TEST_CASE( "Pruning Schemes", "[sph-gen]" ) {
 }
 
 using radial_test_types = std::tuple<
-  bk_type, mk_type, mhl_type, ta_type
+  bk_type, mk_type, mhl_type, ta_type, lmg_type
 >;
 
 TEMPLATE_LIST_TEST_CASE("Radial Generator", "[sph-gen]", radial_test_types) {
   using namespace IntegratorXX;
   using radial_type = TestType;
 
-  size_t npts = 10;
-  radial_type rq(npts, 1.0);
+  size_t npts;
+  std::unique_ptr<RadialTraits> rad_traits = nullptr;
+  std::unique_ptr<radial_type> rq_ptr = nullptr;
   auto rad_spec = radial_from_type<radial_type>();
-  auto rad_traits = make_radial_traits(rad_spec, npts, 1.0);
+  if constexpr (std::is_same_v<radial_type, lmg_type>) {
+    npts = 74;
+    double h = 0.15235041341729277;
+    double c = 1.2798590387343324e-04;
+    rad_traits = make_radial_traits(rad_spec, npts, c, h);
+    rq_ptr = std::make_unique<radial_type>(*rad_traits);
+  } else {
+    npts = 10;
+    rq_ptr = std::make_unique<radial_type>(npts, 1.0);
+    rad_traits = make_radial_traits(rad_spec, npts, 1.0);
+  }
+  const auto& rq = *rq_ptr;
   auto rad_grid = RadialFactory::generate(rad_spec, *rad_traits);
 
   REQUIRE(rad_grid->npts() == npts);
@@ -309,7 +325,12 @@ using sph_test_types = std::tuple<
   std::tuple<ta_type, ah_type>,
   std::tuple<ta_type, de_type>,
   std::tuple<ta_type, ll_type>,
-  std::tuple<ta_type, wo_type>
+  std::tuple<ta_type, wo_type>,
+
+  std::tuple<lmg_type, ah_type>,
+  std::tuple<lmg_type, de_type>,
+  std::tuple<lmg_type, ll_type>,
+  std::tuple<lmg_type, wo_type>
 >;
 
 
@@ -322,19 +343,33 @@ TEMPLATE_LIST_TEST_CASE("Unpruned", "[sph-gen]", sph_test_types) {
 
   using spherical_type = SphericalQuadrature<radial_type,angular_type>;
 
-  size_t nrad = 10;
+
+  size_t nrad;
+  std::unique_ptr<RadialTraits> rad_traits = nullptr;
+  std::unique_ptr<radial_type> rq_ptr = nullptr;
+  auto rad_spec = radial_from_type<radial_type>();
+  if constexpr (std::is_same_v<radial_type, lmg_type>) {
+    nrad = 74;
+    double h = 0.15235041341729277;
+    double c = 1.2798590387343324e-04;
+    rad_traits = make_radial_traits(rad_spec, nrad, c, h);
+    rq_ptr = std::make_unique<radial_type>(*rad_traits);
+  } else {
+    nrad = 10;
+    rq_ptr = std::make_unique<radial_type>(nrad, 1.0);
+    rad_traits = make_radial_traits(rad_spec, nrad, 1.0);
+  }
+
   size_t nang = angular_traits::npts_by_algebraic_order(
     angular_traits::next_algebraic_order(1)); // Smallest possible angular grid
+  angular_type aq(nang);
+
 
   // Generate the quadrature manually
-  radial_type rq(nrad, 1.0);
-  angular_type aq(nang);
-  spherical_type sph_ref(rq,aq);
+  spherical_type sph_ref(*rq_ptr,aq);
 
 
   // Generate via runtime API
-  auto rad_spec = radial_from_type<radial_type>();
-  auto rad_traits = make_radial_traits(rad_spec, nrad, 1.0);
   UnprunedSphericalGridSpecification unp(
     rad_spec, *rad_traits,
     angular_from_type<angular_type>(), nang
@@ -368,13 +403,26 @@ TEMPLATE_LIST_TEST_CASE("Pruned", "[sph-gen]", sph_test_types) {
 
   using spherical_type = PrunedSphericalQuadrature<radial_type,angular_type>;
 
-  size_t nrad = 99;
+  size_t nrad;
+  std::unique_ptr<RadialTraits> rad_traits = nullptr;
+  std::unique_ptr<radial_type> rq_ptr = nullptr;
+  auto rad_spec = radial_from_type<radial_type>();
+  if constexpr (std::is_same_v<radial_type, lmg_type>) {
+    nrad = 74;
+    double h = 0.15235041341729277;
+    double c = 1.2798590387343324e-04;
+    rad_traits = make_radial_traits(rad_spec, nrad, c, h);
+    rq_ptr = std::make_unique<radial_type>(*rad_traits);
+  } else {
+    nrad = 99;
+    rq_ptr = std::make_unique<radial_type>(nrad, 1.0);
+    rad_traits = make_radial_traits(rad_spec, nrad, 1.0);
+  }
+
   size_t nang = angular_traits::npts_by_algebraic_order(
     angular_traits::next_algebraic_order(29)); // Smallest possible angular grid
 
   // Generate pruning scheme
-  auto rad_spec = radial_from_type<radial_type>();
-  auto rad_traits = make_radial_traits(rad_spec, nrad, 1.0);
   UnprunedSphericalGridSpecification unp(
     rad_spec, *rad_traits,
     angular_from_type<angular_type>(), nang
@@ -384,15 +432,14 @@ TEMPLATE_LIST_TEST_CASE("Pruned", "[sph-gen]", sph_test_types) {
 
 
   // Generate the quadrature manually
-  radial_type rq(nrad, 1.0);
   RadialGridPartition<angular_type> rgp;
   for(auto pr : pruning_spec.pruning_regions) {
     angular_type aq(pr.angular_size);
-    rgp.add_quad(rq, pr.idx_st, aq);
+    rgp.add_quad(*rq_ptr, pr.idx_st, aq);
   }
-  rgp.finalize(rq);
+  rgp.finalize(*rq_ptr);
 
-  spherical_type sph_ref(rq, rgp);
+  spherical_type sph_ref(*rq_ptr, rgp);
 
 
   // Generate via runtime API
@@ -414,5 +461,5 @@ TEMPLATE_LIST_TEST_CASE("Pruned", "[sph-gen]", sph_test_types) {
     auto w_ref = sph_ref.weights()[i];
     REQUIRE_THAT(w, Catch::Matchers::WithinAbs(w_ref,1e-15));
   }
-  
+        
 }

@@ -73,6 +73,8 @@ SphericalGridFactory::spherical_grid_ptr
       return detail::make_pruned_grid( mhl_type(traits), pruning_regions );
     case RadialQuad::TreutlerAhlrichs:
       return detail::make_pruned_grid( ta_type(traits), pruning_regions );
+    case RadialQuad::LindhMalmqvistGagliardi:
+      return detail::make_pruned_grid( lmg_type(traits), pruning_regions );
 
     default:
       throw std::runtime_error("Unsupported Radial Quadrature");
