@@ -78,8 +78,10 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
       const auto xi = std::cos(ti);
 
       // The quadrature weight, transformed to unit weight factor in
-      // [-1,1] is given by (see comments above for explanation)
-      const auto wi = pi_ov_npts_p_1 * std::sqrt(1.0 - xi * xi);
+      // [-1,1] is given by (see comments above for explanation). Since
+      // x_i = cos(t_i) with t_i in (0,pi), sqrt(1-x^2) is sin(t_i) exactly;
+      // forming 1 - x*x instead cancels badly as the nodes approach +-1.
+      const auto wi = pi_ov_npts_p_1 * std::sin(ti);
 
       // Store into memory
       points[idx] = xi;
