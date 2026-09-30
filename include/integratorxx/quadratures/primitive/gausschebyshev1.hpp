@@ -77,8 +77,11 @@ struct quadrature_traits<GaussChebyshev1<PointType, WeightType>> {
       auto wi = pi_ov_npts;
 
       // However, as we're integrating f(x) not \frac{f(x)}{\sqrt{1 -
-      // x^2}}, we must factor the \sqrt{1-x^2} into the weight
-      wi *= std::sqrt(1.0 - xi * xi);
+      // x^2}}, we must factor the \sqrt{1-x^2} into the weight.
+      // Since x_i = cos(t_i) with t_i in (0,pi), sqrt(1-x^2) is sin(t_i)
+      // exactly; forming 1 - x*x instead cancels badly as the nodes approach
+      // +-1, losing accuracy as O(n^2).
+      wi *= std::sin(ti);
 
       // Store into memory
       points[idx]  = xi;
