@@ -59,6 +59,10 @@ struct quadrature_traits<GaussChebyshev2Modified<PointType, WeightType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
+  /// Whether the rule places nodes on the interval endpoints.
+  /// Open rule: the nodes are interior for every n.
+  inline static constexpr bool bound_inclusive = false;
+
   inline static std::tuple<point_container, weight_container> generate(size_t npts) {
     const weight_type oonpp = 1.0 / (npts + 1);
 
