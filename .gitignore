@@ -1,7 +1,5 @@
 # Build trees
-build/
 build*/
-objdir/
 install/
 _deps/
 CMakeCache.txt
@@ -20,12 +18,10 @@ compile_commands.json
 *.lib
 *.exe
 a.out
-*.x
 
 # Editor and OS cruft
 *~
 \#*\#
 .\#*
 *.swp
-*.*.swp
 .DS_Store
