@@ -34,8 +34,6 @@ struct quadrature_traits<GaussLobatto<PointType, WeightType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  /// Whether the rule places nodes on the interval endpoints.
-  /// Lobatto includes both endpoints by construction.
   inline static constexpr bool bound_inclusive = true;
 
   inline static std::tuple<point_container, weight_container> generate(

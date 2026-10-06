@@ -55,8 +55,6 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
-  /// Whether the rule places nodes on the interval endpoints.
-  /// Open rule on (0,1): nodes are cos^2(...), never 0 or 1.
   inline static constexpr bool bound_inclusive = false;
 
   inline static std::tuple<point_container, weight_container> generate(size_t npts) {

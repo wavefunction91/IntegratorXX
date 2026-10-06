@@ -44,8 +44,6 @@ struct quadrature_traits<
   using point_container  = std::vector< point_type >;
   using weight_container = std::vector< weight_type >;
 
-  /// Whether the rule places nodes on the interval endpoints.
-  /// Open rule: the Legendre roots are strictly inside (-1,1).
   inline static constexpr bool bound_inclusive = false;
 
   inline static std::tuple<point_container,weight_container>

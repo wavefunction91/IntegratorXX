@@ -50,6 +50,23 @@ auto chebyshev_T(int n, T x) {
 
 
 
+
+// Compose one primitive rule with every radial transform. The pairing is only
+// legal if the primitive's traits declare bound_inclusive, so instantiating
+// these is itself the regression guard for #116.
+template <typename Primitive>
+void compose_with_all_transforms() {
+  constexpr size_t npts = 16;
+  CHECK( IntegratorXX::RadialTransformQuadrature<Primitive,
+           IntegratorXX::BeckeRadialTraits>(npts).npts() == npts );
+  CHECK( IntegratorXX::RadialTransformQuadrature<Primitive,
+           IntegratorXX::MuraKnowlesRadialTraits>(npts).npts() == npts );
+  CHECK( IntegratorXX::RadialTransformQuadrature<Primitive,
+           IntegratorXX::MurrayHandyLamingRadialTraits<2>>(npts).npts() == npts );
+  CHECK( IntegratorXX::RadialTransformQuadrature<Primitive,
+           IntegratorXX::TreutlerAhlrichsRadialTraits>(npts).npts() == npts );
+}
+
 TEST_CASE( "Gauss-Legendre Quadratures", "[1d-quad]" ) {
 
   // Reference integral for polynomial evaluated over [-1,1]
@@ -189,6 +206,47 @@ TEST_CASE( "Becke Quadratures", "[1d-quad]" ) {
   IntegratorXX::Becke<double,double> quad(350);
   const auto msg = "Becke N = " + std::to_string(quad.npts());
   test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
+}
+
+
+TEST_CASE( "Radial transforms over the primitive rules", "[1d-quad]" ) {
+
+  // The named radial grids are all fixed aliases over GaussChebyshev2, so
+  // nothing above pairs a transform with any other primitive by hand.
+
+  SECTION("Gauss-Lobatto x Becke") {
+    // Lobatto is the only bound_inclusive primitive, so this is also the
+    // endpoint-dropping path: the base rule is asked for npts+2 nodes and the
+    // two that map to r = 0 and r = infinity are skipped.
+    IntegratorXX::RadialTransformQuadrature<
+      IntegratorXX::GaussLobatto<double,double>,
+      IntegratorXX::BeckeRadialTraits> quad(350);
+    REQUIRE( quad.npts() == 350 );
+    const auto msg = "Gauss-Lobatto x Becke N = " + std::to_string(quad.npts());
+    test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
+  }
+
+  SECTION("Gauss-Legendre x Becke") {
+    IntegratorXX::RadialTransformQuadrature<
+      IntegratorXX::GaussLegendre<double,double>,
+      IntegratorXX::BeckeRadialTraits> quad(350);
+    REQUIRE( quad.npts() == 350 );
+    const auto msg = "Gauss-Legendre x Becke N = " + std::to_string(quad.npts());
+    test_quadrature<RadialGaussian>(msg, quad, std::sqrt(M_PI)/4, 1e-10);
+  }
+
+  SECTION("Every primitive composes with every transform") {
+    // All 28 pairings. Accuracy is not the point here: several of these are
+    // not sensible rules, but all of them must build.
+    compose_with_all_transforms<IntegratorXX::GaussChebyshev1<double,double>>();
+    compose_with_all_transforms<IntegratorXX::GaussChebyshev2<double,double>>();
+    compose_with_all_transforms<IntegratorXX::GaussChebyshev2Modified<double,double>>();
+    compose_with_all_transforms<IntegratorXX::GaussChebyshev3<double,double>>();
+    compose_with_all_transforms<IntegratorXX::GaussLegendre<double,double>>();
+    compose_with_all_transforms<IntegratorXX::GaussLobatto<double,double>>();
+    compose_with_all_transforms<IntegratorXX::UniformTrapezoid<double,double>>();
+  }
+
 }
 
 TEST_CASE( "Lebedev-Laikov", "[1d-quad]" ) {
