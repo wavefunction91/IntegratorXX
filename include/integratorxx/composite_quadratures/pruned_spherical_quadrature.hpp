@@ -138,6 +138,11 @@ public:
     return iterator( partition_idx_.begin(), quads_.begin() );
   }
   iterator end() {
+    // partition_idx_ carries one entry past the last partition (the npts
+    // sentinel added by finalize), so the end index iterator is one before its
+    // end. An unfinalized partition holds no entries at all, and end()-1 would
+    // step before begin(); the range is simply empty in that case.
+    if( partition_idx_.empty() ) return begin();
     return iterator( partition_idx_.end()-1, quads_.end() );
   }
 
@@ -145,6 +150,7 @@ public:
     return const_iterator( partition_idx_.cbegin(), quads_.cbegin() );
   }
   const_iterator cend() const {
+    if( partition_idx_.empty() ) return cbegin();
     return const_iterator( partition_idx_.cend()-1, quads_.cend() );
   }
 
@@ -152,6 +158,7 @@ public:
     return const_iterator( partition_idx_.cbegin(), quads_.cbegin() );
   }
   const_iterator end() const {
+    if( partition_idx_.empty() ) return begin();
     return const_iterator( partition_idx_.cend()-1, quads_.cend() );
   }
 };

@@ -49,7 +49,6 @@ struct quadrature_traits<
   inline static std::tuple<point_container,weight_container>
     generate( range_idx_type idx_range, const Quadrature<DerivedQuad>& quad ) {
       const auto [begin_idx, end_idx] = idx_range;
-      // begin_idx and end_idx are size_t, so the lower bounds are vacuous
       assert( begin_idx <  end_idx      );
       assert( end_idx   <= quad.npts()  );
 

@@ -4,6 +4,7 @@
 #include <integratorxx/quadratures/s2.hpp>
 #include <integratorxx/composite_quadratures/spherical_quadrature.hpp>
 #include <integratorxx/composite_quadratures/pruned_spherical_quadrature.hpp>
+#include <integratorxx/composite_quadratures/sub_quadrature.hpp>
 #include <integratorxx/batch/spherical_micro_batcher.hpp>
 #include <numeric>
 
@@ -239,6 +240,29 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
   }
       
 
+  SECTION("Unfinalized Partition") {
+
+    size_t nrad = 4;
+    IntegratorXX::MuraKnowles<double,double> r(nrad);
+    IntegratorXX::LebedevLaikov<double> q(6);
+    IntegratorXX::RadialGridPartition<decltype(q)> rgp;
+
+    // Nothing has been added, so there is no last index to compare against
+    // rq.npts(): finalize must say so rather than read back() off an empty
+    // vector.
+    REQUIRE_THROWS( rgp.finalize(r) );
+
+    // The iterators must present an empty range over it. partition_idx_ is
+    // empty, so the end()-1 that skips the npts sentinel would step before
+    // begin().
+    CHECK( rgp.begin() == rgp.end() );
+    CHECK( rgp.cbegin() == rgp.cend() );
+    const auto& crgp = rgp;
+    CHECK( crgp.begin() == crgp.end() );
+
+  }
+
+
   SECTION("Validity") {
 
     size_t nrad = 12;
@@ -300,9 +324,30 @@ TEST_CASE( "Pruned Spherical Quadratures", "[sph-quad]" ) {
 }
 
 
+TEST_CASE( "Sub Quadratures", "[sph-quad]" ) {
 
+  // The slice's weights must be built in the parent's weight_container, not in
+  // its point_container. The two coincide for the usual <double,double> case,
+  // which is why nothing caught it; under mixed precision the weights would be
+  // narrowed to the point type.
+  IntegratorXX::Becke<float,double> r(20);
 
+  const std::pair<size_t,size_t> range{ 5ul, 12ul };
+  IntegratorXX::SubQuadrature<decltype(r)> sq( range, r );
 
+  static_assert( std::is_same_v< decltype(sq)::weight_container,
+                                 decltype(r)::weight_container >,
+                 "sub-quadrature weights must keep the parent's weight type" );
+  static_assert( std::is_same_v< decltype(sq)::point_container,
+                                 decltype(r)::point_container >,
+                 "sub-quadrature points must keep the parent's point type" );
 
+  REQUIRE( sq.npts() == range.second - range.first );
 
+  // The slice is a copy, so it must agree with the parent exactly
+  for( size_t i = 0; i < sq.npts(); ++i ) {
+    CHECK( sq.points()[i]  == r.points()[i + range.first]  );
+    CHECK( sq.weights()[i] == r.weights()[i + range.first] );
+  }
 
+}
