@@ -81,7 +81,11 @@ struct quadrature_traits<GaussChebyshev2<PointType, WeightType>> {
       // [-1,1] is given by (see comments above for explanation). Since
       // x_i = cos(t_i) with t_i in (0,pi), sqrt(1-x^2) is sin(t_i) exactly;
       // forming 1 - x*x instead cancels badly as the nodes approach +-1.
-      const auto wi = pi_ov_npts_p_1 * std::sin(ti);
+      //
+      // As in the T1 rule, t_i lies in (pi/2,pi), where the absolute rounding
+      // of t_i is an O(n eps) relative error in sin(t_i). Use the complement,
+      // which is exact in the index: t_i = pi - (idx + 1) h.
+      const auto wi = pi_ov_npts_p_1 * std::sin((idx + 1.0) * pi_ov_npts_p_1);
 
       // Store into memory
       points[idx] = xi;

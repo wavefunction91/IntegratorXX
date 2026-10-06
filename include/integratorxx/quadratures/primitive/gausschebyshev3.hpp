@@ -80,7 +80,13 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
       //   2h cos^2(t) sqrt((1-cos^2 t)/cos^2 t) = 2h cos(t) sin(t) = h sin(2t)
       //
       // Forming 1 - x instead cancels badly as the nodes approach 1.
-      const auto wi = pi_ov_2n_p_1 * std::sin(2.0 * ti);
+      //
+      // 2 t_i is m h with m = 2i - 1 an exact integer, and for m h past pi/2
+      // the sine of the supplement is the relatively accurate one, since
+      // sin(s) ~ pi - s there. Reflect about pi/2 using the index alone.
+      const size_t m = 2 * i - 1;
+      const size_t k = (m <= npts) ? m : (2 * npts + 1 - m);
+      const auto wi = pi_ov_2n_p_1 * std::sin(k * pi_ov_2n_p_1);
 
       // Copy to storage
       points[idx]  = xi;

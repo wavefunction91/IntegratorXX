@@ -184,6 +184,58 @@ TEST_CASE( "Gauss-Chebyshev T3 Quadratures", "[1d-quad]" ) {
 }
 
 
+TEST_CASE( "Gauss-Chebyshev extremal weights at large N", "[1d-quad]" ) {
+
+  // The extremal weight of each Chebyshev rule is sin(t) at an angle that the
+  // generators reach as pi - t. Rounding t to the nearest double is an
+  // O(ulp(pi)) absolute error there, which is an O(N eps) *relative* error in
+  // the weight: ~1e-13 at N=800, growing with N. Evaluating the sine at the
+  // complement, which is exact in the loop index, keeps it at O(eps).
+  //
+  // The reference is the Taylor series of sin about 0. At these angles
+  // (h < 2e-3) the first omitted term is O(h^7) ~ 1e-22 relative, so the
+  // series is good to rounding and is independent of std::sin.
+  auto sin_series = [](double h) {
+    const double h2 = h * h;
+    return h * (1.0 - h2 / 6.0 * (1.0 - h2 / 20.0 * (1.0 - h2 / 42.0)));
+  };
+
+  // An absolute 10*eps check cannot see this: the weights are themselves
+  // O(1/N^2) here, so the error hides below the tolerance.
+  const double rel_tol = 1e-14;
+  const size_t npts = 800;
+
+  SECTION("T1") {
+    // w_0 = (pi/N) sin(h), h = pi/2N, at the node nearest -1
+    const double h = M_PI / (2.0 * npts);
+    const double ref = (M_PI / npts) * sin_series(h);
+    const GaussChebyshev1<double,double> q(npts);
+    const auto& wgts = q.weights();
+    CHECK_THAT( wgts.front(), Catch::Matchers::WithinRel(ref, rel_tol) );
+    CHECK_THAT( wgts.back(),  Catch::Matchers::WithinRel(ref, rel_tol) );
+  }
+
+  SECTION("T2") {
+    // w_0 = h sin(h), h = pi/(N+1)
+    const double h = M_PI / (npts + 1);
+    const double ref = h * sin_series(h);
+    const GaussChebyshev2<double,double> q(npts);
+    const auto& wgts = q.weights();
+    CHECK_THAT( wgts.front(), Catch::Matchers::WithinRel(ref, rel_tol) );
+    CHECK_THAT( wgts.back(),  Catch::Matchers::WithinRel(ref, rel_tol) );
+  }
+
+  SECTION("T3") {
+    // w = h sin(2 h) at the node nearest 1, and h sin(h) at the one nearest 0
+    const double h = M_PI / (2.0 * npts + 1);
+    const GaussChebyshev3<double,double> q(npts);
+    const auto& wgts = q.weights();
+    CHECK_THAT( wgts.front(), Catch::Matchers::WithinRel(h * sin_series(2.0*h), rel_tol) );
+    CHECK_THAT( wgts.back(),  Catch::Matchers::WithinRel(h * sin_series(h),     rel_tol) );
+  }
+
+}
+
 TEST_CASE( "Euler-Maclaurin Quadratures by Murray, Handy, and Laming", "[1d-quad]" ) {
   IntegratorXX::MurrayHandyLaming<double,double> quad(150);
   const auto msg = "Euler-Maclaurin N = " + std::to_string(quad.npts());
