@@ -163,6 +163,13 @@ To circumvent the CMake build system entirely, define
 usual. The implementations have inline linkage in this mode and may be
 included from any number of translation units.
 
+The choice has to be consistent across the whole link: define
+`INTEGRATORXX_HEADER_ONLY` in every translation unit, and do not also link
+the compiled library. A translation unit compiled without it sees only the
+declarations, so linking it against `libintegratorxx` while other translation
+units carry the inline definitions gives the same functions two definitions
+with different linkage, which is an ODR violation.
+
 ## Contributing and Bug Reports
 
 We welcome any and all contributions and encourage bug reports. Please use the

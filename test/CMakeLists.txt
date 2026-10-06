@@ -28,7 +28,9 @@ target_link_libraries( integratorxx_common_ut PUBLIC Catch2::Catch2WithMain inte
 add_executable( quadrature_manipulation quadrature_manipulation.cxx )
 target_link_libraries( quadrature_manipulation PUBLIC integratorxx_common_ut )
 
-add_executable( spherical_generator spherical_generator.cxx )
+# generator_second_tu.cxx only includes the generator headers: it is here so
+# that a header-only build links two TUs that carry the implementations.
+add_executable( spherical_generator spherical_generator.cxx generator_second_tu.cxx )
 target_link_libraries( spherical_generator PUBLIC integratorxx_common_ut )
 
 add_executable( 1d_quadratures 1d_quadratures.cxx )
