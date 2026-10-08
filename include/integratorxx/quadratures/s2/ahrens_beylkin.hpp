@@ -3,6 +3,7 @@
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/quadratures/s2/ahrens_beylkin/ahrens_beylkin_grids.hpp>
 #include <integratorxx/util/copy_grid.hpp>
+#include <integratorxx/util/unsupported_grid.hpp>
 #include <vector>
 #include <cmath>
 
@@ -65,8 +66,6 @@ template <typename RealType> struct quadrature_traits<AhrensBeylkin<RealType>> {
       detail::copy_grid<ahrens_beylkin_432<RealType>>(points, weights);
     else if (npts == 492)
       detail::copy_grid<ahrens_beylkin_492<RealType>>(points, weights);
-    else if (npts == 552)
-      detail::copy_grid<ahrens_beylkin_552<RealType>>(points, weights);
     else if (npts == 612)
       detail::copy_grid<ahrens_beylkin_612<RealType>>(points, weights);
     else if (npts == 672)
@@ -163,6 +162,8 @@ template <typename RealType> struct quadrature_traits<AhrensBeylkin<RealType>> {
       detail::copy_grid<ahrens_beylkin_7512<RealType>>(points, weights);
     else if (npts == 15012)
       detail::copy_grid<ahrens_beylkin_15012<RealType>>(points, weights);
+    else
+      detail::throw_unsupported_grid_size("AhrensBeylkin", npts);
 
     return std::make_tuple(points, weights);
   }
@@ -183,8 +184,6 @@ inline static int64_t npts_by_algebraic_order(int64_t order) {
     return 432;
   case 37:
     return 492;
-  case 39:
-    return 552;
   case 41:
     return 612;
   case 44:
@@ -302,8 +301,6 @@ inline static int64_t algebraic_order_by_npts(int64_t npts) {
     return 35;
   case 492:
     return 37;
-  case 552:
-    return 39;
   case 612:
     return 41;
   case 672:
@@ -421,8 +418,6 @@ inline static int64_t next_algebraic_order(int64_t order) {
     return 35;
   else if (order <= 37)
     return 37;
-  else if (order <= 39)
-    return 39;
   else if (order <= 41)
     return 41;
   else if (order <= 44)

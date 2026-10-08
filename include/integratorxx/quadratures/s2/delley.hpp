@@ -2,6 +2,7 @@
 
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/util/copy_grid.hpp>
+#include <integratorxx/util/unsupported_grid.hpp>
 #include <integratorxx/quadratures/s2/delley/delley_grids.hpp>
 #include <vector>
 #include <cmath>
@@ -86,6 +87,8 @@ struct quadrature_traits<Delley<RealType>> {
       detail::copy_grid<delley_3074<RealType>>(points, weights);
     else if(npts == 3470)
       detail::copy_grid<delley_3470<RealType>>(points, weights);
+    else
+      detail::throw_unsupported_grid_size("Delley", npts);
 
     // Pretabulated weights are missing 4 pi
     for(auto i=0; i < npts; i++)
