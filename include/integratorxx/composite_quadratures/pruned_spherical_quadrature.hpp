@@ -5,6 +5,7 @@
 #include <integratorxx/types.hpp>
 #include <integratorxx/type_traits.hpp>
 
+#include <stdexcept>
 #include <utility>
 #include <cassert>
 #include <memory>
@@ -48,6 +49,9 @@ public:
 
   template <typename RadialQuad>
   void finalize( const RadialQuad& rq ) {
+    if( partition_idx_.empty() )
+      throw std::runtime_error(
+        "RadialGridPartition: cannot finalize without any angular quadrature");
     if( partition_idx_.back() != rq.npts() )
       partition_idx_.emplace_back( rq.npts() ); 
   }
@@ -134,6 +138,11 @@ public:
     return iterator( partition_idx_.begin(), quads_.begin() );
   }
   iterator end() {
+    // partition_idx_ carries one entry past the last partition (the npts
+    // sentinel added by finalize), so the end index iterator is one before its
+    // end. An unfinalized partition holds no entries at all, and end()-1 would
+    // step before begin(); the range is simply empty in that case.
+    if( partition_idx_.empty() ) return begin();
     return iterator( partition_idx_.end()-1, quads_.end() );
   }
 
@@ -141,6 +150,7 @@ public:
     return const_iterator( partition_idx_.cbegin(), quads_.cbegin() );
   }
   const_iterator cend() const {
+    if( partition_idx_.empty() ) return cbegin();
     return const_iterator( partition_idx_.cend()-1, quads_.cend() );
   }
 
@@ -148,6 +158,7 @@ public:
     return const_iterator( partition_idx_.cbegin(), quads_.cbegin() );
   }
   const_iterator end() const {
+    if( partition_idx_.empty() ) return begin();
     return const_iterator( partition_idx_.cend()-1, quads_.cend() );
   }
 };
@@ -183,13 +194,13 @@ protected:
   const point_container& sph_points_adaptor() const override { 
     return quad_base_type::points();
   }
-  point_container& sph_points_adaptor() override {;
+  point_container& sph_points_adaptor() override {
     return quad_base_type::points();
   }
-  const weight_container& sph_weights_adaptor() const override {;
+  const weight_container& sph_weights_adaptor() const override {
     return quad_base_type::weights();
   }
-  weight_container& sph_weights_adaptor() override {;
+  weight_container& sph_weights_adaptor() override {
     return quad_base_type::weights();
   }
 

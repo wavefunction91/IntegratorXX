@@ -133,13 +133,13 @@ protected:
   const point_container& sph_points_adaptor() const override { 
     return quad_base_type::points();
   }
-  point_container& sph_points_adaptor() override {;
+  point_container& sph_points_adaptor() override {
     return quad_base_type::points();
   }
-  const weight_container& sph_weights_adaptor() const override {;
+  const weight_container& sph_weights_adaptor() const override {
     return quad_base_type::weights();
   }
-  weight_container& sph_weights_adaptor() override {;
+  weight_container& sph_weights_adaptor() override {
     return quad_base_type::weights();
   }
 

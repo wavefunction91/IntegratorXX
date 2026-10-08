@@ -49,16 +49,13 @@ struct quadrature_traits<
   inline static std::tuple<point_container,weight_container>
     generate( range_idx_type idx_range, const Quadrature<DerivedQuad>& quad ) {
       const auto [begin_idx, end_idx] = idx_range;
-      assert( begin_idx >= 0         );
-      assert( begin_idx <= quad.npts()  );
-      assert( end_idx >= 0           );
-      assert( end_idx <= quad.npts()    );
-      assert( begin_idx <  end_idx );
+      assert( begin_idx <  end_idx      );
+      assert( end_idx   <= quad.npts()  );
 
-      point_container points( quad.points().begin() + begin_idx,
-                              quad.points().begin() + end_idx );
-      point_container weights( quad.weights().begin() + begin_idx,
-                              quad.weights().begin() + end_idx );
+      point_container  points ( quad.points().begin()  + begin_idx,
+                                quad.points().begin()  + end_idx );
+      weight_container weights( quad.weights().begin() + begin_idx,
+                                quad.weights().begin() + end_idx );
 
       return std::make_tuple( points, weights );
     }
