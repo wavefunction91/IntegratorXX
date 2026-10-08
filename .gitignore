@@ -1,1 +1,27 @@
-*.*.swp
+# Build trees
+build*/
+install/
+_deps/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+compile_commands.json
+
+# Build products
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.lib
+*.exe
+a.out
+
+# Editor and OS cruft
+*~
+\#*\#
+.\#*
+*.swp
+.DS_Store
