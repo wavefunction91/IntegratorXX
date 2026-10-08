@@ -7,6 +7,22 @@
 #include <utility>
 #include <integratorxx/type_traits.hpp>
 
+/**
+ *  @brief Linkage of the runtime grid generator.
+ *
+ *  By default the runtime generator is compiled once into libintegratorxx and
+ *  consumers see only the declarations in generators/*.hpp, which keeps the
+ *  large angular grid dispatch out of every translation unit. When
+ *  INTEGRATORXX_HEADER_ONLY is defined the same definitions are emitted inline
+ *  in each translation unit that uses them, and the public generator headers
+ *  pull in their own implementations.
+ */
+#ifdef INTEGRATORXX_HEADER_ONLY
+#define INTEGRATORXX_GENERATOR_LINKAGE inline
+#else
+#define INTEGRATORXX_GENERATOR_LINKAGE
+#endif
+
 namespace IntegratorXX {
 
 // Forward decl of quadrature traits

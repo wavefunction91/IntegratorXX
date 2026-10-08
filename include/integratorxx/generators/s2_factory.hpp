@@ -39,3 +39,10 @@ struct S2Factory {
 };
 
 }
+
+// Header-only builds carry the implementation with the declarations. This is
+// included last so that the declarations above are already visible; the impl
+// headers include this one back, which #pragma once makes a no-op.
+#ifdef INTEGRATORXX_HEADER_ONLY
+#include <integratorxx/generators/impl/s2_factory.hpp>
+#endif

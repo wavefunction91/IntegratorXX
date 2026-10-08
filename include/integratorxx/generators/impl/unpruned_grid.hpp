@@ -37,7 +37,7 @@ auto generate_unpruned_grid_impl(RadialQuad rq, const RadialTraits& traits,
 
 } // Implementation details
 
-SphericalGridFactory::spherical_grid_ptr 
+INTEGRATORXX_GENERATOR_LINKAGE SphericalGridFactory::spherical_grid_ptr 
   SphericalGridFactory::generate_unpruned_grid( RadialQuad rq, 
   const RadialTraits& traits, AngularQuad aq, AngularSize nang) {
 

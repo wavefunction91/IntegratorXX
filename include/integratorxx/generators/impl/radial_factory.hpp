@@ -7,7 +7,7 @@
 
 namespace IntegratorXX {
 
-RadialQuad radial_from_string(std::string name) {
+INTEGRATORXX_GENERATOR_LINKAGE RadialQuad radial_from_string(std::string name) {
   std::transform(name.begin(), name.end(), name.begin(),
     [](unsigned char c){ return static_cast<char>(std::toupper(c)); });
   if(name == "BECKE")             return RadialQuad::Becke;
@@ -21,7 +21,7 @@ RadialQuad radial_from_string(std::string name) {
   throw std::runtime_error("Unrecognized Radial Quadrature");
 }
 
-RadialFactory::radial_grid_ptr RadialFactory::generate(RadialQuad rq, const RadialTraits& traits) {
+INTEGRATORXX_GENERATOR_LINKAGE RadialFactory::radial_grid_ptr RadialFactory::generate(RadialQuad rq, const RadialTraits& traits) {
 
   switch(rq) {
     case RadialQuad::Becke:

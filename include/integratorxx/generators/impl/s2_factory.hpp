@@ -7,7 +7,7 @@
 
 namespace IntegratorXX {
 
-AngularQuad angular_from_string(std::string name) {
+INTEGRATORXX_GENERATOR_LINKAGE AngularQuad angular_from_string(std::string name) {
   std::transform(name.begin(), name.end(), name.begin(),
     [](unsigned char c){ return static_cast<char>(std::toupper(c)); });
   if(name == "AHRENSBEYLKIN") return AngularQuad::AhrensBeylkin;
@@ -21,7 +21,7 @@ AngularQuad angular_from_string(std::string name) {
   throw std::runtime_error("Unrecognized Angular Quadrature");
 }
 
-S2Factory::s2_grid_ptr S2Factory::generate(AngularQuad aq, size_t npts) {
+INTEGRATORXX_GENERATOR_LINKAGE S2Factory::s2_grid_ptr S2Factory::generate(AngularQuad aq, size_t npts) {
 
   switch(aq) {
     case AngularQuad::AhrensBeylkin:

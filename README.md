@@ -152,15 +152,23 @@ avoid excessive build times in complex projects with aggressive compiler
 optimization. **N.B. it is highly recommend that users maintain this default
 behavior to avoid excessive compilation sizes and build times**.
 
-IntegratorXX also allows for header-only use of the runtime generator by 
-setting `INTEGRATORXX_HEADER_ONLY=ON`. 
-This feature also allows for circumvention of
-the CMake build system by simply including the requisite implementation
-header.
+IntegratorXX also allows for header-only use of the runtime generator by
+setting `INTEGRATORXX_HEADER_ONLY=ON`, which defines the
+`INTEGRATORXX_HEADER_ONLY` macro on the interface target. The public
+generator headers then carry their own implementations, so no additional
+include is required.
 
-To use the runtime generator header-only, one needs to include 
-`<integratorxx/generators/impl/impl.hpp>` **exactly once** per project,
-otherwise duplicate / incompatible symbols will occur.
+To circumvent the CMake build system entirely, define
+`INTEGRATORXX_HEADER_ONLY` yourself and include the generator headers as
+usual. The implementations have inline linkage in this mode and may be
+included from any number of translation units.
+
+The choice has to be consistent across the whole link: define
+`INTEGRATORXX_HEADER_ONLY` in every translation unit, and do not also link
+the compiled library. A translation unit compiled without it sees only the
+declarations, so linking it against `libintegratorxx` while other translation
+units carry the inline definitions gives the same functions two definitions
+with different linkage, which is an ODR violation.
 
 ## Contributing and Bug Reports
 

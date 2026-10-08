@@ -24,7 +24,7 @@ auto get_robust_low_med_sizes(AngularSize asz) {
 }
 
 
-PrunedSphericalGridSpecification robust_psi4_pruning_scheme_impl(
+INTEGRATORXX_GENERATOR_LINKAGE PrunedSphericalGridSpecification robust_psi4_pruning_scheme_impl(
   size_t low_sz, size_t med_sz, AngularQuad angular_quad, 
   UnprunedSphericalGridSpecification unp ) {
 
@@ -46,7 +46,7 @@ PrunedSphericalGridSpecification robust_psi4_pruning_scheme_impl(
 } // Implementation Details
 
 
-PrunedSphericalGridSpecification robust_psi4_pruning_scheme(
+INTEGRATORXX_GENERATOR_LINKAGE PrunedSphericalGridSpecification robust_psi4_pruning_scheme(
   UnprunedSphericalGridSpecification unp ) {
 
   size_t low_sz, med_sz;

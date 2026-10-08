@@ -188,3 +188,11 @@ struct SphericalGridFactory {
 };
 
 }
+
+// Header-only builds carry the implementation with the declarations. This is
+// included last so that the declarations above are already visible; the impl
+// headers include this one back, which #pragma once makes a no-op.
+#ifdef INTEGRATORXX_HEADER_ONLY
+#include <integratorxx/generators/impl/unpruned_grid.hpp>
+#include <integratorxx/generators/impl/pruned_grid.hpp>
+#endif

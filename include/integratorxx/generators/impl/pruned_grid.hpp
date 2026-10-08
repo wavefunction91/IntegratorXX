@@ -58,7 +58,7 @@ auto make_pruned_grid(const RadialQuadType& rq,
 
 } // Implementation Details
 
-SphericalGridFactory::spherical_grid_ptr 
+INTEGRATORXX_GENERATOR_LINKAGE SphericalGridFactory::spherical_grid_ptr 
   SphericalGridFactory::generate_pruned_grid( RadialQuad rq, 
   const RadialTraits& traits, 
   const std::vector<PruningRegion>& pruning_regions) { 
@@ -83,7 +83,7 @@ SphericalGridFactory::spherical_grid_ptr
 }
 
 
-PrunedSphericalGridSpecification create_pruned_spec(
+INTEGRATORXX_GENERATOR_LINKAGE PrunedSphericalGridSpecification create_pruned_spec(
   PruningScheme scheme, UnprunedSphericalGridSpecification unp
 ) {
 

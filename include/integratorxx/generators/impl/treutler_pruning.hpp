@@ -16,7 +16,7 @@ auto get_treutler_low_med_sizes() {
   return std::make_pair(low_sz, med_sz);
 }
 
-PrunedSphericalGridSpecification treutler_pruning_scheme_impl(
+INTEGRATORXX_GENERATOR_LINKAGE PrunedSphericalGridSpecification treutler_pruning_scheme_impl(
   size_t low_sz, size_t med_sz, AngularQuad angular_quad, 
   UnprunedSphericalGridSpecification unp ) {
 
@@ -39,7 +39,7 @@ PrunedSphericalGridSpecification treutler_pruning_scheme_impl(
 
 
 
-PrunedSphericalGridSpecification treutler_pruning_scheme(
+INTEGRATORXX_GENERATOR_LINKAGE PrunedSphericalGridSpecification treutler_pruning_scheme(
   UnprunedSphericalGridSpecification unp ) {
 
   size_t low_sz, med_sz;
