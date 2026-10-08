@@ -3,6 +3,7 @@
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/quadratures/s2/lebedev_laikov/lebedev_laikov_grids.hpp>
 #include <integratorxx/util/copy_grid.hpp>
+#include <integratorxx/util/unsupported_grid.hpp>
 #include <vector>
 #include <cmath>
 
@@ -106,8 +107,12 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
       detail::copy_grid<lebedev_laikov_4334<RealType>>( points, weights );
     else if( npts == 4802 ) 
       detail::copy_grid<lebedev_laikov_4802<RealType>>( points, weights );
+    else if( npts == 5294 ) 
+      detail::copy_grid<lebedev_laikov_5294<RealType>>( points, weights );
     else if( npts == 5810 ) 
       detail::copy_grid<lebedev_laikov_5810<RealType>>( points, weights );
+    else
+      detail::throw_unsupported_grid_size("LebedevLaikov", npts);
 
     // Pretabulated weights are missing 4 pi
     for(size_t i=0; i < npts; i++)
@@ -150,6 +155,7 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
       case 107: return 3890 ; 
       case 113: return 4334 ; 
       case 119: return 4802 ; 
+      case 125: return 5294 ; 
       case 131: return 5810 ; 
       default:  return -1;
     }
@@ -189,6 +195,7 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
       case 3890: return 107 ; 
       case 4334: return 113 ; 
       case 4802: return 119 ; 
+      case 5294: return 125 ; 
       case 5810: return 131 ; 
       default:  return -1;
     }
@@ -228,6 +235,7 @@ struct quadrature_traits< LebedevLaikov<RealType> > {
      else if( order <= 107) return 107; 
      else if( order <= 113) return 113; 
      else if( order <= 119) return 119; 
+     else if( order <= 125) return 125; 
      else                   return 131; 
 
   }
