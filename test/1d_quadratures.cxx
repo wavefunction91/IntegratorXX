@@ -211,13 +211,16 @@ TEST_CASE( "Becke Quadratures", "[1d-quad]" ) {
 
 TEST_CASE( "Radial transforms over the primitive rules", "[1d-quad]" ) {
 
-  // The named radial grids are all fixed aliases over GaussChebyshev2, so
-  // nothing above pairs a transform with any other primitive by hand.
+  // Becke and Treutler-Ahlrichs are fixed aliases over GaussChebyshev2, and
+  // Mura-Knowles and MHL over UniformTrapezoid, so nothing above pairs a
+  // transform with any other primitive by hand.
 
   SECTION("Gauss-Lobatto x Becke") {
-    // Lobatto is the only bound_inclusive primitive, so this is also the
-    // endpoint-dropping path: the base rule is asked for npts+2 nodes and the
-    // two that map to r = 0 and r = infinity are skipped.
+    // Lobatto is the only bound_inclusive Gauss rule, so this is the
+    // endpoint-dropping path for those: the base rule is asked for npts+2
+    // nodes and the two that map to r = 0 and r = infinity are skipped.
+    // UniformTrapezoid is bound_inclusive as well, so the Mura-Knowles and
+    // MHL cases above already cover that path.
     IntegratorXX::RadialTransformQuadrature<
       IntegratorXX::GaussLobatto<double,double>,
       IntegratorXX::BeckeRadialTraits> quad(350);
