@@ -44,6 +44,8 @@ struct quadrature_traits<
   using point_container  = std::vector< point_type >;
   using weight_container = std::vector< weight_type >;
 
+  inline static constexpr bool bound_inclusive = false;
+
   inline static std::tuple<point_container,weight_container>
   generate( size_t npts ) {
     point_container  points( npts );

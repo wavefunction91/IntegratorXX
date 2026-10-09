@@ -55,6 +55,8 @@ struct quadrature_traits<GaussChebyshev1<PointType, WeightType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
+  inline static constexpr bool bound_inclusive = false;
+
   inline static std::tuple<point_container, weight_container> generate(size_t npts) {
     point_container points(npts);
     weight_container weights(npts);
@@ -75,8 +77,17 @@ struct quadrature_traits<GaussChebyshev1<PointType, WeightType>> {
       auto wi = pi_ov_npts;
 
       // However, as we're integrating f(x) not \frac{f(x)}{\sqrt{1 -
-      // x^2}}, we must factor the \sqrt{1-x^2} into the weight
-      wi *= std::sqrt(1.0 - xi * xi);
+      // x^2}}, we must factor the \sqrt{1-x^2} into the weight.
+      // Since x_i = cos(t_i) with t_i in (0,pi), sqrt(1-x^2) is sin(t_i)
+      // exactly; forming 1 - x*x instead cancels badly as the nodes approach
+      // +-1, losing accuracy as O(n^2).
+      //
+      // t_i lies in (pi/2,pi) here, where sin(t) ~ pi - t, so the O(ulp(pi))
+      // absolute rounding of t_i would show up as an O(n eps) *relative*
+      // error in sin(t_i), and the reflection below copies it to both ends.
+      // The complement is exact in the index, t_i = pi - (2 idx + 1) h, so
+      // evaluate the sine at that small angle instead.
+      wi *= std::sin((2.0 * idx + 1.0) * pi_ov_2npts);
 
       // Store into memory
       points[idx]  = xi;

@@ -55,6 +55,8 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
+  inline static constexpr bool bound_inclusive = false;
+
   inline static std::tuple<point_container, weight_container> generate(size_t npts) {
     const weight_type pi_ov_2n_p_1 = M_PI / (2 * npts + 1);
 
@@ -70,11 +72,21 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
       const auto ti = 0.5 * (2 * i - 1) * pi_ov_2n_p_1;
       const auto cti = std::cos(ti);
       const auto xi = cti * cti;  // cos^2(t)
-      auto wi = 2.0 * pi_ov_2n_p_1 * xi;
 
-      // However, since we want the rule with a unit weight factor, we
-      // divide the weights by sqrt(x/(1-x)).
-      wi *= std::sqrt((1.0 - xi) / xi);
+      // The standard weight is 2h x_i, and since we want the rule with a unit
+      // weight factor we divide by sqrt(x/(1-x)). With x_i = cos^2(t_i) and
+      // t_i in (0,pi/2) the whole product collapses exactly:
+      //
+      //   2h cos^2(t) sqrt((1-cos^2 t)/cos^2 t) = 2h cos(t) sin(t) = h sin(2t)
+      //
+      // Forming 1 - x instead cancels badly as the nodes approach 1.
+      //
+      // 2 t_i is m h with m = 2i - 1 an exact integer, and for m h past pi/2
+      // the sine of the supplement is the relatively accurate one, since
+      // sin(s) ~ pi - s there. Reflect about pi/2 using the index alone.
+      const size_t m = 2 * i - 1;
+      const size_t k = (m <= npts) ? m : (2 * npts + 1 - m);
+      const auto wi = pi_ov_2n_p_1 * std::sin(k * pi_ov_2n_p_1);
 
       // Copy to storage
       points[idx]  = xi;
