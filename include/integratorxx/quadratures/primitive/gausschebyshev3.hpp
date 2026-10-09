@@ -55,6 +55,8 @@ struct quadrature_traits<GaussChebyshev3<PointType, WeightType>> {
   using point_container = std::vector<point_type>;
   using weight_container = std::vector<weight_type>;
 
+  inline static constexpr bool bound_inclusive = false;
+
   inline static std::tuple<point_container, weight_container> generate(size_t npts) {
     const weight_type pi_ov_2n_p_1 = M_PI / (2 * npts + 1);
 
