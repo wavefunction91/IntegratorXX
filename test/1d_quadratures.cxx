@@ -226,7 +226,9 @@ TEST_CASE( "Gauss-Chebyshev extremal weights at large N", "[1d-quad]" ) {
   }
 
   SECTION("T3") {
-    // w = h sin(2 h) at the node nearest 1, and h sin(h) at the one nearest 0
+    // front() is the node nearest 0: there t = pi/2 - h exactly, so
+    // x = sin^2(h) and the weight is h sin(2h). back() is the node nearest
+    // 1, with weight h sin(h).
     const double h = M_PI / (2.0 * npts + 1);
     const GaussChebyshev3<double,double> q(npts);
     const auto& wgts = q.weights();
