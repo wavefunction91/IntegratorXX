@@ -1,8 +1,20 @@
 #pragma once
 #include <cmath>
+#include <complex>
 #include <random>
+#include <version>
 #include "quad_matcher.hpp"
 
+// The C++17 mathematical special functions ([sf.cmath]) are an optional part of
+// the standard library. libstdc++ and the MSVC STL provide them; libc++ does
+// not, so std::assoc_legendre is unavailable on macOS and on any clang build
+// against libc++. Detect it with the standard feature-test macro rather than by
+// sniffing the standard library, so this keeps working if libc++ implements
+// [sf.cmath] later.
+#if defined(__cpp_lib_math_special_functions) && \
+    __cpp_lib_math_special_functions >= 201603L
+#  define IXX_TEST_HAS_STD_ASSOC_LEGENDRE 1
+#endif
 
 namespace detail {
   constexpr size_t factorial(size_t n) {
@@ -10,8 +22,49 @@ namespace detail {
   }
 }
 struct AssociatedLegendre {
+  /**
+   *  Associated Legendre polynomial P_l^m(x), evaluated with the standard
+   *  upward recurrence. This is compiled on every platform, whether or not
+   *  std::assoc_legendre exists, so that the parity test in assoc_legendre.cxx
+   *  can check it against the standard library wherever that is available.
+   *
+   *  Follows the [sf.cmath] convention, P_l^m(x) = (1-x^2)^(m/2) d^m/dx^m
+   *  P_l(x), i.e. WITHOUT the Condon-Shortley phase (-1)^m. This is the same
+   *  convention std::assoc_legendre uses, which is what makes the two
+   *  interchangeable.
+   */
+  static inline double evaluate_fallback(int l, int m, double x) {
+    // Preconditions of std::assoc_legendre; callers pass std::abs(m) and a cos
+    if( m < 0 or m > l or std::abs(x) > 1.0 ) return 0.0;
+
+    // P_m^m(x) = (2m-1)!! (1-x^2)^(m/2), accumulated as a product of the exact
+    // integer coefficients (2j-1) and sqrt(1-x^2) to avoid forming (2m-1)!! and
+    // the fractional power separately
+    const double s = std::sqrt( (1.0 - x) * (1.0 + x) );
+    double p_mm = 1.0;
+    for( int j = 1; j <= m; ++j ) p_mm *= (2 * j - 1) * s;
+    if( l == m ) return p_mm;
+
+    // P_{m+1}^m(x) = x (2m+1) P_m^m(x)
+    double p_lm_m1 = p_mm;
+    double p_lm    = x * (2 * m + 1) * p_mm;
+
+    // (l-m) P_l^m(x) = x (2l-1) P_{l-1}^m(x) - (l+m-1) P_{l-2}^m(x)
+    for( int ll = m + 2; ll <= l; ++ll ) {
+      const double p_lm_m2 = p_lm_m1;
+      p_lm_m1 = p_lm;
+      p_lm = ( x * (2 * ll - 1) * p_lm_m1 - (ll + m - 1) * p_lm_m2 ) / (ll - m);
+    }
+
+    return p_lm;
+  }
+
   static inline double evaluate(int l, int m, double x) {
+#ifdef IXX_TEST_HAS_STD_ASSOC_LEGENDRE
     return std::assoc_legendre(l, m, x);
+#else
+    return evaluate_fallback(l, m, x);
+#endif
   }
 };
 
@@ -27,8 +80,8 @@ struct SphericalHarmonic {
     }
 
     return prefactor * 
-           std::assoc_legendre(l, std::abs(m), std::cos(theta)) *
-           std::complex( std::cos(m*phi), std::sin(m*phi) );
+           AssociatedLegendre::evaluate(l, std::abs(m), std::cos(theta)) *
+           std::complex<double>( std::cos(m*phi), std::sin(m*phi) );
   }
 
   static auto evaluate(int l, int m, double x, double y, double z) {
