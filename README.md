@@ -2,21 +2,27 @@
 
 ## Synopsis
 
-IntegratorXX is a modern C++ library for the generation of atomic and molecular
-grids for quantum chemistry calculations. Among the most important applications
-of these grids is the evaluation of exchange--correlation (XC) related quantities
+IntegratorXX is a modern C++ library for the generation of atomic grids for
+quantum chemistry calculations. Among the most important applications of these
+grids is the evaluation of exchange--correlation (XC) related quantities
 (energies, potentials, etc) required for density functional theory calculations.
 
 IntegratorXX provides a uniform interface for the generation of primitive,
-radial and solid angle quadratures, as well as there combination into spherical
+radial and solid angle quadratures, as well as their combination into spherical
 grids.
+
+The scope of IntegratorXX is the atomic grid. Assembling atomic grids into a
+molecular grid -- the fuzzy-cell partition weights, basis set screening and the
+batched evaluation that goes with them -- is the responsibility of the calling
+code; see [GauXC](https://github.com/wavefunction91/GauXC) for a driver that
+does this.
 
 ## Design Goals 
 
-* Provide stable, reusable, and reproducible implementations of the various atomic and
-molecular grids commonly encountered in quantum chemistry calculations
+* Provide stable, reusable, and reproducible implementations of the various
+atomic grids commonly encountered in quantum chemistry calculations
 * Develop a modern, modular, extensible C++ API to allow for the implementation
-and validation new atomic and molecular quadrature schemes.
+and validation of new atomic quadrature schemes.
 * Provide complete C and Python interfaces to allow reusing the implementation in projects written in these languages
 
 ## Dependencies
@@ -72,7 +78,7 @@ in the radial weights while the radial component of the spherical volume element
 
 Angular quadratures integrate over $S^2$ (solid angle). These have typically been
 manually constructed to integrate spherical harmonics up to a specific order, and
-are thus only compatible witch *specific* grid orders (see note below).
+are thus only compatible with *specific* grid orders (see note below).
 
 | Quadrature Name                 | Domain  | C++ Class           |
 |---------------------------------|---------|---------------------|
@@ -86,10 +92,10 @@ are thus only compatible witch *specific* grid orders (see note below).
 All of the currently implemented angular quadrature schemes are only compatible
 with *specific* grid orders corresponding to *specific* algebraic orders of
 spherical harmonics they integrate exactly.  The construction of the angular
-grids takes the number of points as argument, and will fail if the grid order
-is incompatible. As these *magic numbers* are different for each of the
-quadratures, we provide a set of look-up functions which can safely produce
-compatible grid orders:
+grids takes the number of points as argument, and throws `std::runtime_error`
+if the requested size is not tabulated. As these *magic numbers* are different
+for each of the quadratures, we provide a set of look-up functions which can
+safely produce compatible grid orders:
 
 ```
 using angular_type = LebedevLaikov<double>; // FP64 LL grid, similar for other implementations
@@ -109,7 +115,7 @@ the following radial pruning schemes:
 |-----------|--------------------------------------|---------------------------|
 | Unpruned  | Do not perform pruning               | `PruningScheme::Unpruned` |
 | Robust    | The Psi4 "robust" pruning scheme     | `PruningScheme::Robust`   |
-| Treutler  | The Treutler-Ahlrichs pruning scheme | `PruntinScheme::Treutler` |
+| Treutler  | The Treutler-Ahlrichs pruning scheme | `PruningScheme::Treutler` |
 
 
 
@@ -121,19 +127,23 @@ a simple invocation example for the generation of an atomic sphere via the
 runtime generator:
 ```
 using namespace IntegratorXX;                         // Import namespace
-auto rad_spec = radial_from_string("MuraKnowles");    // MK Radial scheme
-auto ang_spec = angular_from_string("AhrensBeylkin"); // AH Angular scheme
+auto rad_spec = radial_from_string("MuraKnowles");    // MK radial scheme
+auto ang_spec = angular_from_string("AhrensBeylkin"); // AB angular scheme
 size_t nrad   = 99;
 size_t nang   = 372;
 double rscal  = 2.0;
 
-// Generate Grid Specification
-UnprunedSphericalGridSpecification unp{
-  rad_spec, nrad, rscal, ang_spec, nang
-};
-auto pruning_spec = create_pruned_spec(PruningScheme::Robust, unp); 
+// The radial parameters are carried by a RadialTraits instance;
+// make_radial_traits builds the one matching the requested scheme
+auto rad_traits = make_radial_traits(rad_spec, nrad, rscal);
 
-// Generate Quadrature
+// Generate grid specification
+UnprunedSphericalGridSpecification unp{
+  rad_spec, *rad_traits, ang_spec, nang
+};
+auto pruning_spec = create_pruned_spec(PruningScheme::Robust, unp);
+
+// Generate quadrature
 auto sph_quad = SphericalGridFactory::generate_grid(pruning_spec);
 
 size_t npts = sph_quad->npts();
