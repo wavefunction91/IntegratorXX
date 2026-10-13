@@ -10,6 +10,7 @@
 #include "ahrens_beylkin_432.hpp"
 #include "ahrens_beylkin_492.hpp"
 #include "ahrens_beylkin_552.hpp"
+#include "ahrens_beylkin_572.hpp"
 #include "ahrens_beylkin_612.hpp"
 #include "ahrens_beylkin_672.hpp"
 #include "ahrens_beylkin_732.hpp"

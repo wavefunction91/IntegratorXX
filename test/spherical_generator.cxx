@@ -1,5 +1,7 @@
 #include "catch2/catch_all.hpp"
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 
 #include <integratorxx/quadratures/radial.hpp>
 #include <integratorxx/quadratures/s2.hpp>
@@ -288,6 +290,57 @@ TEMPLATE_LIST_TEST_CASE("S2 Generator", "[sph-gen]", s2_test_types) {
     REQUIRE_THAT(w, Catch::Matchers::WithinAbs(w_ref,1e-15));
   }
 
+}
+
+/// Exact value of \int_{S^2} x^{2a} y^{2b} z^{2c} d\Omega
+static double exact_even_monomial(int a, int b, int c) {
+  auto dfact = [](int n) { double r = 1.0; for(int k = n; k > 1; k -= 2) r *= k; return r; };
+  return 4.0 * M_PI * dfact(2*a-1) * dfact(2*b-1) * dfact(2*c-1) /
+         dfact(2*(a+b+c) + 1);
+}
+
+TEMPLATE_LIST_TEST_CASE("S2 Grid Validity", "[sph-gen]", s2_test_types) {
+  using namespace IntegratorXX;
+  using angular_type   = TestType;
+  using angular_traits = quadrature_traits<angular_type>;
+
+  // Sizes that no angular scheme tabulates must be diagnosed rather than
+  // silently yielding a zero grid.
+  REQUIRE_THROWS_AS( angular_type(1), std::runtime_error );
+  REQUIRE_THROWS_AS( angular_type(7), std::runtime_error );
+
+  // Every size advertised by the algebraic order tables must be dispatched
+  // and must integrate polynomials exactly up to its claimed order. A
+  // missing dispatch branch would return zero weights; a corrupt table
+  // would integrate low-order monomials incorrectly.
+  for( int64_t order = 0; order <= 200; ++order ) {
+    const auto npts = angular_traits::npts_by_algebraic_order(order);
+    if( npts < 0 ) continue;
+
+    INFO( "algebraic order " << order << ", " << npts << " points" );
+    angular_type aq(npts);
+    REQUIRE( aq.npts() == static_cast<size_t>(npts) );
+
+    const auto& p = aq.points();
+    const auto& w = aq.weights();
+
+    // Total degree 2*(a+b+c) must not exceed the claimed algebraic order.
+    // Capped for run time; degree 8 already exercises every table.
+    const int dmax = static_cast<int>(std::min<int64_t>(order / 2, 4));
+    for( int a = 0;         a <= dmax; ++a )
+    for( int b = 0;     a + b <= dmax; ++b )
+    for( int c = 0; a + b + c <= dmax; ++c ) {
+      double integral = 0.0;
+      for( size_t i = 0; i < aq.npts(); ++i )
+        integral += w[i] * std::pow(p[i][0], 2*a)
+                         * std::pow(p[i][1], 2*b)
+                         * std::pow(p[i][2], 2*c);
+
+      INFO( "monomial x^" << 2*a << " y^" << 2*b << " z^" << 2*c );
+      REQUIRE_THAT( integral,
+        Catch::Matchers::WithinRel(exact_even_monomial(a,b,c), 1e-12) );
+    }
+  }
 }
 
 using sph_test_types = std::tuple<

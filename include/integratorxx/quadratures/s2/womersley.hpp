@@ -2,6 +2,7 @@
 
 #include <integratorxx/quadrature.hpp>
 #include <integratorxx/util/copy_grid.hpp>
+#include <integratorxx/util/unsupported_grid.hpp>
 #include <integratorxx/util/create_array.hpp>
 #include <integratorxx/quadratures/s2/womersley/womersley_grids.hpp>
 #include <vector>
@@ -185,6 +186,8 @@ struct quadrature_traits<Womersley<RealType>> {
       detail::copy_grid<womersley_7814<RealType>>(points, weights);
     else if(npts == 7939)
       detail::copy_grid<womersley_7939<RealType>>(points, weights);
+    else
+      detail::throw_unsupported_grid_size("Womersley", npts);
   }
 
   inline static std::tuple<point_container, weight_container> generate(
@@ -320,6 +323,8 @@ struct quadrature_traits<Womersley<RealType>> {
       detail::copy_grid<womersley_1923<RealType>>(points, weights);
     else if(npts == 1986)
       detail::copy_grid<womersley_1986<RealType>>(points, weights);
+    else
+      detail::throw_unsupported_grid_size("Womersley", npts);
     return std::make_tuple(points, weights);
   }
 
